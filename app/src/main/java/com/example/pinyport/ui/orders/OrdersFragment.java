@@ -23,8 +23,6 @@ public class OrdersFragment extends Fragment {
         binding = FragmentOrdersBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        final TextView textView = binding.textOrders;
-        ordersViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 
