@@ -11,4 +11,30 @@
     <color name="light_blue">#8DADFF</color>
 
 
+
+
+    <!-- Custom colors for your app -->
+    <color name="my_app_surface">#FFFFFF</color>
+    <color name="my_app_on_background">#000000</color>
+    <color name="my_app_on_error">#FFFFFF</color>
+    <color name="my_app_on_surface">#000000</color>
+    <color name="mtrl_scrim">#000000</color>
+
+    <!-- Material3 attributes -->
+    <color name="my_app_primary_inverse">#FFFFFF</color>
+    <color name="my_app_primary_container">#E8EAF6</color>
+    <color name="my_app_on_primary_container">#3F51B5</color>
+    <color name="my_app_secondary_container">#E0F7FA</color>
+    <color name="my_app_on_secondary_container">#018786</color>
+    <color name="my_app_tertiary">#FF5722</color>
+    <color name="my_app_on_tertiary">#FFFFFF</color>
+    <color name="my_app_tertiary_container">#FFCCBC</color>
+    <color name="my_app_on_tertiary_container">#FF5722</color>
+    <color name="my_app_surface_variant">#ECEFF1</color>
+    <color name="my_app_on_surface_variant">#607D8B</color>
+    <color name="my_app_inverse_surface">#37474F</color>
+    <color name="my_app_inverse_on_surface">#ECEFF1</color>
+    <color name="my_app_outline">#B0BEC5</color>
+    <color name="my_app_error_container">#CF6679</color>
+    <color name="my_app_on_error_container">#000000</color>
 </resources>
