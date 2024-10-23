@@ -8,11 +8,4 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="blue_500">#006FFD</color>
-    <color name="blue_sky">#FFF4F9FD</color>
-    <color name="yellow">#EEFFC107</color>
-    <color name="bronze">#CD7F32</color>
-    <color name="silver">#C0C0C0</color>
-    <color name="gold">#FFD700</color>
-    <color name="diamond">#B9FBC0</color>
-    <color name="success">#44D480</color>
 </resources>
