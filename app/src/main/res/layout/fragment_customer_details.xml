@@ -217,11 +217,10 @@
                     android:layout_width="60dp"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="Gold"
+                    android:text="Bronze"
                     android:textColor="@color/white"
-                    android:background="@drawable/blue_background"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
+                    android:background="@drawable/bronze_background"
+                    android:textSize="12sp" />
             </LinearLayout>
 
             <!-- Point -->
@@ -245,7 +244,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="54dp"
-                    android:text="1103"
+                    android:text="1800"
                     android:textColor="@color/black"
                     android:textSize="14sp" />
             </LinearLayout>
@@ -387,12 +386,11 @@
                     <TextView
                         android:layout_width="60dp"
                         android:layout_height="match_parent"
-                        android:background="@drawable/blue_background"
+                        android:background="@drawable/success_background"
                         android:gravity="center"
                         android:text="Success"
                         android:textColor="@android:color/white"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textSize="13sp"/>
 
 
                 </LinearLayout>
@@ -467,7 +465,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
-                        android:text="12/06/2024"
+                        android:text="10/06/2024"
                         android:textColor="@color/black"
                         android:textSize="13sp" />
 
@@ -490,19 +488,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="100dp"
-                        android:text=" 11:30 "
+                        android:text=" 10:00 "
                         android:textColor="@color/black"
                         android:textSize="13sp" />
 
                     <TextView
                         android:layout_width="60dp"
                         android:layout_height="match_parent"
-                        android:background="@drawable/blue_background"
+                        android:background="@drawable/cancel_background"
                         android:gravity="center"
-                        android:text="Success"
+                        android:text="Cancel"
                         android:textColor="@android:color/white"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textSize="13sp"/>
 
 
                 </LinearLayout>
@@ -510,7 +507,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="#MM0876"
+                    android:text="#MM0870"
                     android:textColor="@color/black"
                     android:textSize="14sp"
                     android:textStyle="bold" />
