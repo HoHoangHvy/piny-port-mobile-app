@@ -14,4 +14,5 @@
     <color name="silver">#C0C0C0</color>
     <color name="gold">#FFD700</color>
     <color name="diamond">#B9FBC0</color>
+    <color name="success">#44D480</color>
 </resources>
