@@ -41,4 +41,10 @@
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
 
+    <fragment
+        android:id="@+id/navigation_newchat"
+        android:name="com.example.pinyport.ui.chat.NewChatFragment"
+        android:label="New Chat"
+        tools:layout="@layout/fragment_newchat" />
+
 </navigation>
