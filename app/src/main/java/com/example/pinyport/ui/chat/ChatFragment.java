@@ -1,12 +1,16 @@
 package com.example.pinyport.ui.chat;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -30,7 +34,10 @@ public class ChatFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentChatBinding.inflate(inflater, container, false);
-        View root = binding.getRoot(); // Trả về view gốc của fragment
+        View root = binding.getRoot();
+
+        View customView = ((AppCompatActivity) getActivity()).getSupportActionBar().getCustomView();
+        TextView customTitle = customView.findViewById(R.id.customTitle);
 
         recyclerView = binding.recyclerView;
         recyclerView.setHasFixedSize(true);
@@ -38,24 +45,19 @@ public class ChatFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.addItemDecoration(new ItemDecoration(8)); // khoảng cách giữa các item
 
-        // Set up the newchatButton click listener
         binding.newchatButton.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(v);
-            navController.navigate(R.id.navigation_newchat); // Navigate to NewChatFragment
+            navController.navigate(R.id.navigation_newchat);
+            customTitle.setText("New chat");
         });
 
-        // Create a list of chats
-        // Create chat list
         chatList = new ArrayList<>();
         for (int i = 0; i <= 15; i++) {
             chatList.add(new Chat("Customer " + i, "Latest chat"));
         }
 
-        // Set up adapter
         chatAdapter = new ChatAdapter(chatList);
         recyclerView.setAdapter(chatAdapter);
-
-        // Notify adapter after setting the data
         chatAdapter.notifyDataSetChanged();
 
         return root;

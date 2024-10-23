@@ -41,8 +41,9 @@
         android:background="@drawable/rounded_item"
         android:paddingLeft="16dp"
         android:hint="Search"
+        android:drawableStart="@drawable/search_icon"
+        android:drawablePadding="12dp"
         android:inputType="text"/>
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

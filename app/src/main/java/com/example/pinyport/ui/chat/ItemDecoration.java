@@ -17,7 +17,6 @@ public class ItemDecoration extends RecyclerView.ItemDecoration {
     public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
 
-        // Set khoảng cách cho tất cả các item trừ item cuối cùng
         if (parent.getChildAdapterPosition(view) != parent.getAdapter().getItemCount() - 1) {
             outRect.bottom = verticalSpaceHeight;
         }

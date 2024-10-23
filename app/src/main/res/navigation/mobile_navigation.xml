@@ -44,7 +44,7 @@
     <fragment
         android:id="@+id/navigation_newchat"
         android:name="com.example.pinyport.ui.chat.NewChatFragment"
-        android:label="New Chat"
+        android:label="@string/new_chat"
         tools:layout="@layout/fragment_newchat" />
 
 </navigation>

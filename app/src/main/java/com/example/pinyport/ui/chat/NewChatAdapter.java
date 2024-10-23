@@ -24,14 +24,12 @@ public class NewChatAdapter extends RecyclerView.Adapter<NewChatAdapter.ChatView
     @NonNull
     @Override
     public ChatViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Inflate the item layout for each chat item
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_chat, parent, false);
         return new ChatViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
-        // Bind data to the views
         Chat chat = chatList.get(position);
         holder.customerName.setText(chat.getName());
         holder.latestChat.setText(chat.getLatestMessage());
@@ -48,7 +46,6 @@ public class NewChatAdapter extends RecyclerView.Adapter<NewChatAdapter.ChatView
 
         public ChatViewHolder(@NonNull View itemView) {
             super(itemView);
-            // Initialize views
             customerName = itemView.findViewById(R.id.customerName);
             latestChat = itemView.findViewById(R.id.latestChat);
             profileImage = itemView.findViewById(R.id.profileImage);

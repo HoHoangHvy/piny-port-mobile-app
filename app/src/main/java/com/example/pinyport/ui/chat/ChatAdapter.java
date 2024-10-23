@@ -31,7 +31,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
-        // Bind data to the views
         Chat chat = chatList.get(position);
         holder.customerName.setText(chat.getName());
         holder.latestChat.setText(chat.getLatestMessage());
@@ -48,7 +47,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
         public ChatViewHolder(@NonNull View itemView) {
             super(itemView);
-            // Initialize views
             customerName = itemView.findViewById(R.id.customerName);
             latestChat = itemView.findViewById(R.id.latestChat);
             profileImage = itemView.findViewById(R.id.profileImage);
