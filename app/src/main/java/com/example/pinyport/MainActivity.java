@@ -28,6 +28,11 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Set custom action bar only once, when the activity is created
+        View actionBarView = getLayoutInflater().inflate(R.layout.custom_action_bar, null);
+        getSupportActionBar().setCustomView(actionBarView);
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+
         BottomNavigationView navView = findViewById(R.id.nav_view);
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_orders, R.id.navigation_chat,
