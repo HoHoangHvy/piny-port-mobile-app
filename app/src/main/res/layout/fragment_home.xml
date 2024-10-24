@@ -48,7 +48,7 @@
                 <!-- Đường phân cách -->
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="3dp"
+                    android:layout_height="2dp"
                     android:background="#006FFD" />
 
                 <TextView
@@ -94,7 +94,7 @@
                 <!-- Đường phân cách -->
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="3dp"
+                    android:layout_height="2dp"
                     android:background="#006FFD" />
 
                 <TextView
