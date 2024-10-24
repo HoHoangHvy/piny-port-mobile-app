@@ -41,7 +41,7 @@
         android:background="@drawable/rounded_item"
         android:paddingLeft="16dp"
         android:hint="Search"
-        android:drawableStart="@drawable/search_icon"
+        android:drawableStart="@drawable/search_48px"
         android:drawablePadding="12dp"
         android:inputType="text"/>
 

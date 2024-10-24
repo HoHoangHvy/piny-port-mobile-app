@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.PinyPort" parent="Theme.Material3.DayNight">
+    <style name="Theme.PinyPort" parent="Theme.Material3.Light">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/blue_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -70,6 +70,10 @@
         <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Material3.LargeComponent</item>
     </style>
     <style name="CustomButtonStyle" parent="Widget.AppCompat.Button">
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:textColor">@color/white</item> <!-- Optional text color -->
+    </style>
+    <style name="LoginStyle" parent="Theme.Material3.Light.NoActionBar">
         <item name="android:background">?android:attr/selectableItemBackground</item>
         <item name="android:textColor">@color/white</item> <!-- Optional text color -->
     </style>
