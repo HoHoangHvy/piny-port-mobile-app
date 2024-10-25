@@ -14,7 +14,7 @@
         <!-- Customize your theme here. -->
 
         <!-- MaterialComponents attributes (needed if parent="Theme.AppCompat"). -->
-        <item name="colorSurface">@color/my_app_surface</item>
+        <item name="colorSurface">@color/my_app_surface</item>S
         <item name="colorOnBackground">@color/my_app_on_background</item>
         <item name="colorOnError">@color/my_app_on_error</item>
         <item name="colorOnSurface">@color/my_app_on_surface</item>
@@ -68,6 +68,7 @@
         <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Material3.SmallComponent</item>
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.Material3.MediumComponent</item>
         <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Material3.LargeComponent</item>
+        <item name="bottomNavigationStyle">@style/Widget.App.BottomNavigationView</item>
     </style>
     <style name="CustomButtonStyle" parent="Widget.AppCompat.Button">
         <item name="android:background">?android:attr/selectableItemBackground</item>
@@ -76,5 +77,13 @@
     <style name="LoginStyle" parent="Theme.Material3.Light.NoActionBar">
         <item name="android:background">?android:attr/selectableItemBackground</item>
         <item name="android:textColor">@color/white</item> <!-- Optional text color -->
+    </style>
+    <style name="Widget.App.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.BottomNavigationView</item>
+    </style>
+
+    <style name="ThemeOverlay.App.BottomNavigationView" parent="">
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurfaceVariant">@color/light_blue</item>
     </style>
 </resources>

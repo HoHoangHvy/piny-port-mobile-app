@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:layout_margin="0dp"
     android:padding="0dp"
+    android:background="@color/my_app_surface"
     tools:context=".ui.home.HomeFragment">
 
     <!-- Thẻ chứa Sales Today và Total Orders -->
@@ -22,14 +23,14 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <!-- CardView cho Sales Today -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_weight="1"
-            android:backgroundTint="#FFFFFF"
+            app:cardBackgroundColor="@color/my_app_surface"
             app:cardCornerRadius="20dp"
-            app:cardElevation="4dp">
+            app:cardElevation="0dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -65,17 +66,17 @@
                     android:layout_height="wrap_content"
                     android:text="*Updated every order success" />
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- CardView cho Total Orders -->
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_weight="1"
-            android:backgroundTint="#FFFFFF"
+            app:cardBackgroundColor="@color/my_app_surface"
             app:cardCornerRadius="20dp"
-            app:cardElevation="4dp">
+            app:cardElevation="0dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -111,17 +112,18 @@
                     android:layout_height="wrap_content"
                     android:text="+4.95% More earning than" />
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
 
     <!-- Thẻ chứa BarChart -->
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_bar_chart"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         app:cardCornerRadius="16dp"
-        app:cardElevation="4dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="@color/my_app_surface"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/statistics_section">
@@ -148,17 +150,17 @@
                 android:layout_height="match_parent"
                 android:layout_marginTop="8dp" />
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
     <!-- Thẻ chứa PieChart -->
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_pie_chart"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:backgroundTint="#FFFFFF"
         app:cardCornerRadius="16dp"
-        app:cardElevation="4dp"
+        app:cardBackgroundColor="@color/my_app_surface"
+        app:cardElevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/card_bar_chart">
@@ -185,6 +187,6 @@
                 android:layout_height="match_parent"
                 android:layout_marginTop="8dp" />
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

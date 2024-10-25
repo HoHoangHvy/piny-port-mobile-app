@@ -23,7 +23,7 @@
 
     <!-- Material3 attributes -->
     <color name="my_app_primary_inverse">#FFFFFF</color>
-    <color name="my_app_primary_container">#E8EAF6</color>
+    <color name="my_app_primary_container">#FFFFFF</color>
     <color name="my_app_on_primary_container">#3F51B5</color>
     <color name="my_app_secondary_container">#E0F7FA</color>
     <color name="my_app_on_secondary_container">#018786</color>
