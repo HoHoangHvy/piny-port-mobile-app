@@ -10,6 +10,12 @@
     <color name="dark_gray">#7D8592</color>
     <color name="blue_500">#006FFD</color>
     <color name="light_blue">#8DADFF</color>
+    <color name="status_wait">#FFA726</color>
+    <color name="status_preparing">#FFEB3B</color>
+    <color name="status_delivering">#29B6F6</color>
+    <color name="status_success">#4CAF50</color>
+    <color name="status_cancel">#F44336</color>
+    <color name="filter_item_background">#EAF2FF</color>
 
 
 

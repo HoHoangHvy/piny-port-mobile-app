@@ -1,80 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/my_app_surface"
     tools:context=".ui.orders.OrdersFragment">
-    <!-- Search Bar FrameLayout -->
-    <FrameLayout
-        android:id="@+id/searchBarFrameLayout"
-        android:layout_width="0dp"
-        android:layout_margin="10dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
 
-        <SearchView
-            android:id="@+id/search_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:focusable="false"
-            android:iconifiedByDefault="false"
-            android:background="@drawable/search_bar_bg"
-            android:queryBackground="@android:color/transparent"
-            android:queryHint="Search for orders"
-            tools:layout_editor_absoluteX="27dp"
-            tools:layout_editor_absoluteY="94dp"/>
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/my_app_surface"
+        tools:context=".ui.orders.OrdersFragment">
+        <!-- Search Bar FrameLayout -->
+        <FrameLayout
+            android:id="@+id/searchBarFrameLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    </FrameLayout>
+            <SearchView
+                android:id="@+id/search_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/search_bar_bg"
+                android:focusable="false"
+                android:iconifiedByDefault="false"
+                android:queryBackground="@android:color/transparent"
+                android:queryHint="Search for orders"
+                tools:layout_editor_absoluteX="27dp"
+                tools:layout_editor_absoluteY="94dp" />
 
-    <!-- Sort Button -->
+        </FrameLayout>
 
-    <!-- Filter Button -->
+        <Button
+            android:id="@+id/sortButton"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="6dp"
+            android:drawableStart="@drawable/sync_alt"
+            android:drawablePadding="8dp"
+            android:padding="10dp"
+            android:text="Sort"
+            android:textColor="#000000"
+            app:icon="@drawable/sync_alt"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/searchBarFrameLayout" />
 
-    <Button
-        android:id="@+id/sortButton"
-        style="?attr/materialButtonOutlinedStyle"
+        <Button
+            android:id="@+id/filterButton"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:drawablePadding="8dp"
+            android:padding="10dp"
+            android:text="Filter"
+            android:textColor="#000000"
+            app:icon="@drawable/filter_list"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.926"
+            app:layout_constraintStart_toEndOf="@+id/sortButton"
+            app:layout_constraintTop_toBottomOf="@+id/searchBarFrameLayout" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/orderList"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="60dp"
+            android:clipToPadding="false"
+            android:paddingBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sortButton" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <include
+        android:id="@+id/filterOrderDrawer"
+        layout="@layout/filter_order_drawer"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
-        android:drawableStart="@drawable/sync_alt"
-        android:drawablePadding="8dp"
-        android:padding="10dp"
-        android:text="Sort"
-        android:textColor="#000000"
-        app:icon="@drawable/sync_alt"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/searchBarFrameLayout" />
-
-    <Button
-        android:id="@+id/filterButton"
-        style="?attr/materialButtonOutlinedStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        app:icon="@drawable/filter_list"
-        android:drawablePadding="8dp"
-        android:padding="10dp"
-        android:text="Filter"
-        android:textColor="#000000"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.926"
-        app:layout_constraintStart_toEndOf="@+id/sortButton"
-        app:layout_constraintTop_toBottomOf="@+id/searchBarFrameLayout" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/orderList"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:clipToPadding="false"
-        android:paddingBottom="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/sortButton"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_height="match_parent"
+        android:layout_gravity="end" />
+</androidx.drawerlayout.widget.DrawerLayout>

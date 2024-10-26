@@ -1,10 +1,12 @@
 package com.example.pinyport.adapter;
 
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pinyport.R;
@@ -48,6 +50,7 @@ public class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapter.Orde
         holder.orderDate.setText(order.getDate());
         holder.orderTime.setText(order.getTime());
         holder.orderStatus.setText(order.getStatus());
+        setStatusColor(holder.orderStatus, order.getStatus());
         holder.orderItemsCount.setText(order.getItemsCount() + " items");
         holder.orderValue.setText(order.getValue());
         holder.orderCustomer.setText(order.getCustomerName());
@@ -56,6 +59,43 @@ public class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapter.Orde
     @Override
     public int getItemCount() {
         return orderList.size();
+    }
+
+    private void setStatusColor(TextView statusTextView, String status) {
+        int color;
+        switch (status) {
+            case "Wait":
+                color = ContextCompat.getColor(statusTextView.getContext(), R.color.status_wait);
+                statusTextView.setText("Wait");
+                break;
+            case "Preparing":
+                color = ContextCompat.getColor(statusTextView.getContext(), R.color.status_preparing);
+                statusTextView.setText("Preparing");
+                break;
+            case "Delivering":
+                color = ContextCompat.getColor(statusTextView.getContext(), R.color.status_delivering);
+                statusTextView.setText("Delivering");
+                break;
+            case "Success":
+                color = ContextCompat.getColor(statusTextView.getContext(), R.color.status_success);
+                statusTextView.setText("Success");
+                break;
+            case "Cancelled":
+                color = ContextCompat.getColor(statusTextView.getContext(), R.color.status_cancel);
+                statusTextView.setText("Cancelled");
+                break;
+            default:
+                color = ContextCompat.getColor(statusTextView.getContext(), R.color.dark_gray);
+                statusTextView.setText("Unknown");
+                break;
+        }
+
+        // Apply the color tint to the background drawable
+        Drawable background = ContextCompat.getDrawable(statusTextView.getContext(), R.drawable.status_background);
+        if (background != null) {
+            background.setTint(color);
+            statusTextView.setBackground(background);
+        }
     }
 
 }

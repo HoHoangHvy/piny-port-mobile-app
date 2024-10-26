@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout
+        android:id="@+id/filter_drawer"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_marginBottom="55dp">
+
+        <!-- Header with Cancel and Clear All options -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <Button
+                style="@style/Widget.Material3.Button.TextButton"
+                android:id="@+id/cancel_filter_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cancel"
+                android:textColor="#006FFD"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/filter"
+                android:textStyle="bold"
+                android:layout_weight="2"
+                android:textColor="#000000"
+                android:gravity="center" />
+
+            <Button
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/clear_all"
+                android:textColor="#006FFD"/>
+        </LinearLayout>
+
+        <!-- Category Filter -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Status"
+            android:textSize="16sp"
+            android:textColor="#000000" />
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:flexWrap="wrap"
+            app:alignItems="center">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/wait_status_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                app:cardBackgroundColor="@color/filter_item_background"
+                android:checkable="true"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_weight="1"
+                app:strokeWidth="0dp">
+                <TextView
+                    android:id="@+id/wait_status_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="WAIT"
+                    android:textColor="#006FFD"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cancelled_status_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/filter_item_background"
+                android:checkable="true"
+                android:clickable="true"
+                android:focusable="true"
+                app:checkedIconSize="11dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                app:strokeWidth="0dp">
+                <TextView
+                    android:id="@+id/cancelled_status_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="CANCELLED"
+                    android:textColor="#006FFD"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/success_status_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/filter_item_background"
+                android:checkable="true"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                app:strokeWidth="0dp">
+                <TextView
+                    android:id="@+id/success_status_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="SUCCESS"
+                    android:textColor="#006FFD"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/delivering_status_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/filter_item_background"
+                android:checkable="true"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                app:strokeWidth="0dp">
+                <TextView
+                    android:id="@+id/delivering_status_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="DELIVERING"
+                    android:textColor="#006FFD"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/preparing_status_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/filter_item_background"
+                android:checkable="true"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                app:strokeWidth="0dp">
+                <TextView
+                    android:id="@+id/preparing_status_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="PREPARING"
+                    android:textColor="#006FFD"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </com.google.android.material.card.MaterialCardView>
+        </com.google.android.flexbox.FlexboxLayout>
+
+        <!-- Price Range Filter -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Price Range"
+            android:textSize="16sp"
+            android:textColor="#000000" />
+
+        <!-- Placeholder for price range options -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Price Range Options Here"
+            android:textColor="#000000" />
+
+        <!-- Customer Level Filter with Chip-like Buttons -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Customer Level"
+            android:textSize="16sp"
+            android:textColor="#000000" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_gravity="center_horizontal">
+
+            <!-- Chip-like buttons -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/filter_chip"
+                android:padding="8dp"
+                android:text="GOLD"
+                android:textColor="#006FFD" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/filter_chip_selected"
+                android:padding="8dp"
+                android:text="PREMIUM"
+                android:textColor="#FFFFFF" />
+
+            <!-- Repeat for other chips -->
+        </LinearLayout>
+
+        <!-- Date Filter -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Date"
+            android:textSize="16sp"
+            android:textColor="#000000" />
+
+        <!-- Placeholder for date picker -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Date Options Here"
+            android:textColor="#000000" />
+
+        <!-- Customer Filter -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Customer"
+            android:textSize="16sp"
+            android:textColor="#000000" />
+
+        <!-- Placeholder for customer options -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Customer Options Here"
+            android:textColor="#000000" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <Button
+                android:id="@+id/apply_filter_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:backgroundTint="#006FFD"
+                android:text="Apply Filters"
+                android:textColor="#FFFFFF"
+                android:textAllCaps="false"
+                android:layout_gravity="center_horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Apply Filter Button -->
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
