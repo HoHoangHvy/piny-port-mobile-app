@@ -59,82 +59,16 @@
             android:layout_marginTop="8dp"
             app:flexWrap="wrap"
             app:alignItems="center">
-
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/wait_status_filter"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                app:cardBackgroundColor="@color/filter_item_background"
-                android:checkable="true"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_weight="1"
-                app:strokeWidth="0dp">
-                <TextView
-                    android:id="@+id/wait_status_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:text="WAIT"
-                    android:textColor="#006FFD"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
-            </com.google.android.material.card.MaterialCardView>
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cancelled_status_filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/filter_item_background"
-                android:checkable="true"
-                android:clickable="true"
-                android:focusable="true"
-                app:checkedIconSize="11dp"
-                android:layout_marginRight="5dp"
-                android:layout_weight="1"
-                app:strokeWidth="0dp">
-                <TextView
-                    android:id="@+id/cancelled_status_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:text="CANCELLED"
-                    android:textColor="#006FFD"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
-            </com.google.android.material.card.MaterialCardView>
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/success_status_filter"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/filter_item_background"
-                android:checkable="true"
-                android:clickable="true"
-                android:focusable="true"
-                android:layout_marginRight="5dp"
-                android:layout_weight="1"
-                app:strokeWidth="0dp">
-                <TextView
-                    android:id="@+id/success_status_text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:text="SUCCESS"
-                    android:textColor="#006FFD"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:maxLines="1"
-                    android:ellipsize="end" />
-            </com.google.android.material.card.MaterialCardView>
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/delivering_status_filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/filter_item_background"
-                android:checkable="true"
                 android:clickable="true"
-                android:focusable="true"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
+                android:checkable="true"
+                app:checkedIcon="@drawable/icon_empty"
+                app:cardBackgroundColor="@color/filter_item_background"
                 app:strokeWidth="0dp">
                 <TextView
                     android:id="@+id/delivering_status_text"
@@ -152,13 +86,12 @@
                 android:id="@+id/preparing_status_filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/filter_item_background"
-                android:checkable="true"
                 android:clickable="true"
-                android:focusable="true"
                 android:layout_marginRight="5dp"
-                android:layout_marginTop="5dp"
                 android:layout_weight="1"
+                android:checkable="true"
+                app:checkedIcon="@drawable/icon_empty"
+                app:cardBackgroundColor="@color/filter_item_background"
                 app:strokeWidth="0dp">
                 <TextView
                     android:id="@+id/preparing_status_text"
@@ -166,6 +99,73 @@
                     android:layout_height="wrap_content"
                     android:padding="8dp"
                     android:text="PREPARING"
+                    android:textColor="#006FFD"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cancelled_status_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:state_checked="true"
+                android:clickable="true"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:checkable="true"
+                app:checkedIcon="@drawable/icon_empty"
+                app:cardBackgroundColor="@color/filter_item_background"
+                app:strokeWidth="0dp">
+                <TextView
+                    android:id="@+id/cancelled_status_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="CANCELLED"
+                    android:textColor="#006FFD"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/wait_status_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="5dp"
+                android:clickable="true"
+                android:layout_weight="1"
+                android:checkable="true"
+                app:checkedIcon="@drawable/icon_empty"
+                app:cardBackgroundColor="@color/filter_item_background"
+                app:strokeWidth="0dp">
+                <TextView
+                    android:id="@+id/wait_status_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="WAIT"
+                    android:textColor="#006FFD"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/success_status_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/filter_item_background"
+                android:clickable="true"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:checkable="true"
+                app:checkedIcon="@drawable/icon_empty"
+                app:strokeWidth="0dp">
+                <TextView
+                    android:id="@+id/success_status_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="SUCCESS"
                     android:textColor="#006FFD"
                     android:textSize="11sp"
                     android:textStyle="bold"
@@ -183,13 +183,15 @@
             android:textSize="16sp"
             android:textColor="#000000" />
 
-        <!-- Placeholder for price range options -->
-        <TextView
-            android:layout_width="wrap_content"
+        <com.google.android.material.slider.RangeSlider
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Price Range Options Here"
-            android:textColor="#000000" />
+            android:layout_width="match_parent"
+            app:trackHeight="10dp"
+            app:trackColorInactive="@color/filter_item_background"
+            app:thumbHeight="20dp"
+            android:valueFrom="0.0"
+            android:valueTo="100"
+            app:values="@array/initial_slider_values" />
 
         <!-- Customer Level Filter with Chip-like Buttons -->
         <TextView

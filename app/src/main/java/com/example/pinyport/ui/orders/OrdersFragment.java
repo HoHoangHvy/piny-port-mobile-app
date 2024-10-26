@@ -23,8 +23,11 @@ import com.example.pinyport.databinding.FilterOrderDrawerBinding;
 import com.example.pinyport.databinding.FragmentOrdersBinding;
 import com.example.pinyport.model.Order;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.slider.RangeSlider;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 
 public class OrdersFragment extends Fragment {
@@ -87,7 +90,6 @@ public class OrdersFragment extends Fragment {
         setupCardClickListener(filterOrderDrawerBinding.preparingStatusFilter,
                 filterOrderDrawerBinding.preparingStatusText);
     }
-
     private void setupCardClickListener(final MaterialCardView card, final TextView textView) {
         card.setOnClickListener(new View.OnClickListener() {
             @Override
