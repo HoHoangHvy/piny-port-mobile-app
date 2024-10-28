@@ -9,4 +9,5 @@
     <string name="customers">Customers</string>
     <string name="profile">Profile</string>
     <string name="back_to_home">Back to home\n</string>
+    <string name="new_chat">New chat\n</string>
 </resources>
