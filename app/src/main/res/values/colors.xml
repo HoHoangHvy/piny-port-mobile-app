@@ -16,6 +16,7 @@
     <color name="status_success">#4CAF50</color>
     <color name="status_cancel">#F44336</color>
     <color name="filter_item_background">#EAF2FF</color>
+    <color name="text_color_secondary">#8696BB</color>
 
 
 
@@ -35,7 +36,7 @@
     <color name="my_app_on_secondary_container">#018786</color>
     <color name="my_app_tertiary">#FF5722</color>
     <color name="my_app_on_tertiary">#FFFFFF</color>
-    <color name="my_app_tertiary_container">#FFCCBC</color>
+    <color name="my_app_tertiary_container">#FFFFFF</color>
     <color name="my_app_on_tertiary_container">#FF5722</color>
     <color name="my_app_surface_variant">#ECEFF1</color>
     <color name="my_app_on_surface_variant">#607D8B</color>

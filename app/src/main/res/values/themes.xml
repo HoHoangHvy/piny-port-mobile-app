@@ -77,4 +77,17 @@
         <item name="android:background">?android:attr/selectableItemBackground</item>
         <item name="android:textColor">@color/white</item> <!-- Optional text color -->
     </style>
+    <!-- Custom DatePicker theme -->
+    <style name="CustomDatePickerTheme" parent="ThemeOverlay.Material3.MaterialCalendar">
+        <item name="colorPrimary">@color/blue_500</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="elevationOverlayEnabled">false</item>
+        <item name="colorSurfaceContainerHigh">@color/white</item>
+    </style>
+    <style name="CustomDialogTheme" parent="Theme.MaterialComponents.Dialog">
+        <item name="backgroundColor">@color/white</item> <!-- Set background color -->
+        <item name="android:windowBackground">@color/white</item> <!-- Set window background -->
+        <item name="android:textColorPrimary">@color/blue_500</item> <!-- Set primary text color -->
+        <item name="android:padding">16dp</item> <!-- Add padding -->
+    </style>
 </resources>

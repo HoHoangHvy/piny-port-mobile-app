@@ -9,20 +9,24 @@
         android:id="@+id/navigation_orders"
         android:name="com.example.pinyport.ui.orders.OrdersFragment"
         android:label="Orders"
-        tools:layout="@layout/fragment_orders"
-        />
+        tools:layout="@layout/fragment_orders">
+        <action
+            android:id="@+id/action_ordersFragment_to_orderDetailFragment"
+            app:destination="@id/orderDetailFragment" />
+    </fragment>
+
     <fragment
         android:id="@+id/navigation_customers"
         android:name="com.example.pinyport.ui.customers.CustomersFragment"
         android:label="Customers"
-        tools:layout="@layout/fragment_customers"
-        />
+        tools:layout="@layout/fragment_customers" />
+
     <fragment
         android:id="@+id/navigation_profile"
         android:name="com.example.pinyport.ui.profile.ProfileFragment"
         android:label="Profile"
-        tools:layout="@layout/fragment_profile"
-        />
+        tools:layout="@layout/fragment_profile" />
+
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.example.pinyport.ui.home.HomeFragment"
@@ -47,4 +51,9 @@
         android:label="@string/new_chat"
         tools:layout="@layout/fragment_newchat" />
 
+    <fragment
+        android:id="@+id/orderDetailFragment"
+        android:name="com.example.pinyport.ui.orders.OrderDetailFragment"
+        android:label="Order Detail"
+        tools:layout="@layout/order_detail_fragment" />
 </navigation>

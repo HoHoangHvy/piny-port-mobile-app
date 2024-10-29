@@ -1,6 +1,8 @@
 package com.example.pinyport.model;
 
-public class Order {
+import java.io.Serializable;
+
+public class Order implements Serializable {
     private String orderId;
     private String date;
     private String time;
@@ -47,5 +49,4 @@ public class Order {
     public String getValue() {
         return value;
     }
-
 }

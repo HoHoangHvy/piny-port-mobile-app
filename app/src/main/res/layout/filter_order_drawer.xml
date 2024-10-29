@@ -38,6 +38,7 @@
                 android:gravity="center" />
 
             <Button
+                android:id="@+id/clear_all_button"
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -182,72 +183,64 @@
             android:text="Price Range"
             android:textSize="16sp"
             android:textColor="#000000" />
-
-        <com.google.android.material.slider.RangeSlider
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            app:trackHeight="10dp"
-            app:trackColorInactive="@color/filter_item_background"
-            app:thumbHeight="20dp"
-            android:valueFrom="0.0"
-            android:valueTo="100"
-            app:values="@array/initial_slider_values" />
-
-        <!-- Customer Level Filter with Chip-like Buttons -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Customer Level"
-            android:textSize="16sp"
-            android:textColor="#000000" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_gravity="center_horizontal">
-
-            <!-- Chip-like buttons -->
+            android:orientation="horizontal">
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/filter_chip"
-                android:padding="8dp"
-                android:text="GOLD"
-                android:textColor="#006FFD" />
-
-            <TextView
+                android:text="Step: " />
+            <Spinner
+                android:id="@+id/step_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:background="@drawable/filter_chip_selected"
-                android:padding="8dp"
-                android:text="PREMIUM"
-                android:textColor="#FFFFFF" />
-
-            <!-- Repeat for other chips -->
+                android:entries="@array/step_values" />
         </LinearLayout>
+        <com.google.android.material.slider.RangeSlider
+            android:id="@+id/price_range_slider"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:valueFrom="0.0"
+            android:valueTo="100"
+            app:thumbHeight="15dp"
+            app:trackColorInactive="@color/filter_item_background"
+            app:trackHeight="7dp"
+            app:values="@array/initial_slider_values"
+            android:stepSize="10.0"/>
+        <TextView
+            android:id="@+id/price_range_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
         <!-- Date Filter -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="8dp"
             android:text="Date"
             android:textSize="16sp"
             android:textColor="#000000" />
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            app:justifyContent="flex_start"
+            app:alignContent="center"
+            >
+            <Button
+                style="?attr/materialIconButtonStyle"
+                android:id="@+id/date_picker_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/calendar_icon"/>
 
-        <!-- Placeholder for date picker -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Date Options Here"
-            android:textColor="#000000" />
+            <TextView
+                android:id="@+id/date_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:padding="5dp"
+                android:text="Selected Date will appear here" />
+        </com.google.android.flexbox.FlexboxLayout>
 
         <!-- Customer Filter -->
         <TextView
@@ -258,13 +251,25 @@
             android:textSize="16sp"
             android:textColor="#000000" />
 
-        <!-- Placeholder for customer options -->
-        <TextView
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Customer Options Here"
-            android:textColor="#000000" />
+            android:orientation="horizontal">
+            <Button
+                style="?attr/materialIconButtonStyle"
+                android:id="@+id/customer_picker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/profile_icon"/>
+            <TextView
+                android:id="@+id/selectedCustomerTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Selected Customer: None"
+                android:textSize="14sp"
+                android:paddingBottom="8dp"/>
+        </LinearLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
