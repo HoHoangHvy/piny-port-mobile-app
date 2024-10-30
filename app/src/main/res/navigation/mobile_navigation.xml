@@ -46,10 +46,10 @@
         tools:layout="@layout/fragment_notifications" />
 
     <fragment
-        android:id="@+id/navigation_newchat"
-        android:name="com.example.pinyport.ui.chat.NewChatFragment"
+        android:id="@+id/navigation_chat_detail"
+        android:name="com.example.pinyport.ui.chat.ChatDetailFragment"
         android:label="@string/new_chat"
-        tools:layout="@layout/fragment_newchat" />
+        tools:layout="@layout/fragment_chat_detail" />
 
     <fragment
         android:id="@+id/orderDetailFragment"

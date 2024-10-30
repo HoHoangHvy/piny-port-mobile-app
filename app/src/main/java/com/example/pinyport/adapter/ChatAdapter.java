@@ -1,24 +1,34 @@
-package com.example.pinyport.ui.chat;
+package com.example.pinyport.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pinyport.R;
+import com.example.pinyport.model.Chat;
 
 import java.util.List;
 
-public class NewChatAdapter extends RecyclerView.Adapter<NewChatAdapter.ChatViewHolder> {
+public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder> {
 
     private List<Chat> chatList;
+    private OnItemClickListener listener;
 
-    public NewChatAdapter(List<Chat> chatList) {
+    public interface OnItemClickListener {
+        void onItemClick(int position);
+    }
+
+    public ChatAdapter(List<Chat> chatList) {
         this.chatList = chatList;
+    }
+
+    // Phương thức để thiết lập OnItemClickListener
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
     }
 
     @NonNull
@@ -33,6 +43,13 @@ public class NewChatAdapter extends RecyclerView.Adapter<NewChatAdapter.ChatView
         Chat chat = chatList.get(position);
         holder.customerName.setText(chat.getName());
         holder.latestChat.setText(chat.getLatestMessage());
+
+        // Xử lý sự kiện khi nhấn vào item
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(position);
+            }
+        });
     }
 
     @Override
@@ -40,15 +57,13 @@ public class NewChatAdapter extends RecyclerView.Adapter<NewChatAdapter.ChatView
         return chatList.size();
     }
 
-    public class ChatViewHolder extends RecyclerView.ViewHolder {
+    public static class ChatViewHolder extends RecyclerView.ViewHolder {
         TextView customerName, latestChat;
-        ImageView profileImage;
 
         public ChatViewHolder(@NonNull View itemView) {
             super(itemView);
             customerName = itemView.findViewById(R.id.customerName);
             latestChat = itemView.findViewById(R.id.latestChat);
-            profileImage = itemView.findViewById(R.id.profileImage);
         }
     }
 }

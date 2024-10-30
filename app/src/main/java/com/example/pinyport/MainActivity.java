@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         // AppBarConfiguration should not include the OrderDetailFragment
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_orders, R.id.navigation_chat,
-                R.id.navigation_home, R.id.navigation_customers, R.id.navigation_profile, R.id.orderDetailFragment)
+                R.id.navigation_home, R.id.navigation_customers, R.id.navigation_profile, R.id.orderDetailFragment, R.id.navigation_chat_detail)
                 .build();
 
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
@@ -74,8 +74,21 @@ public class MainActivity extends AppCompatActivity {
             });
 
             // Set up destination change listener to update title and visibility of home button
-            TextView customTitle = customView.findViewById(R.id.customTitle);
             navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
+                if (destination.getId() == R.id.navigation_chat_detail) {
+                    // Hide ActionBar in specific fragments
+                    if (getSupportActionBar() != null) {
+                        getSupportActionBar().hide();
+                    }
+                } else {
+                    // Show ActionBar in other fragments
+                    if (getSupportActionBar() != null) {
+                        getSupportActionBar().show();
+                    }
+                }
+
+                // Update title based on destination
+                TextView customTitle = customView.findViewById(R.id.customTitle);
                 if (destination.getId() == R.id.navigation_orders) {
                     customTitle.setText("Orders");
                 } else if (destination.getId() == R.id.navigation_chat) {
@@ -90,13 +103,14 @@ public class MainActivity extends AppCompatActivity {
                     customTitle.setText("Order Detail");
                 }
 
-                // Hide home button on home fragment, show otherwise
+                // Show or hide the home button depending on the fragment
                 if (destination.getId() == R.id.navigation_home) {
                     homeButton.setVisibility(View.GONE);
                 } else {
                     homeButton.setVisibility(View.VISIBLE);
                 }
             });
+
         }
     }
 }

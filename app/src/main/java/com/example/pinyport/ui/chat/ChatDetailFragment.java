@@ -11,16 +11,20 @@ import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.pinyport.databinding.FragmentChatviewBinding;
+import com.example.pinyport.adapter.MessageAdapter;
+import com.example.pinyport.adapter.NewChatAdapter;
+import com.example.pinyport.databinding.FragmentChatDetailBinding;
+import com.example.pinyport.model.Chat;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChatView extends Fragment {
-    private FragmentChatviewBinding binding;
+public class ChatDetailFragment extends Fragment {
+    private FragmentChatDetailBinding binding;
     private RecyclerView chatRecyclerView;
     private EditText messageInput;
     private ImageButton sendButton;
@@ -31,7 +35,7 @@ public class ChatView extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        binding = FragmentChatviewBinding.inflate(inflater, container, false);
+        binding = FragmentChatDetailBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
@@ -82,6 +86,6 @@ public class ChatView extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null; 
+        binding = null;
     }
 }

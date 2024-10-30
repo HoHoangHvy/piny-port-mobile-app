@@ -1,49 +1,114 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="12dp"
     tools:context=".ui.chat.ChatFragment">
 
-    <LinearLayout
+    <FrameLayout
+        android:id="@+id/searchBarChat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <SearchView
+            android:id="@+id/search_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/search_bar_bg"
+            android:focusable="false"
+            android:iconifiedByDefault="false"
+            android:queryBackground="@android:color/transparent"
+            android:queryHint="Search"
+            tools:layout_editor_absoluteX="27dp"
+            tools:layout_editor_absoluteY="94dp" />
+    </FrameLayout>
+
+    <!-- FlexboxLayout containing Title, New Chat Button, and Exit Button -->
+    <com.google.android.flexbox.FlexboxLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:orientation="horizontal">
+        app:flexDirection="row"
+        app:justifyContent="space_between"
+        app:alignItems="center">
 
         <TextView
             android:id="@+id/title"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginTop="8dp"
             android:text="All Chats"
-            android:textStyle="bold"
             android:textSize="18sp"
-            android:layout_marginBottom="8dp" />
+            android:textStyle="bold" />
 
-        <ImageButton
-            android:id="@+id/newchatButton"
-            android:layout_width="50dp"
-            android:layout_height="match_parent"
-            android:src="@drawable/newchat_icon"
-            android:background="@null"/>
-    </LinearLayout>
+        <Button
+            style="?attr/materialIconButtonStyle"
+            android:id="@+id/newChatButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/newchat_icon"/>
 
-    <EditText
-        android:id="@+id/search_user_chat"
+        <Button
+            style="?attr/materialIconButtonStyle"
+            android:id="@+id/exitButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:icon="@drawable/ic_close"/>
+    </com.google.android.flexbox.FlexboxLayout>
+    <com.google.android.flexbox.FlexboxLayout
+        android:id="@+id/newChatLayout"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/rounded_item"
-        android:paddingLeft="16dp"
-        android:hint="Search"
-        android:drawableStart="@drawable/search_icon"
-        android:drawablePadding="12dp"
-        android:inputType="text"/>
+        android:layout_height="wrap_content"
+        android:background="@drawable/new_chat_background"
+        android:padding="10dp"
+        android:visibility="gone"
+        app:flexDirection="column"
+        app:justifyContent="center"
+        app:alignItems="flex_start">
+        <!-- TextViews for Customer Selection and Message -->
+        <com.google.android.flexbox.FlexboxLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:alignItems="center"
+            app:justifyContent="space_between">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <Button
+                    style="?attr/materialIconButtonStyle"
+                    android:id="@+id/customer_picker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:icon="@drawable/profile_icon"/>
+                <TextView
+                    android:id="@+id/selectedCustomerTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Customer: None"
+                    android:textSize="16sp"
+                    android:paddingBottom="8dp"/>
+
+            </LinearLayout>
+            <Button
+                style="?attr/materialIconButtonStyle"
+                android:id="@+id/sendButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/send_icon"/>
+        </com.google.android.flexbox.FlexboxLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/outlinedTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Message">
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/message_background"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+    </com.google.android.flexbox.FlexboxLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

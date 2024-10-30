@@ -1,4 +1,4 @@
-package com.example.pinyport.ui.chat;
+package com.example.pinyport.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;

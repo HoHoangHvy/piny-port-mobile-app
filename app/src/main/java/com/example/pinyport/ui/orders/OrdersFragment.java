@@ -83,9 +83,6 @@ public class OrdersFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }
     public void onOrderClick(Order order) {
-        // Create an instance of the OrderDetailFragment
-        OrderDetailFragment orderDetailFragment = new OrderDetailFragment();
-
         // Pass the selected order details to the fragment
         Bundle args = new Bundle();
         args.putSerializable("order", order); // Assuming Order implements Serializable

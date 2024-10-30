@@ -33,7 +33,7 @@
                 android:focusable="false"
                 android:iconifiedByDefault="false"
                 android:queryBackground="@android:color/transparent"
-                android:queryHint="Search for orders"
+                android:queryHint="Search"
                 tools:layout_editor_absoluteX="27dp"
                 tools:layout_editor_absoluteY="94dp" />
 
