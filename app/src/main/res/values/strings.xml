@@ -10,6 +10,7 @@
     <string name="profile">Profile</string>
     <string name="back_to_home">Back to home\n</string>
     <string name="new_chat">New chat\n</string>
+    <string name="chat_view">Chat view\n</string>
     <string name="filter">Filter</string>
     <string name="clear_all">Clear All</string>
     <string name="cancel">Cancel</string>
