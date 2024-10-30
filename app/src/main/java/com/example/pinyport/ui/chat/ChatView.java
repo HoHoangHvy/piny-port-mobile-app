@@ -67,7 +67,7 @@ public class ChatView extends Fragment {
             Log.d("ChatView", "Message: " + message);
             if (!message.isEmpty()) {
                 addMessage(message);
-                messageInput.setText("");  // Xóa dữ liệu sau khi gửi
+                messageInput.setText("");
             }
         });
 
@@ -82,6 +82,6 @@ public class ChatView extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null; // Avoid memory leaks
+        binding = null; 
     }
 }
