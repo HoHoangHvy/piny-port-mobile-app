@@ -6,11 +6,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -30,6 +33,8 @@ public class ChatFragment extends Fragment {
     private RecyclerView recyclerView;
     private ChatAdapter chatAdapter;
     private List<Chat> chatList;
+    private boolean isCloseButton = false;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -46,9 +51,42 @@ public class ChatFragment extends Fragment {
         recyclerView.addItemDecoration(new ItemDecoration(8)); // khoảng cách giữa các item
 
         binding.newchatButton.setOnClickListener(v -> {
-            NavController navController = Navigation.findNavController(v);
-            navController.navigate(R.id.navigation_newchat);
-            customTitle.setText("New chat");
+            ImageButton newChatButton = (ImageButton) v;
+
+            if (isCloseButton) {
+                binding.title.setText("Chat");
+                ViewGroup parent = (ViewGroup) binding.searchUserChat.getParent();
+
+                if (parent != null) {
+                    View newEditText = parent.findViewById(R.id.new_edittext);
+                    if (newEditText != null) {
+                        parent.removeView(newEditText);
+                    }
+                    parent.addView(binding.searchUserChat, 1);
+                }
+
+                newChatButton.setImageResource(R.drawable.newchat_icon);
+                isCloseButton = false;
+            } else {
+                binding.title.setText("New Chat");
+                ViewGroup parent = (ViewGroup) binding.searchUserChat.getParent();
+
+                if (parent != null) {
+                    parent.removeView(binding.searchUserChat);
+
+                    View existingEditText = parent.findViewById(R.id.new_edittext);
+                    if (existingEditText == null) {
+                        LayoutInflater layoutInflater = LayoutInflater.from(getContext());
+                        EditText newEditText = (EditText) layoutInflater.inflate(R.layout.new_edittext, parent, false);
+                        newEditText.setId(R.id.new_edittext); // Đảm bảo rằng ID được gán để có thể tìm và xóa nó sau này
+
+                        parent.addView(newEditText, 1);
+                    }
+                }
+
+                newChatButton.setImageResource(R.drawable.ic_close);
+                isCloseButton = true;
+            }
         });
 
         chatList = new ArrayList<>();
@@ -58,7 +96,12 @@ public class ChatFragment extends Fragment {
 
         chatAdapter = new ChatAdapter(chatList);
         recyclerView.setAdapter(chatAdapter);
-        chatAdapter.notifyDataSetChanged();
+        chatAdapter.setOnItemClickListener(position -> {
+            NavController navController = Navigation.findNavController(requireView());
+            Bundle bundle = new Bundle();
+            bundle.putString("customerName", chatList.get(position).getName());
+            navController.navigate(R.id.navigation_newchat, bundle);
+        });
 
         return root;
     }
