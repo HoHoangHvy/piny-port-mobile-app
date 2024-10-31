@@ -87,6 +87,7 @@
                     android:layout_height="wrap_content"
                     android:text="Customer: None"
                     android:textSize="16sp"
+                    android:textStyle="bold"
                     android:paddingBottom="8dp"/>
 
             </LinearLayout>
@@ -103,6 +104,7 @@
             android:layout_height="wrap_content"
             android:hint="Message">
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/messageInput"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/message_background"

@@ -1,6 +1,8 @@
 package com.example.pinyport.model;
 
-public class Comment {
+import java.io.Serializable;
+
+public class Comment implements Serializable {
     private String id;
     private String name;
     private String comment;

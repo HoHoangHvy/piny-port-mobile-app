@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import com.example.pinyport.R;
 import com.example.pinyport.adapter.ChatAdapter;
 import com.example.pinyport.databinding.FragmentChatBinding;
 import com.example.pinyport.model.Chat;
+import com.example.pinyport.model.Comment;
 import com.example.pinyport.model.Customer;
 import com.example.pinyport.ui.dialog.CustomerDialog;
 import com.example.pinyport.ui.orders.OrderDetailFragment;
@@ -79,6 +81,32 @@ public class ChatFragment extends Fragment {
             navController.navigate(R.id.navigation_chat_detail, args);
         });
         initCustomerFilter(binding);
+        binding.sendButton.setOnClickListener(v -> {
+            String message = binding.messageInput.getText().toString();
+            String customerName = binding.selectedCustomerTextView.getText().toString().replace("Customer: ", "");
+
+            if (!message.isEmpty() && (!customerName.isEmpty() || !customerName.equals("None"))) {
+                // Create a new Chat object
+                Chat newChat = new Chat(customerName, message);
+
+                // Create a bundle to pass the Chat object to ChatDetailFragment
+                Bundle args = new Bundle();
+                args.putSerializable("chat", newChat);
+                args.putSerializable("comment", new Comment("123", "example", message, "outgoing"));
+                args.putBoolean("isNewChat", true);
+                // Hide Action Bar when fragment is visible
+                AppCompatActivity activity = (AppCompatActivity) requireActivity();
+                if (activity.getSupportActionBar() != null) {
+                    activity.getSupportActionBar().hide(); // Hide the action bar
+                }
+                // Navigate to ChatDetailFragment with arguments
+                NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+                navController.navigate(R.id.navigation_chat_detail, args);
+            } else {
+                Toast.makeText(getContext(), "Please select a customer and enter a message.", Toast.LENGTH_SHORT).show();
+            }
+        });
+
         return root;
     }
     private void initCustomerFilter(FragmentChatBinding binding) {
@@ -92,9 +120,9 @@ public class ChatFragment extends Fragment {
     }
     private List<Customer> getCustomerList() {
         List<Customer> customers = new ArrayList<>();
-        customers.add(new Customer("C001", "John Doe", "john.doe@example.com", "Gold"));
-        customers.add(new Customer("C002", "Jane Smith", "jane.smith@example.com", "Silver"));
-        customers.add(new Customer("C003", "Alice Johnson", "alice.johnson@example.com", "Bronze"));
+        customers.add(new Customer("C001", "Nguyen Manh Dung", "manhdung@gmail.com", "Gold"));
+        customers.add(new Customer("C002", "Ho Hoang Huy", "hoanghuy@gmail.com", "Silver"));
+        customers.add(new Customer("C003", "Nguyen Minh Duy", "duynguyen@gmail.com", "Bronze"));
         // Add more customers as needed
         return customers;
     }
