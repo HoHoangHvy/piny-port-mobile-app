@@ -48,4 +48,6 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation("com.google.android.flexbox:flexbox:3.0.0")
+    implementation("io.github.chaosleung:pinview:1.4.4")
+
 }

@@ -15,6 +15,9 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.chaos.view.PinView;
+import com.google.android.material.textfield.TextInputEditText;
+
 public class LoginActivity extends AppCompatActivity {
 
     private EditText emailEditText;
@@ -27,6 +30,9 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().hide();
+        }
         setContentView(R.layout.signin);
 
         emailEditText = findViewById(R.id.etEmail);
@@ -53,7 +59,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         // Sự kiện Forgot Password
-        forgotPasswordTextView.setOnClickListener(v -> showPhoneNumberPopup());
+        forgotPasswordTextView.setOnClickListener(v -> showPhoneNumberInputDialog());
     }
 
     private void signIn() {
@@ -63,107 +69,112 @@ public class LoginActivity extends AppCompatActivity {
         if (email.isEmpty() || password.isEmpty()) {
             Toast.makeText(this, "Please enter both email and password", Toast.LENGTH_SHORT).show();
         } else {
-            SharedPreferences sharedPreferences = getSharedPreferences("userPrefs", MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putBoolean("isLoggedIn", true);
-            editor.apply();
-
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
+            // Add your login logic here
+            // For now, we are just displaying a toast message
+            Toast.makeText(this, "Sign in successful", Toast.LENGTH_SHORT).show();
+            authSuccess();
         }
     }
-
-    private void showPhoneNumberPopup() {
+    // Show the phone number input dialog
+    private void showPhoneNumberInputDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.popup_enter_phone, null);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_phone_input, null);
         builder.setView(dialogView);
 
-        EditText phoneNumberEditText = dialogView.findViewById(R.id.etPhoneNumber);
+        TextInputEditText phoneNumberEditText = dialogView.findViewById(R.id.etPhoneNumber);
         Button sendCodeButton = dialogView.findViewById(R.id.btnSendCode);
+
+        AlertDialog alertDialog = builder.create();
 
         sendCodeButton.setOnClickListener(v -> {
             String phoneNumber = phoneNumberEditText.getText().toString().trim();
-            if (phoneNumber.isEmpty()) {
-                Toast.makeText(this, "Please enter your phone number", Toast.LENGTH_SHORT).show();
+            if (isValidPhoneNumber(phoneNumber)) {
+                // Show OTP dialog after validating the phone number
+                showOtpInputDialog();
+                alertDialog.dismiss();
             } else {
-                // Gửi mã xác nhận (thực hiện ở đây nếu cần)
-                Toast.makeText(this, "Verification code sent to " + phoneNumber, Toast.LENGTH_SHORT).show();
-                // Hiện popup nhập mã xác nhận
-                showVerificationCodePopup();
+                Toast.makeText(this, "Please enter a valid phone number", Toast.LENGTH_SHORT).show();
             }
         });
 
-        builder.setNegativeButton("Cancel", (dialog, id) -> dialog.dismiss());
-
-        AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
-
-    private void showVerificationCodePopup() {
+    // Show OTP input dialog
+    private void showOtpInputDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.popup_enter_code, null);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_otp_input, null);
         builder.setView(dialogView);
 
-        EditText verificationCodeEditText = dialogView.findViewById(R.id.etVerificationCode);
-        Button confirmCodeButton = dialogView.findViewById(R.id.btnVerifyCode);
+        PinView otpEditText = dialogView.findViewById(R.id.etp_otp);
+        Button verifyOtpButton = dialogView.findViewById(R.id.btn_verify);
 
-        confirmCodeButton.setOnClickListener(v -> {
-            String verificationCode = verificationCodeEditText.getText().toString().trim();
-            if (verificationCode.isEmpty()) {
-                Toast.makeText(this, "Please enter the verification code", Toast.LENGTH_SHORT).show();
+        AlertDialog alertDialog = builder.create();
+
+        verifyOtpButton.setOnClickListener(v -> {
+            String otp = otpEditText.getText().toString().trim();
+            if (isValidOtp(otp)) {
+                // Show new password dialog after validating the OTP
+                showNewPasswordDialog();
+                alertDialog.dismiss();
             } else {
-                // Kiểm tra mã xác nhận (thực hiện ở đây nếu cần)
-                Toast.makeText(this, "Verification code verified", Toast.LENGTH_SHORT).show();
-                // Hiện popup đặt mật khẩu mới
-                showNewPasswordPopup();
+                Toast.makeText(this, "Invalid OTP. Please try again.", Toast.LENGTH_SHORT).show();
             }
         });
 
-        builder.setNegativeButton("Cancel", (dialog, id) -> dialog.dismiss());
-
-        AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
 
-    private void showNewPasswordPopup() {
+    // Validate OTP
+    private boolean isValidOtp(String otp) {
+        // Add your OTP validation logic here
+        return otp.length() == 6; // Example validation
+    }
+    // Show new password input dialog
+    private void showNewPasswordDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = this.getLayoutInflater();
-        View dialogView = inflater.inflate(R.layout.popup_new_password, null);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_new_password, null);
         builder.setView(dialogView);
 
-        EditText newPasswordEditText = dialogView.findViewById(R.id.etNewPassword);
-        EditText confirmNewPasswordEditText = dialogView.findViewById(R.id.etConfirmPassword);
-        Button updatePasswordButton = dialogView.findViewById(R.id.btnConfirmReset);
+        TextInputEditText newPasswordEditText = dialogView.findViewById(R.id.etNewPassword);
+        TextInputEditText confirmNewPasswordEditText = dialogView.findViewById(R.id.etConfirmNewPassword);
+        Button resetPasswordButton = dialogView.findViewById(R.id.btnResetPassword);
 
-        updatePasswordButton.setOnClickListener(v -> {
-            try {
-                String newPassword = newPasswordEditText.getText().toString().trim();
-                String confirmNewPassword = confirmNewPasswordEditText.getText().toString().trim();
+        AlertDialog alertDialog = builder.create();
 
-                if (newPassword.isEmpty() || confirmNewPassword.isEmpty()) {
-                    Toast.makeText(this, "Please complete all fields", Toast.LENGTH_SHORT).show();
-                } else if (!newPassword.equals(confirmNewPassword)) {
-                    Toast.makeText(this, "Passwords do not match. Please try again.", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, "Password updated successfully!", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(LoginActivity.this, LoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    finish();
-                }
-            } catch (Exception e) {
-                Toast.makeText(this, "An error occurred: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        resetPasswordButton.setOnClickListener(v -> {
+            String newPassword = newPasswordEditText.getText().toString().trim();
+            String confirmNewPassword = confirmNewPasswordEditText.getText().toString().trim();
+
+            if (newPassword.isEmpty() || confirmNewPassword.isEmpty()) {
+                Toast.makeText(this, "Please enter both fields", Toast.LENGTH_SHORT).show();
+            } else if (!newPassword.equals(confirmNewPassword)) {
+                Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+            } else {
+                // Update password logic here
+                Toast.makeText(this, "Password successfully updated", Toast.LENGTH_SHORT).show();
+                alertDialog.dismiss();
+                authSuccess();
             }
         });
 
-
-        builder.setNegativeButton("Cancel", (dialog, id) -> dialog.dismiss());
-
-        AlertDialog alertDialog = builder.create();
         alertDialog.show();
     }
+    private void authSuccess() {
+        SharedPreferences sharedPreferences = getSharedPreferences("userPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("isLoggedIn", true);
+        editor.apply();
 
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(intent);
+        finish();
+    }
+    // Validate the phone number
+    private boolean isValidPhoneNumber(String phoneNumber) {
+        // Add your phone number validation logic here
+        return phoneNumber.length() == 10; // Example validation
+    }
 }

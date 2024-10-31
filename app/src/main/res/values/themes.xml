@@ -68,6 +68,7 @@
         <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.Material3.SmallComponent</item>
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.Material3.MediumComponent</item>
         <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.Material3.LargeComponent</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog</item>
     </style>
     <style name="CustomButtonStyle" parent="Widget.AppCompat.Button">
         <item name="android:background">?android:attr/selectableItemBackground</item>
@@ -89,5 +90,10 @@
         <item name="android:windowBackground">@color/white</item> <!-- Set window background -->
         <item name="android:textColorPrimary">@color/blue_500</item> <!-- Set primary text color -->
         <item name="android:padding">16dp</item> <!-- Add padding -->
+    </style>
+    <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">@color/white</item>
+        <item name="elevationOverlayEnabled">false</item>
+        <item name="colorSurfaceContainerHigh">@color/white</item>
     </style>
 </resources>

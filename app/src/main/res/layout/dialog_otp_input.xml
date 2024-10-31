@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.google.android.flexbox.FlexboxLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        app:flexDirection="column"
+        app:alignItems="center">
+        <com.chaos.view.PinView
+            android:id="@+id/etp_otp"
+            app:itemCount="6"
+            app:itemWidth="40dp"
+            app:itemHeight="40dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:itemBackground="@color/white"
+            android:inputType="number"
+            android:cursorVisible="true"
+            app:hideLineWhenFilled="false"
+            app:itemRadius="10dp"
+            style="@style/PinWidget.PinView"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp"
+            android:text="Don't see any otp send to yours phone? Re-send"/>
+        <Button
+            android:id="@+id/btn_verify"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Verify"
+            android:layout_marginTop="10dp"
+            />
+    </com.google.android.flexbox.FlexboxLayout>
+</LinearLayout>
+
