@@ -71,10 +71,23 @@
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         android:drawablePadding="8dp"
-        android:drawableStart="@drawable/ic_lock"
-        android:drawableEnd="@drawable/eye"/>
+        android:drawableStart="@drawable/ic_lock"/>
+<!--        android:drawableEnd="@drawable/eye"/>-->
 
     <!-- Forgot Password -->
+
+    <ImageView
+        android:id="@+id/ivTogglePassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="44dp"
+        android:contentDescription="Toggle Password Visibility"
+        android:src="@drawable/eye_off"
+        app:layout_constraintBottom_toBottomOf="@+id/etPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/etPassword"
+        app:layout_constraintVertical_bias="0.523" />
+
     <TextView
         android:id="@+id/tvForgotPassword"
         android:layout_width="wrap_content"
