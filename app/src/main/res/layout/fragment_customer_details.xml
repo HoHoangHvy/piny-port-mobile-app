@@ -1,54 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.flexbox.FlexboxLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/my_app_surface"
-    tools:context=".ui.customers.CustomersFragment">
-
-
-    <LinearLayout
-        android:id="@+id/customer_details_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:layout_marginTop="2dp"
-        android:orientation="horizontal"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="-1dp">
-
-        <!-- Khoảng cách giữa ImageView và TextView -->
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_marginStart="10dp"
-            android:layout_marginEnd="90dp"
-            android:src="@drawable/blue_arrow_left" />
-
-        <TextView
-            android:id="@+id/tvCustomerDetails"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Customer Details"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold" /> <!-- Đảm bảo TextView được căn giữa trong LinearLayout -->
-    </LinearLayout>
-
+    app:flexDirection="column"
+    android:padding="16dp">
     <androidx.cardview.widget.CardView
         android:id="@+id/customer_info_card"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:layout_marginTop="0dp"
-        app:cardCornerRadius="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/customer_details_title">
+        app:cardCornerRadius="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -58,27 +22,29 @@
 
             <!-- Customer ID -->
             <ImageView
+                android:id="@+id/ivAvatar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:src="@drawable/avatar_icon" />
 
             <LinearLayout
+                android:id="@+id/llCustomerId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:orientation="horizontal"> <!-- Thêm khoảng cách nếu cần -->
+                android:orientation="horizontal">
 
-                <!-- TextView cho "Customer ID:" -->
                 <TextView
+                    android:id="@+id/tvCustomerIdLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Customer ID:"
                     android:textColor="@color/black"
                     android:textSize="14sp"
-                    android:textStyle="bold" /> <!-- In đậm -->
+                    android:textStyle="bold" />
 
-                <!-- TextView cho "MM0876675" -->
                 <TextView
+                    android:id="@+id/tvCustomerId"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -89,21 +55,22 @@
 
             <!-- Name -->
             <LinearLayout
+                android:id="@+id/llCustomerName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <!-- Nhãn cho tên khách hàng -->
                 <TextView
+                    android:id="@+id/tvNameLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Name:"
                     android:textColor="@color/black"
                     android:textSize="14sp"
-                    android:textStyle="bold" /> <!-- In đậm -->
+                    android:textStyle="bold" />
 
-                <!-- Giá trị cho tên khách hàng -->
                 <TextView
+                    android:id="@+id/tvCustomerName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="51dp"
@@ -114,21 +81,22 @@
 
             <!-- Customer Phone -->
             <LinearLayout
+                android:id="@+id/llCustomerPhone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <!-- Nhãn cho số điện thoại -->
                 <TextView
+                    android:id="@+id/tvPhoneLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Phone:"
                     android:textColor="@color/black"
                     android:textSize="14sp"
-                    android:textStyle="bold" /> <!-- In đậm -->
+                    android:textStyle="bold" />
 
-                <!-- Giá trị cho số điện thoại -->
                 <TextView
+                    android:id="@+id/tvCustomerPhone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="48dp"
@@ -139,21 +107,22 @@
 
             <!-- Customer Birthday -->
             <LinearLayout
+                android:id="@+id/llCustomerBirthday"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <!-- Nhãn cho ngày sinh -->
                 <TextView
+                    android:id="@+id/tvBirthdayLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Birthday:"
                     android:textColor="@color/black"
                     android:textSize="14sp"
-                    android:textStyle="bold" /> <!-- In đậm -->
+                    android:textStyle="bold" />
 
-                <!-- Giá trị cho ngày sinh -->
                 <TextView
+                    android:id="@+id/tvCustomerBirthday"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="35dp"
@@ -164,21 +133,22 @@
 
             <!-- Start Date -->
             <LinearLayout
+                android:id="@+id/llCustomerStartDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <!-- Nhãn cho ngày sinh -->
                 <TextView
+                    android:id="@+id/tvStartDateLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Start Date:"
                     android:textColor="@color/black"
                     android:textSize="14sp"
-                    android:textStyle="bold" /> <!-- In đậm -->
+                    android:textStyle="bold" />
 
-                <!-- Giá trị cho ngày sinh -->
                 <TextView
+                    android:id="@+id/tvCustomerStartDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="24dp"
@@ -189,30 +159,31 @@
             </LinearLayout>
 
             <!-- Line SVG under Spending History -->
-            <ImageView
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:src="@drawable/blue_line" />
+                android:layout_height="1dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:background="#006FFD" />
 
             <!-- Level -->
             <LinearLayout
+                android:id="@+id/llLevel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:orientation="horizontal">
 
-                <!-- Nhãn cho Level -->
                 <TextView
+                    android:id="@+id/tvLevelLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginRight="52dp"
                     android:text="Level:"
                     android:textColor="@color/black"
                     android:textSize="14sp"
-                    android:textStyle="bold" /> <!-- In đậm -->
+                    android:textStyle="bold" />
 
-                <!-- Giá trị cho Level -->
                 <TextView
                     android:id="@+id/tvLevel"
                     android:layout_width="60dp"
@@ -226,22 +197,23 @@
 
             <!-- Point -->
             <LinearLayout
+                android:id="@+id/llPoint"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:orientation="horizontal">
 
-                <!-- Nhãn point -->
                 <TextView
+                    android:id="@+id/tvPointLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Point:"
                     android:textColor="@color/black"
                     android:textSize="14sp"
-                    android:textStyle="bold" /> <!-- In đậm -->
+                    android:textStyle="bold" />
 
-                <!-- Giá trị cho point -->
                 <TextView
+                    android:id="@+id/tvCustomerPoint"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="54dp"
@@ -252,24 +224,24 @@
 
             <!-- Total Spending -->
             <LinearLayout
+                android:id="@+id/llTotalSpending"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:orientation="horizontal">
 
-                <!-- Nhãn cho Total Spending -->
                 <TextView
+                    android:id="@+id/tvTotalSpendingLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Total Spending:"
                     android:textColor="@color/black"
                     android:textSize="14sp"
                     android:textStyle="bold"
-                    android:layout_marginRight="125dp"
-                    tools:ignore="HardcodedText" />
+                    android:layout_marginRight="125dp" />
 
-                <!-- Giá trị -->
                 <TextView
+                    android:id="@+id/tvTotalSpending"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="1.800.000 VND"
@@ -283,267 +255,43 @@
 
     <LinearLayout
         android:id="@+id/order_history"
-        android:layout_width="376dp"
-        android:layout_height="56dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:orientation="vertical"
-        android:padding="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.485"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/customer_info_card"
-        tools:ignore="MissingConstraints">
+        android:padding="10dp">
 
-        <!-- Horizontal layout for Spending History and Arrow -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <!-- Arrow Icon -->
             <TextView
-                android:layout_width="322dp"
+                android:id="@+id/tvOrderHistoryTitle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Order History"
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 android:textStyle="bold" />
-
         </LinearLayout>
 
         <!-- Line SVG under Spending History -->
-        <ImageView
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:background="#006FFD" />
+        <!-- Dynamic Order History -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/blue_line" />
+            android:layout_marginTop="8dp"
+            android:nestedScrollingEnabled="false" />
     </LinearLayout>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/order_card1"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:cardCornerRadius="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/order_history">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="2dp"
-                        android:src="@drawable/calendar_icon"></ImageView>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:text="12/06/2024"
-                        android:textColor="@color/black"
-                        android:textSize="13sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginRight="10dp"
-                        android:text=" | "
-                        android:textColor="@color/black"
-                        android:textSize="13sp" />
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="2dp"
-                        android:src="@drawable/clock_icon"></ImageView>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="100dp"
-                        android:text=" 11:30 "
-                        android:textColor="@color/black"
-                        android:textSize="13sp" />
-
-                    <TextView
-                        android:layout_width="60dp"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/status_background"
-                        android:gravity="center"
-                        android:text="Success"
-                        android:textColor="@android:color/white"
-                        android:textSize="13sp"/>
-
-
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="#MM0876"
-                    android:textColor="@color/black"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="0dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="10dp"
-                        android:text="2 items"
-                        android:textSize="14sp"
-                        tools:ignore="HardcodedText" />
-
-                    <!-- Giá trị -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="170.000 VND"
-                        android:textSize="14sp" />
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/order_card2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:cardCornerRadius="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/order_card1">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="2dp"
-                        android:src="@drawable/calendar_icon"></ImageView>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:text="10/06/2024"
-                        android:textColor="@color/black"
-                        android:textSize="13sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text=" | "
-                        android:layout_marginRight="10dp"
-                        android:layout_marginLeft="10dp"
-                        android:textColor="@color/black"
-                        android:textSize="13sp" />
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="2dp"
-                        android:src="@drawable/clock_icon"></ImageView>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="100dp"
-                        android:text=" 10:00 "
-                        android:textColor="@color/black"
-                        android:textSize="13sp" />
-
-                    <TextView
-                        android:layout_width="60dp"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/cancel_background"
-                        android:gravity="center"
-                        android:text="Cancel"
-                        android:textColor="@android:color/white"
-                        android:textSize="13sp"/>
-
-
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="#MM0870"
-                    android:textColor="@color/black"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="0dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="10dp"
-                        android:text="2 items"
-                        android:textSize="14sp"
-                        tools:ignore="HardcodedText" />
-
-                    <!-- Giá trị -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:text="170.000 VND"
-                        android:textSize="14sp" />
-                </LinearLayout>
-            </LinearLayout>
-        </LinearLayout>
-    </androidx.cardview.widget.CardView>
-
-    <Button
-        android:id="@+id/btnChat_with_customer"
-        android:layout_width="210dp"
-        android:layout_height="40dp"
-        android:text="Chat with customer"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="100dp"
-        tools:layout_editor_absoluteY="637dp" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.flexbox.FlexboxLayout>

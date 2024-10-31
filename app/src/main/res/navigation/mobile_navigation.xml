@@ -19,7 +19,11 @@
         android:id="@+id/navigation_customers"
         android:name="com.example.pinyport.ui.customers.CustomersFragment"
         android:label="Customers"
-        tools:layout="@layout/fragment_customers" />
+        tools:layout="@layout/fragment_customers">
+        <action
+            android:id="@+id/action_customersFragment_to_customerDetailFragment"
+            app:destination="@id/customer_detail_navigation" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_profile"
@@ -56,4 +60,13 @@
         android:name="com.example.pinyport.ui.orders.OrderDetailFragment"
         android:label="Order Detail"
         tools:layout="@layout/order_detail_fragment" />
+    <fragment
+        android:id="@+id/customer_detail_navigation"
+        android:name="com.example.pinyport.ui.customers.CustomerDetailFragment"
+        android:label="Order Detail"
+        tools:layout="@layout/fragment_customer_details">
+        <action
+            android:id="@+id/action_customerDetailFragment_to_orderDetailFragment"
+            app:destination="@id/orderDetailFragment" />
+    </fragment>
 </navigation>

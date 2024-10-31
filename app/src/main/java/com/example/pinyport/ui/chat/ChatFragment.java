@@ -120,12 +120,20 @@ public class ChatFragment extends Fragment {
     }
     private List<Customer> getCustomerList() {
         List<Customer> customers = new ArrayList<>();
-        customers.add(new Customer("C001", "Nguyen Manh Dung", "manhdung@gmail.com", "Gold"));
-        customers.add(new Customer("C002", "Ho Hoang Huy", "hoanghuy@gmail.com", "Silver"));
-        customers.add(new Customer("C003", "Nguyen Minh Duy", "duynguyen@gmail.com", "Bronze"));
+        customers.add(new Customer("C001", "Nguyễn Văn A", "nguyenvana@example.com", "Gold", "01/01/2023"));
+        customers.add(new Customer("C002", "Trần Thị B", "tranthib@example.com", "Silver", "15/02/2023"));
+        customers.add(new Customer("C003", "Lê Văn C", "levanc@example.com", "Bronze", "20/03/2023"));
+        customers.add(new Customer("C004", "Phạm Thị D", "phamthid@example.com", "Gold", "30/04/2023"));
+        customers.add(new Customer("C005", "Đỗ Văn E", "dovanE@example.com", "Silver", "05/05/2023"));
+        customers.add(new Customer("C006", "Hoàng Thị F", "hoangthif@example.com", "Bronze", "12/06/2023"));
+        customers.add(new Customer("C007", "Vũ Văn G", "vuvanG@example.com", "Gold", "25/07/2023"));
+        customers.add(new Customer("C008", "Ngô Thị H", "ngothih@example.com", "Silver", "10/08/2023"));
+        customers.add(new Customer("C009", "Nguyễn Văn I", "nguyenvani@example.com", "Bronze", "15/09/2023"));
+        customers.add(new Customer("C010", "Lê Thị J", "lethij@example.com", "Gold", "20/10/2023"));
         // Add more customers as needed
         return customers;
     }
+
     private void toggleNewChatMode(boolean isNewChat, FragmentChatBinding binding) {
         binding.newChatButton.setVisibility(isNewChat ? View.GONE : View.VISIBLE);
         binding.exitButton.setVisibility(isNewChat ? View.VISIBLE : View.GONE);

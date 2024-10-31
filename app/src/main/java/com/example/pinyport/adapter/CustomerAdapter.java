@@ -39,7 +39,7 @@ public class CustomerAdapter extends RecyclerView.Adapter<CustomerAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Customer customer = customers.get(position);
         holder.customerNameTextView.setText(customer.getName());
-        holder.customerEmailTextView.setText(customer.getEmail());
+        holder.customerEmailTextView.setText(customer.getPhone());
         holder.customerRankTextView.setText(customer.getRank());
 
         // Set onClickListener to update the selected customer and dismiss the dialog

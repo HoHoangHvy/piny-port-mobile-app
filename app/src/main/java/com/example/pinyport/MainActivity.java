@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         // AppBarConfiguration should not include the OrderDetailFragment
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_orders, R.id.navigation_chat,
-                R.id.navigation_home, R.id.navigation_customers, R.id.navigation_profile, R.id.orderDetailFragment, R.id.navigation_chat_detail)
+                R.id.navigation_home, R.id.navigation_customers, R.id.navigation_profile, R.id.orderDetailFragment, R.id.navigation_chat_detail, R.id.customer_detail_navigation)
                 .build();
 
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
@@ -101,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
                     customTitle.setText("Profile");
                 } else if (destination.getId() == R.id.orderDetailFragment) {
                     customTitle.setText("Order Detail");
+                } else if (destination.getId() == R.id.customer_detail_navigation) {
+                    customTitle.setText("Customer Detail");
                 }
 
                 // Show or hide the home button depending on the fragment
