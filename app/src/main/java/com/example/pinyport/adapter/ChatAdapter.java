@@ -26,7 +26,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         this.chatList = chatList;
     }
 
-    // Phương thức để thiết lập OnItemClickListener
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.listener = listener;
     }
@@ -44,7 +43,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         holder.customerName.setText(chat.getName());
         holder.latestChat.setText(chat.getLatestMessage());
 
-        // Xử lý sự kiện khi nhấn vào item
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onItemClick(position);

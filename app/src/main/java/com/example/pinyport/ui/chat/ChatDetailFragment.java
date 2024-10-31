@@ -16,9 +16,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pinyport.adapter.MessageAdapter;
-import com.example.pinyport.adapter.NewChatAdapter;
 import com.example.pinyport.databinding.FragmentChatDetailBinding;
-import com.example.pinyport.model.Chat;
+import com.example.pinyport.model.Comment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +29,7 @@ public class ChatDetailFragment extends Fragment {
     private ImageButton sendButton;
     private ImageButton backButton;
     private MessageAdapter messageAdapter;
-    private List<String> messageList = new ArrayList<>();
+    private List<Comment> commentList = new ArrayList<>();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -43,9 +42,9 @@ public class ChatDetailFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initializeViews();
+        loadCommentList();
         setupListeners();
     }
-
 
     private void initializeViews() {
         chatRecyclerView = binding.chatRecyclerView;
@@ -57,7 +56,7 @@ public class ChatDetailFragment extends Fragment {
         layoutManager.setStackFromEnd(true);
         chatRecyclerView.setLayoutManager(layoutManager);
 
-        messageAdapter = new MessageAdapter(messageList);
+        messageAdapter = new MessageAdapter(commentList);
         chatRecyclerView.setAdapter(messageAdapter);
     }
 
@@ -68,19 +67,25 @@ public class ChatDetailFragment extends Fragment {
 
         sendButton.setOnClickListener(v -> {
             String message = messageInput.getText().toString().trim();
-            Log.d("ChatView", "Message: " + message);
             if (!message.isEmpty()) {
-                addMessage(message);
+                addMessage(message, "outgoing");
                 messageInput.setText("");
             }
         });
-
     }
 
-    private void addMessage(String message) {
-        messageList.add(message);
-        messageAdapter.notifyItemInserted(messageList.size() - 1);
-        chatRecyclerView.scrollToPosition(messageList.size() - 1);
+    private void addMessage(String message, String direction) {
+        Comment comment = new Comment(String.valueOf(commentList.size()), "User", message, direction);
+        commentList.add(comment);
+        messageAdapter.notifyItemInserted(commentList.size() - 1);
+        chatRecyclerView.scrollToPosition(commentList.size() - 1);
+    }
+
+    private void loadCommentList() {
+        commentList.add(new Comment("1", "John", "Hello!", "incoming"));
+        commentList.add(new Comment("2", "Jane", "Hi", "outgoing"));
+        commentList.add(new Comment("3", "John", "How are you?", "incoming"));
+        messageAdapter.notifyDataSetChanged();
     }
 
     @Override

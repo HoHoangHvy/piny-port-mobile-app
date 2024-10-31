@@ -15,12 +15,7 @@ public class Chat implements Serializable {
         this.latestMessage = latestMessage;
     }
 
-    public void loadCommentList() {
-        commentList = new ArrayList<>();
-        commentList.add(new Comment("John", "Hello", "incoming"));
-        commentList.add(new Comment("Jane", "Hi", "outgoing"));
-        commentList.add(new Comment("John", "How are you?", "incoming"));
-    }
+
 
     public String getName() {
         return name;
