@@ -10,4 +10,16 @@
         <item>1.000.000 đ</item>
     </string-array>
 
+    <string-array name="customers">
+        <item>Customer 1</item>
+        <item>Customer 2</item>
+    </string-array>
+    <string-array name="product_items">
+        <item>Cà phê muối</item>
+        <item>Ô long sữa lài</item>
+    </string-array>
+    <string-array name="payment_methods">
+        <item>Cash</item>
+        <item>Credit Card</item>
+    </string-array>
 </resources>

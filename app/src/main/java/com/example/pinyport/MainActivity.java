@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         // AppBarConfiguration should not include the OrderDetailFragment
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_orders, R.id.navigation_chat,
-                R.id.navigation_home, R.id.navigation_customers, R.id.navigation_profile, R.id.orderDetailFragment, R.id.navigation_chat_detail, R.id.customer_detail_navigation)
+                R.id.navigation_home, R.id.navigation_customers, R.id.navigation_profile, R.id.orderDetailFragment, R.id.navigation_chat_detail, R.id.customer_detail_navigation, R.id.navigation_create_order)
                 .build();
 
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
             ImageButton homeButton = customView.findViewById(R.id.homeButton);
             homeButton.setOnClickListener(v -> {
                 if (navController.getCurrentDestination() != null &&
-                        navController.getCurrentDestination().getId() == R.id.orderDetailFragment) {
+                        (navController.getCurrentDestination().getId() == R.id.orderDetailFragment) || (navController.getCurrentDestination().getId() == R.id.navigation_create_order)) {
                     // Navigate to OrdersFragment if currently on OrderDetailFragment
                     navController.navigate(R.id.navigation_orders);
                 } else {
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
             // Set up destination change listener to update title and visibility of home button
             navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
-                if (destination.getId() == R.id.navigation_chat_detail) {
+                if (destination.getId() == R.id.navigation_chat_detail ) {
                     // Hide ActionBar in specific fragments
                     if (getSupportActionBar() != null) {
                         getSupportActionBar().hide();
@@ -86,10 +86,11 @@ public class MainActivity extends AppCompatActivity {
                         getSupportActionBar().show();
                     }
                 }
-
-                // Update title based on destination
                 TextView customTitle = customView.findViewById(R.id.customTitle);
-                if (destination.getId() == R.id.navigation_orders) {
+                // Update title based on destination
+                if (destination.getId() == R.id.navigation_create_order) {
+                    customTitle.setText("Create Orders");
+                } else if (destination.getId() == R.id.navigation_orders) {
                     customTitle.setText("Orders");
                 } else if (destination.getId() == R.id.navigation_chat) {
                     customTitle.setText("Chat");

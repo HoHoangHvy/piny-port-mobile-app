@@ -75,13 +75,27 @@
             android:id="@+id/orderList"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginBottom="60dp"
             android:clipToPadding="false"
             android:paddingBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sortButton" />
+
+        <Button
+            android:id="@+id/createOrderButton"
+            style="?attr/materialButtonStyle"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="75dp"
+            android:backgroundTint="@color/blue_500"
+            android:text="+"
+            android:textSize="25dp"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     <include

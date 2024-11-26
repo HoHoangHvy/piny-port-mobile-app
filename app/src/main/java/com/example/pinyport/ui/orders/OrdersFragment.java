@@ -8,11 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.util.Pair;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -63,6 +65,9 @@ public class OrdersFragment extends Fragment {
         binding = FragmentOrdersBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
+        View customView = ((AppCompatActivity) getActivity()).getSupportActionBar().getCustomView();
+        TextView customTitle = customView.findViewById(R.id.customTitle);
+
         // Initialize RecyclerView
         setupRecyclerView();
 
@@ -72,8 +77,16 @@ public class OrdersFragment extends Fragment {
         // Set the default date range for the date picker
         setDefaultDateRange();
 
+        Button createOrderButton = binding.createOrderButton;
+
+        createOrderButton.setOnClickListener(v -> {
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            navController.navigate(R.id.navigation_create_order);
+        });
+
         return root;
     }
+
 
     private void setupRecyclerView() {
         orderList = getOrderList(); // Fetch the list of orders

@@ -60,6 +60,12 @@
         android:name="com.example.pinyport.ui.orders.OrderDetailFragment"
         android:label="Order Detail"
         tools:layout="@layout/order_detail_fragment" />
+
+    <fragment
+        android:id="@+id/navigation_create_order"
+        android:name="com.example.pinyport.ui.orders.CreateOrderFragment"
+        android:label="Create Order"
+        tools:layout="@layout/fragment_create_order" />
     <fragment
         android:id="@+id/customer_detail_navigation"
         android:name="com.example.pinyport.ui.customers.CustomerDetailFragment"
@@ -68,5 +74,7 @@
         <action
             android:id="@+id/action_customerDetailFragment_to_orderDetailFragment"
             app:destination="@id/orderDetailFragment" />
+
+
     </fragment>
 </navigation>
