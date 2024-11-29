@@ -58,6 +58,13 @@ public class CustomersFragment extends Fragment {
         // Initialize Filter UI Components
         initFilterUI(root);
 
+        Button createCustomerButton = binding.createCustomerButton;
+
+        createCustomerButton.setOnClickListener(v -> {
+            NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
+            navController.navigate(R.id.navigation_create_customer);
+        });
+
         return root;
     }
     private void setupRecyclerView() {

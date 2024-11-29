@@ -108,43 +108,35 @@ public class CreateOrderFragment extends Fragment {
     }
 
     private void setupproductSpinner() {
-        // Dữ liệu cho các Spinner
         String[] productOptions = {"Cà phê muối", "Ô long lài sữa"};
 
-        // Cài đặt Spinner ban đầu
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
                 android.R.layout.simple_spinner_item, productOptions);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         binding.spinnerProduct.setAdapter(adapter);
 
-        // Xử lý sự kiện nhấn nút "+"
         binding.btnAddSpinner.setOnClickListener(v -> addNewSpinner(productOptions));
     }
 
     private void addNewSpinner(String[] productOptions) {
-        // Ẩn nút Button cũ (nếu tồn tại)
         if (lastAddedButton != null) {
             lastAddedButton.setVisibility(View.GONE);
         }
 
-        // Ẩn nút btnAddSpinner đầu tiên (nếu chưa ẩn)
         if (!isFirstButtonHidden) {
             binding.btnAddSpinner.setVisibility(View.GONE);
             isFirstButtonHidden = true;
         }
 
-        // Tạo LinearLayout mới theo chiều ngang
         LinearLayout horizontalLayout = new LinearLayout(requireContext());
         horizontalLayout.setOrientation(LinearLayout.HORIZONTAL);
         horizontalLayout.setId(View.generateViewId());
 
-        // Thiết lập LayoutParams cho LinearLayout ngang
         LinearLayout.LayoutParams horizontalLayoutParams = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         horizontalLayoutParams.setMargins(0, 0, 0, 0); // Khoảng cách trên và dưới
         horizontalLayout.setLayoutParams(horizontalLayoutParams);
 
-        // Tạo newView
         View newView = new View(requireContext());
         newView.setId(View.generateViewId());
         int widthInPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 75, getResources().getDisplayMetrics());
@@ -152,7 +144,6 @@ public class CreateOrderFragment extends Fragment {
         LinearLayout.LayoutParams viewLayoutParams = new LinearLayout.LayoutParams(widthInPx, heightInPx);
         newView.setLayoutParams(viewLayoutParams);
 
-// Tạo Spinner mới
         Spinner newSpinner = new Spinner(requireContext());
         newSpinner.setId(View.generateViewId()); // Đảm bảo Spinner có ID duy nhất
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
@@ -160,19 +151,14 @@ public class CreateOrderFragment extends Fragment {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         newSpinner.setAdapter(adapter);
 
-// Thiết lập màu backgroundTint
         newSpinner.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.blue_500)));
 
-// Thiết lập chiều cao cho Spinner
         int heightspInPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48, getResources().getDisplayMetrics());
 
         LinearLayout.LayoutParams spinnerLayoutParams = new LinearLayout.LayoutParams(
                 0, heightspInPx, 1.0f);
         newSpinner.setLayoutParams(spinnerLayoutParams);
 
-
-
-// Tạo Button mới
         Button newButton = new Button(requireContext());
         newButton.setId(View.generateViewId());
         newButton.setText("+");
@@ -187,19 +173,15 @@ public class CreateOrderFragment extends Fragment {
         horizontalLayout.addView(newSpinner);
         horizontalLayout.addView(newButton);
 
-        // Thêm layout ngang vào layout_products
         LinearLayout layoutProducts = binding.layoutProducts;
         layoutProducts.setOrientation(LinearLayout.VERTICAL);
         layoutProducts.addView(horizontalLayout);
 
-        // Gán chức năng cho Button mới
         newButton.setOnClickListener(v -> addNewSpinner(productOptions));
 
-        // Cập nhật lastAddedSpinner và lastAddedButton
         lastAddedSpinner = newSpinner;
         lastAddedButton = newButton;
 
-        // Yêu cầu layout cập nhật lại
         layoutProducts.requestLayout();
     }
 

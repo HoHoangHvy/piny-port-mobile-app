@@ -57,7 +57,7 @@
                 android:layout_height="25dp"
                 android:layout_weight="1"
                 android:textSize="15dp"
-                android:background="@drawable/rounded_edit_text"
+                android:background="@drawable/rounded_corners"
                 android:paddingLeft="5dp" />
         </LinearLayout>
 
@@ -100,9 +100,8 @@
                 android:layout_width="0dp"
                 android:layout_height="25dp"
                 android:layout_weight="1"
-                android:hint="Nhập địa chỉ giao hàng"
                 android:textSize="15dp"
-                android:background="@drawable/rounded_edit_text"
+                android:background="@drawable/rounded_corners"
                 android:paddingLeft="5dp" />
         </LinearLayout>
 

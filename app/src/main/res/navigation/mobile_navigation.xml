@@ -67,6 +67,11 @@
         android:label="Create Order"
         tools:layout="@layout/fragment_create_order" />
     <fragment
+        android:id="@+id/navigation_create_customer"
+        android:name="com.example.pinyport.ui.customers.CreateCustomerFragment"
+        android:label="Create Customer"
+        tools:layout="@layout/fragment_create_customer" />
+    <fragment
         android:id="@+id/customer_detail_navigation"
         android:name="com.example.pinyport.ui.customers.CustomerDetailFragment"
         android:label="Order Detail"
@@ -74,7 +79,5 @@
         <action
             android:id="@+id/action_customerDetailFragment_to_orderDetailFragment"
             app:destination="@id/orderDetailFragment" />
-
-
     </fragment>
 </navigation>

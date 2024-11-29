@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
         // AppBarConfiguration should not include the OrderDetailFragment
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_orders, R.id.navigation_chat,
-                R.id.navigation_home, R.id.navigation_customers, R.id.navigation_profile, R.id.orderDetailFragment, R.id.navigation_chat_detail, R.id.customer_detail_navigation, R.id.navigation_create_order)
+                R.id.navigation_home, R.id.navigation_customers, R.id.navigation_profile, R.id.orderDetailFragment, R.id.navigation_chat_detail, R.id.customer_detail_navigation, R.id.navigation_create_order, R.id.navigation_create_customer)
                 .build();
 
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
@@ -67,11 +67,15 @@ public class MainActivity extends AppCompatActivity {
                         (navController.getCurrentDestination().getId() == R.id.orderDetailFragment) || (navController.getCurrentDestination().getId() == R.id.navigation_create_order)) {
                     // Navigate to OrdersFragment if currently on OrderDetailFragment
                     navController.navigate(R.id.navigation_orders);
+                } else if (navController.getCurrentDestination() != null &&
+                        (navController.getCurrentDestination().getId() == R.id.navigation_create_customer)) {
+                    navController.navigate(R.id.navigation_customers);
                 } else {
                     // Navigate to HomeFragment otherwise
                     navController.navigate(R.id.navigation_home);
                 }
             });
+
 
             // Set up destination change listener to update title and visibility of home button
             navController.addOnDestinationChangedListener((controller, destination, arguments) -> {
@@ -90,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
                 // Update title based on destination
                 if (destination.getId() == R.id.navigation_create_order) {
                     customTitle.setText("Create Orders");
+                } else if (destination.getId() == R.id.navigation_create_customer) {
+                    customTitle.setText("Create Customers");
                 } else if (destination.getId() == R.id.navigation_orders) {
                     customTitle.setText("Orders");
                 } else if (destination.getId() == R.id.navigation_chat) {
