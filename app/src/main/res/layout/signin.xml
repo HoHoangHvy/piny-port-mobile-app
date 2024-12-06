@@ -1,126 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.flexbox.FlexboxLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_login"
-    android:background="@color/blue_500"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/blue_500"
+    android:padding="16dp"
+    app:alignItems="center"
+    app:flexDirection="column"
+    tools:context=".LoginActivity">
 
+    <!-- Title -->
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:text="Piny Port"
-        android:textSize="70sp"
         android:textColor="@android:color/white"
-        android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="100dp"
-        android:gravity="center"/>
+        android:textSize="70sp"
+        android:textStyle="bold" />
 
     <!-- Subtitle -->
     <TextView
         android:id="@+id/tvSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="8dp"
-        android:gravity="center"
         android:text="Customer management platform"
         android:textColor="@android:color/white"
-        android:textSize="16sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+        android:textSize="16sp" />
 
-    <!-- Email Input -->
-    <EditText
-        android:id="@+id/etEmail"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="100dp"
-        android:hint="Email or phone number"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:background="@drawable/login_edittext_bg"
-        app:layout_constraintTop_toBottomOf="@+id/tvSubtitle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:drawablePadding="8dp"
-        android:drawableStart="@drawable/ic_user"/>
-
-    <!-- Password Input -->
-    <EditText
-        android:id="@+id/etPassword"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="24dp"
-        android:hint="Password"
-        android:inputType="textPassword"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:background="@drawable/login_edittext_bg"
-        app:layout_constraintTop_toBottomOf="@+id/etEmail"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:drawablePadding="8dp"
-        android:drawableStart="@drawable/ic_lock"/>
-<!--        android:drawableEnd="@drawable/eye"/>-->
-
-    <!-- Forgot Password -->
-
-    <ImageView
-        android:id="@+id/ivTogglePassword"
-        android:layout_width="wrap_content"
+    <!-- ViewSwitcher for Login Modes -->
+    <ViewSwitcher
+        android:id="@+id/loginSwitcher"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="44dp"
-        android:contentDescription="Toggle Password Visibility"
-        android:src="@drawable/eye_off"
-        app:layout_constraintBottom_toBottomOf="@+id/etPassword"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/etPassword"
-        app:layout_constraintVertical_bias="0.523" />
+        android:layout_marginTop="120dp">
 
+        <!-- OTP Login View -->
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/otpLoginLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:justifyContent="center"
+            app:flexDirection="column">
+
+            <!-- Phone Number Input -->
+            <EditText
+                android:id="@+id/etPhoneNumber"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/login_edittext_bg"
+                android:drawableStart="@drawable/ic_phone"
+                android:drawablePadding="8dp"
+                android:hint="Phone Number"
+                android:inputType="phone"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" />
+        </com.google.android.flexbox.FlexboxLayout>
+
+        <!-- Password Login View -->
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/passwordLoginLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:flexDirection="column">
+
+            <!-- Email Input -->
+            <EditText
+                android:id="@+id/etEmail"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/login_edittext_bg"
+                android:drawableStart="@drawable/ic_user"
+                android:drawablePadding="8dp"
+                android:hint="Email or phone number"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" />
+
+            <!-- Password Input -->
+            <EditText
+                android:id="@+id/etPassword"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/login_edittext_bg"
+                android:drawableStart="@drawable/ic_lock"
+                android:drawablePadding="8dp"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" />
+
+            <!-- Toggle Password Visibility -->
+            <ImageView
+                android:id="@+id/ivTogglePassword"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="end"
+                android:layout_marginTop="-36dp"
+                android:layout_marginEnd="16dp"
+                android:contentDescription="Toggle Password Visibility"
+                android:src="@drawable/eye_off" />
+
+            <!-- Forgot Password -->
+            <com.google.android.flexbox.FlexboxLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:justifyContent="flex_end">
+                <TextView
+                    android:id="@+id/tvForgotPassword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Forgot password?"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp" />
+            </com.google.android.flexbox.FlexboxLayout>
+        </com.google.android.flexbox.FlexboxLayout>
+    </ViewSwitcher>
+
+    <!-- Switch Mode Button -->
     <TextView
-        android:id="@+id/tvForgotPassword"
+        android:id="@+id/tvSwitchMode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Forgot password?"
-        android:textSize="14sp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:text="Switch to Password Login"
         android:textColor="@android:color/white"
-        app:layout_constraintTop_toBottomOf="@+id/etPassword"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="32dp"
-        android:layout_marginTop="8dp"/>
+        android:textSize="14sp" />
 
     <!-- Login Button -->
     <Button
         android:id="@+id/btnLogin"
-        style="?attr/materialButtonOutlinedStyle"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:layout_marginStart="32dp"
         android:layout_marginTop="24dp"
-        android:layout_marginEnd="32dp"
-        android:text="LOGIN"
-        android:textColor="@android:color/white"
+        android:text="SEND OTP"
         android:textSize="18sp"
         android:textStyle="bold"
         app:backgroundTint="@color/light_blue"
-        app:cornerRadius="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvForgotPassword"
-        app:strokeColor="#468EFE"
-        app:strokeWidth="6dp" />
-
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        app:cornerRadius="10dp" />
+</com.google.android.flexbox.FlexboxLayout>

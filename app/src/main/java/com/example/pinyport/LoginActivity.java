@@ -12,11 +12,24 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ViewSwitcher;
+
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.chaos.view.PinView;
+import com.example.pinyport.DTO.GenOtpRequest;
+import com.example.pinyport.DTO.GenOtpResponse;
+import com.example.pinyport.DTO.LoginOtpRequest;
+import com.example.pinyport.DTO.LoginOtpResponse;
+import com.example.pinyport.network.ApiClient;
+import com.example.pinyport.network.ApiService;
+import com.example.pinyport.service.AuthManager;
 import com.google.android.material.textfield.TextInputEditText;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -26,6 +39,11 @@ public class LoginActivity extends AppCompatActivity {
     private TextView forgotPasswordTextView;
     private ImageView togglePasswordVisibility;
     private boolean isPasswordVisible = false;
+    private TextView tvSwitchMode;
+    private ViewSwitcher loginSwitcher;
+    private AuthManager authManager;
+
+    private ApiService apiService = ApiClient.getClient().create(ApiService.class);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,14 +53,30 @@ public class LoginActivity extends AppCompatActivity {
         }
         setContentView(R.layout.signin);
 
+        authManager = new AuthManager(this);
         emailEditText = findViewById(R.id.etEmail);
         passwordEditText = findViewById(R.id.etPassword);
         signInButton = findViewById(R.id.btnLogin);
         togglePasswordVisibility = findViewById(R.id.ivTogglePassword);
         forgotPasswordTextView = findViewById(R.id.tvForgotPassword);
 
-        // Sự kiện đăng nhập
-        signInButton.setOnClickListener(v -> signIn());
+        loginSwitcher = findViewById(R.id.loginSwitcher);
+        tvSwitchMode = findViewById(R.id.tvSwitchMode);
+
+        // Switch between login modes
+        tvSwitchMode.setOnClickListener(v -> {
+            if (loginSwitcher.getDisplayedChild() == 1) {
+                // Switch to OTP Login
+                loginSwitcher.showNext();
+                tvSwitchMode.setText("Switch to Password Login");
+                signInButton.setText("SEND OTP");
+            } else {
+                // Switch to Password Login
+                loginSwitcher.showPrevious();
+                tvSwitchMode.setText("Switch to OTP Login");
+                signInButton.setText("SIGN IN");
+            }
+        });
 
         // Sự kiện đổi hiển thị mật khẩu
         togglePasswordVisibility.setOnClickListener(v -> {
@@ -60,21 +94,101 @@ public class LoginActivity extends AppCompatActivity {
 
         // Sự kiện Forgot Password
         forgotPasswordTextView.setOnClickListener(v -> showPhoneNumberInputDialog());
+
+        signInButton.setOnClickListener(v -> {
+            if (loginSwitcher.getDisplayedChild() == 1) {
+                // Password Login logic
+                EditText etEmail = findViewById(R.id.etEmail);
+                EditText etPassword = findViewById(R.id.etPassword);
+
+                String email = etEmail.getText().toString();
+                String password = etPassword.getText().toString();
+
+                if (email.isEmpty() || password.isEmpty()) {
+                    Toast.makeText(this, "Please enter both email and password", Toast.LENGTH_SHORT).show();
+                } else {
+                    // Add your login logic here
+                    // For now, we are just displaying a toast message
+                    Toast.makeText(this, "Sign in successful", Toast.LENGTH_SHORT).show();
+                    authSuccess();
+                }
+                // Perform validation and login API call
+            } else {
+                // OTP Login logic
+                EditText etPhoneNumber = findViewById(R.id.etPhoneNumber);
+                String phoneNumber = etPhoneNumber.getText().toString();
+
+                if (isValidPhoneNumber(phoneNumber)) {
+                    GenOtpRequest request = new GenOtpRequest(phoneNumber);
+                    apiService.genOtp(request).enqueue(new Callback<GenOtpResponse>() {
+                        @Override
+                        public void onResponse(Call<GenOtpResponse> call, Response<GenOtpResponse> response) {
+                            if (response.isSuccessful() && response.body() != null) {
+                                Toast.makeText(LoginActivity.this, "OTP sent to " + phoneNumber, Toast.LENGTH_SHORT).show();
+                                showOtpVerifyDialog(response.body().getData().getUser_id()); // Proceed to OTP verification dialog
+                            } else {
+                                Toast.makeText(LoginActivity.this, "Failed to send OTP", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<GenOtpResponse> call, Throwable t) {
+                            Toast.makeText(LoginActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    Toast.makeText(this, "Please enter a valid phone number", Toast.LENGTH_SHORT).show();
+                }
+
+                // Perform validation and OTP verification API call
+            }
+        });
     }
 
-    private void signIn() {
-        String email = emailEditText.getText().toString().trim();
-        String password = passwordEditText.getText().toString().trim();
+    private void showOtpVerifyDialog(String userId) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_otp_input, null);
+        builder.setView(dialogView);
 
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Please enter both email and password", Toast.LENGTH_SHORT).show();
-        } else {
-            // Add your login logic here
-            // For now, we are just displaying a toast message
-            Toast.makeText(this, "Sign in successful", Toast.LENGTH_SHORT).show();
-            authSuccess();
-        }
+        PinView otpEditText = dialogView.findViewById(R.id.etp_otp);
+        Button verifyOtpButton = dialogView.findViewById(R.id.btn_verify);
+
+        AlertDialog alertDialog = builder.create();
+
+        verifyOtpButton.setOnClickListener(v -> {
+            String otp = otpEditText.getText().toString().trim();
+            if (isValidOtp(otp)) {
+                // Show new password dialog after validating the OTP
+                // Call the server to verify OTP and login
+                apiService.verifyOtp(new LoginOtpRequest(userId, otp)).enqueue(new Callback<LoginOtpResponse>() {
+                    @Override
+                    public void onResponse(Call<LoginOtpResponse> call, Response<LoginOtpResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            // Save token to shared preferences
+                            String token = response.body().getData().getToken();
+                            authManager.saveToken(token);
+                            authSuccess();
+                            finish();
+                        } else {
+                            Toast.makeText(LoginActivity.this, "Invalid OTP. Please try again.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<LoginOtpResponse> call, Throwable t) {
+                        Toast.makeText(LoginActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } else {
+                Toast.makeText(this, "Invalid OTP", Toast.LENGTH_SHORT).show();
+            }
+            alertDialog.dismiss();
+        });
+
+        alertDialog.show();
     }
+
     // Show the phone number input dialog
     private void showPhoneNumberInputDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -100,6 +214,7 @@ public class LoginActivity extends AppCompatActivity {
 
         alertDialog.show();
     }
+
     // Show OTP input dialog
     private void showOtpInputDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -131,6 +246,7 @@ public class LoginActivity extends AppCompatActivity {
         // Add your OTP validation logic here
         return otp.length() == 6; // Example validation
     }
+
     // Show new password input dialog
     private void showNewPasswordDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -162,6 +278,7 @@ public class LoginActivity extends AppCompatActivity {
 
         alertDialog.show();
     }
+
     private void authSuccess() {
         SharedPreferences sharedPreferences = getSharedPreferences("userPrefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -172,6 +289,7 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
     // Validate the phone number
     private boolean isValidPhoneNumber(String phoneNumber) {
         // Add your phone number validation logic here
