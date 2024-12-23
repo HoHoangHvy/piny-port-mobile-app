@@ -7,396 +7,320 @@
     android:background="@color/my_app_surface"
     android:fillViewport="true">
 
-<!--  Main  -->
+    <!-- Main Layout -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:background="@android:color/white"
-        android:paddingBottom="100dp"
-        tools:context=".ui.profile.ProfileFragment"
-        tools:ignore="ExtraText">
+        android:padding="16dp"
+        tools:context=".ui.profile.ProfileFragment">
 
-        <!--    Profile IMG, NAME, TITLE    -->
-        <ImageView
-            android:id="@+id/profileImage"
-            android:layout_width="79dp"
-            android:layout_height="76dp"
-            android:layout_marginTop="40dp"
-            android:adjustViewBounds="false"
-            android:contentDescription="Profile Image"
-            android:src="@drawable/ic_profile_placeholder"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/profileName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:fontFamily="sans-serif-black"
-            android:text="Piny"
-            android:textColor="@color/black"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profileImage" />
+        <com.google.android.flexbox.FlexboxLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/imageContainer"
+            >
+            <!-- Profile Image -->
+            <ImageView
+                android:id="@+id/profileImage"
+                android:layout_width="200dp"
+                android:layout_marginTop="16dp"
+                android:layout_height="80dp"
+                android:src="@drawable/ic_profile_placeholder"
+                android:contentDescription="Profile Image"/>
+            <com.google.android.flexbox.FlexboxLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:flexDirection="column"
+                android:layout_marginLeft="8dp"
+                android:id="@+id/nameContainer"
+                >
+                <TextView
+                    android:id="@+id/profileName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Hồ Hoàng Huy"
+                    android:textColor="@color/black"
+                    android:textSize="24sp"
+                    android:textStyle="bold"/>
+                <!-- Profile Title -->
+                <TextView
+                    android:id="@+id/profileTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="UI/UX Designer"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/profileName" />
 
-        <TextView
-            android:id="@+id/profileTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="UI/UX Designer"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profileName" />
+                <TextView
+                    android:id="@+id/roleTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Manager"
+                    android:textColor="@color/dark_gray"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/profileName" />
 
+            </com.google.android.flexbox.FlexboxLayout>
+        </com.google.android.flexbox.FlexboxLayout>
+        <!-- Horizontal Line -->
         <View
             android:id="@+id/horizontalLine"
-            android:layout_width="360dp"
+            android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_marginTop="16dp"
-            android:background="@color/black"
+            android:background="@color/grey"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/profileTitle" />
+            app:layout_constraintTop_toBottomOf="@id/imageContainer" />
 
-        <!--    Main info    -->
+        <!-- Main Info Section -->
         <TextView
             android:id="@+id/mainInfoLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:fontFamily="sans-serif"
-            android:text="Main info"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="#000000"
+            android:layout_marginTop="16dp"
+            android:text="Main Info"
+            android:textColor="@color/black"
+            android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.113"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/profileTitle" />
+            app:layout_constraintTop_toBottomOf="@id/horizontalLine" />
 
-        <!--    Position    -->
-        <TextView
-            android:id="@+id/positionLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="46dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="314dp"
-            android:text="Position"
-            android:textColor="@color/dark_gray"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/mainInfoLabel" />
-
-        <EditText
-            android:id="@+id/positionField"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="40dp"
-            android:background="@drawable/rounded_corners"
-            android:hint="UI/UX Designer"
-            android:inputType="text"
-            android:paddingLeft="16dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/positionLabel" />
-
-        <!--    COMPANY    -->
+        <!-- Company Field -->
         <TextView
             android:id="@+id/companyLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="46dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="314dp"
             android:text="Company"
+            android:layout_marginTop="16dp"
             android:textColor="@color/dark_gray"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/positionField" />
+            app:layout_constraintTop_toBottomOf="@id/mainInfoLabel" />
 
         <EditText
-            android:id="@+id/companyField"
+            android:id="@+id/branchField"
             android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginStart="40dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="40dp"
             android:background="@drawable/rounded_corners"
-            android:hint="Cadabra"
+            android:hint="Branch Name"
             android:inputType="text"
-            android:paddingLeft="16dp"
+            android:padding="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/companyLabel" />
+            app:layout_constraintTop_toBottomOf="@id/companyLabel" />
 
-        <!--    Location    -->
+        <!-- Location Field -->
         <TextView
             android:id="@+id/locationLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="46dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="314dp"
-            android:text="Location"
+            android:layout_marginTop="16dp"
+            android:text="Address"
             android:textColor="@color/dark_gray"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/companyField" />
+            app:layout_constraintTop_toBottomOf="@id/branchField" />
 
         <EditText
             android:id="@+id/locationField"
             android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginStart="40dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="40dp"
             android:background="@drawable/rounded_corners"
             android:hint="NYC, New York, USA"
             android:inputType="text"
-            android:paddingLeft="16dp"
+            android:padding="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/locationLabel" />
+            app:layout_constraintTop_toBottomOf="@id/locationLabel" />
 
-        <!--    Birthday    -->
-
+        <!-- Birthday Field -->
         <TextView
-            android:id="@+id/birdthdayLabel"
+            android:id="@+id/birthdayLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="46dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="314dp"
-            android:text="Birthday Date"
+            android:layout_marginTop="16dp"
+            android:text="Birthday"
             android:textColor="@color/dark_gray"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.029"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/locationField" />
-
+            app:layout_constraintTop_toBottomOf="@id/locationField" />
 
         <EditText
             android:id="@+id/birthdayField"
             android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginStart="40dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="40dp"
             android:background="@drawable/rounded_corners"
             android:hint="May 19, 1996"
-            android:inputType="date"
-            android:paddingLeft="16dp"
+            android:inputType="text"
+            android:padding="12dp"
+            android:focusable="false"
+            android:clickable="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/birdthdayLabel"
-            android:focusable="false"
-            android:clickable="true" />
-        <!-- Disable keyboard input -->
-        <!-- Make it clickable -->
+            app:layout_constraintTop_toBottomOf="@id/birthdayLabel" />
 
-
-        <!--    CONTACT INFO    -->
+        <!-- Contact Info Section -->
         <TextView
             android:id="@+id/contactInfoLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:fontFamily="sans-serif"
-            android:text="Contact info"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="#000000"
+            android:layout_marginTop="24dp"
+            android:text="Contact Info"
+            android:textColor="@color/black"
+            android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.113"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/birthdayField"/>
+            app:layout_constraintTop_toBottomOf="@id/birthdayField" />
 
+        <!-- Email Field -->
         <TextView
             android:id="@+id/emailLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="46dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="314dp"
             android:text="Email"
+            android:layout_marginTop="16dp"
             android:textColor="@color/dark_gray"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/contactInfoLabel" />
+            app:layout_constraintTop_toBottomOf="@id/contactInfoLabel" />
 
         <EditText
             android:id="@+id/emailField"
             android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginStart="40dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="40dp"
             android:background="@drawable/rounded_corners"
             android:hint="evanyates@gmail.com"
             android:inputType="textEmailAddress"
-            android:paddingLeft="16dp"
+            android:padding="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/emailLabel" />
+            app:layout_constraintTop_toBottomOf="@id/emailLabel" />
 
+        <!-- Phone Field -->
         <TextView
             android:id="@+id/phoneLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="46dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="314dp"
+            android:layout_marginTop="16dp"
             android:text="Mobile Number"
             android:textColor="@color/dark_gray"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/emailField" />
+            app:layout_constraintTop_toBottomOf="@id/emailField" />
 
         <EditText
             android:id="@+id/phoneField"
             android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="40dp"
+            android:layout_height="wrap_content"
             android:background="@drawable/rounded_corners"
             android:hint="+1 675 346 23-10"
             android:inputType="phone"
-            android:paddingLeft="16dp"
+            android:padding="12dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.6"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/phoneLabel" />
+            app:layout_constraintTop_toBottomOf="@id/phoneLabel" />
 
+        <!-- Change Password Section -->
         <TextView
             android:id="@+id/changePasswordLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:fontFamily="sans-serif"
+            android:layout_marginTop="24dp"
             android:text="Change Password"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="#000000"
+            android:textColor="@color/black"
+            android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.113"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/phoneField"/>
+            app:layout_constraintTop_toBottomOf="@id/phoneField" />
 
+        <!-- Current Password Field -->
         <TextView
             android:id="@+id/currentPasswordLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="46dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="314dp"
+            android:layout_marginTop="16dp"
             android:text="Current Password"
             android:textColor="@color/dark_gray"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/changePasswordLabel" />
+            app:layout_constraintTop_toBottomOf="@id/changePasswordLabel" />
 
         <EditText
             android:id="@+id/currentPasswordField"
             android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginStart="40dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="40dp"
             android:background="@drawable/rounded_corners"
             android:hint="Enter current password"
-            android:inputType="number"
-            android:paddingLeft="16dp"
+            android:inputType="textPassword"
+            android:padding="12dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.6"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/currentPasswordLabel"/>
+            app:layout_constraintTop_toBottomOf="@id/currentPasswordLabel" />
 
+        <!-- New Password Field -->
         <TextView
             android:id="@+id/newPasswordLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="46dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="314dp"
+            android:layout_marginTop="16dp"
             android:text="New Password"
             android:textColor="@color/dark_gray"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/currentPasswordField" />
+            app:layout_constraintTop_toBottomOf="@id/currentPasswordField" />
 
         <EditText
             android:id="@+id/newPasswordField"
             android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginHorizontal="20dp"
-            android:layout_marginStart="40dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginEnd="40dp"
             android:background="@drawable/rounded_corners"
             android:hint="Enter new password"
-            android:inputType="number"
-            android:paddingLeft="16dp"
+            android:inputType="textPassword"
+            android:padding="12dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.6"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/newPasswordLabel"/>
+            app:layout_constraintTop_toBottomOf="@id/newPasswordLabel" />
 
+        <!-- Save Changes Button -->
         <Button
             android:id="@+id/editButton"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="130dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="130dp"
+            android:layout_marginTop="24dp"
             android:text="SAVE CHANGES"
+            android:backgroundTint="@color/black"
+            android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/newPasswordField" />
+            app:layout_constraintTop_toBottomOf="@id/newPasswordField" />
 
+        <!-- Sign Out Button -->
         <Button
             android:id="@+id/signoutButton"
-            android:layout_width="900px"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/button_sign_out_background"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/blue_500"
             android:text="SIGN OUT"
             android:textColor="@color/white"
-            android:textAllCaps="true"
-            android:textSize="16sp"
-            android:gravity="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editButton"/>
+            app:layout_constraintTop_toBottomOf="@id/editButton" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

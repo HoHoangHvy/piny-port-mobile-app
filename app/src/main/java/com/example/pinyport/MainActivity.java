@@ -1,5 +1,7 @@
 package com.example.pinyport;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -16,18 +18,20 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.pinyport.databinding.ActivityMainBinding;
+import com.example.pinyport.network.SharedPrefsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    private SharedPrefsManager sharedPrefsManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences sharedPreferences = getSharedPreferences("userPrefs", MODE_PRIVATE);
-        boolean isLoggedIn = sharedPreferences.getBoolean("isLoggedIn", false);
+        sharedPrefsManager = new SharedPrefsManager(this);
+        boolean isLoggedIn = sharedPrefsManager.isLoggedIn();
 
         if (!isLoggedIn) {
             // If not logged in, navigate to the login activity

@@ -14,6 +14,7 @@ import com.example.pinyport.DTO.LoginOtpResponse;
 import com.example.pinyport.DTO.LoginRequest;
 import com.example.pinyport.DTO.LoginResponse;
 import com.example.pinyport.model.Customer;
+import com.google.gson.JsonObject;
 
 public interface ApiService {
     @GET("customers")
@@ -26,7 +27,7 @@ public interface ApiService {
     Call<LoginResponse> login(@Body LoginRequest request);
 
     @POST("auth/auth-otp") // Replace with your Laravel API login endpoint
-    Call<LoginOtpResponse> verifyOtp(@Body LoginOtpRequest request);
+    Call<JsonObject> verifyOtp(@Body LoginOtpRequest request);
 
     @POST("auth/gen-otp") // Replace with your Laravel API login endpoint
     Call<GenOtpResponse> genOtp(@Body GenOtpRequest request);
