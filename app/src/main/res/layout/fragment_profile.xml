@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginBottom="36dp"
     android:background="@color/my_app_surface"
     android:fillViewport="true">
 
@@ -27,7 +28,6 @@
                 android:layout_width="200dp"
                 android:layout_marginTop="16dp"
                 android:layout_height="80dp"
-                android:src="@drawable/ic_profile_placeholder"
                 android:contentDescription="Profile Image"/>
             <com.google.android.flexbox.FlexboxLayout
                 android:layout_width="match_parent"
@@ -99,7 +99,7 @@
             android:id="@+id/companyLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Company"
+            android:text="Branch Name"
             android:layout_marginTop="16dp"
             android:textColor="@color/dark_gray"
             android:textStyle="bold"
@@ -125,19 +125,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="Address"
+            android:text="Date Registered"
             android:textColor="@color/dark_gray"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/branchField" />
 
         <EditText
-            android:id="@+id/locationField"
+            android:id="@+id/dateRegistered"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@drawable/rounded_corners"
-            android:hint="NYC, New York, USA"
             android:inputType="text"
             android:padding="12dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -154,7 +153,7 @@
             android:textColor="@color/dark_gray"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/locationField" />
+            app:layout_constraintTop_toBottomOf="@id/dateRegistered" />
 
         <EditText
             android:id="@+id/birthdayField"

@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.bumptech.glide.Glide;
 import com.example.pinyport.LoginActivity;
 import com.example.pinyport.R;
 import com.example.pinyport.databinding.FragmentProfileBinding;
@@ -64,7 +65,7 @@ public class ProfileFragment extends Fragment {
     public String formatDate(String inputDate) {
         try {
             // Define the input date format (e.g., "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'")
-            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'", Locale.getDefault());
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 
             // Parse the input date string into a Date object
             Date date = inputFormat.parse(inputDate);
@@ -86,12 +87,24 @@ public class ProfileFragment extends Fragment {
         if (user != null) {
             // Bind the user data to the UI elements
             binding.profileName.setText(user.get("name").getAsString());
-            binding.profileTitle.setText(user.get("role_name").getAsString());
+            binding.roleTitle.setText(user.get("role_name").getAsString());
+            binding.profileTitle.setText(user.get("level").getAsString());
+            binding.branchField.setText(user.get("team_name").getAsString());
             binding.emailField.setText(user.get("email").getAsString());
             binding.phoneField.setText(user.get("phone_number").getAsString());
-            String birthday = user.get("created_at").getAsString();
-            String formattedBirthday = formatDate(birthday);
-            binding.birthdayField.setText(formattedBirthday);            // Add more fields as needed
+            binding.birthdayField.setText(formatDate(user.get("date_of_birth").getAsString()));
+            binding.dateRegistered.setText(formatDate(user.get("date_registered").getAsString()));
+
+            // Load the profile image using Glide
+            String profileImageUrl = user.get("image").getAsString();
+            if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+                Glide.with(this)
+                        .load(profileImageUrl)
+                        .into(binding.profileImage);
+            } else {
+                // If no image URL is provided, set a default image
+                binding.profileImage.setImageResource(R.drawable.ic_profile_placeholder);
+            }
         } else {
             // Handle the case where no user data is found
             binding.profileName.setText("No User Data Found");
@@ -99,9 +112,11 @@ public class ProfileFragment extends Fragment {
             binding.emailField.setText("");
             binding.phoneField.setText("");
             binding.birthdayField.setText("");
+
+            // Set a default image when no user data is found
+            binding.profileImage.setImageResource(R.drawable.ic_profile_placeholder);
         }
     }
-
     private void redirectToLogin() {
         Intent intent = new Intent(getContext(), LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
