@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -28,28 +29,39 @@ import com.example.pinyport.databinding.FilterCustomerDrawerBinding;
 import com.example.pinyport.databinding.FragmentCustomersBinding;
 import com.example.pinyport.model.Customer;
 import com.example.pinyport.model.Order;
+import com.example.pinyport.network.ApiClient;
+import com.example.pinyport.network.ApiService;
+import com.example.pinyport.network.SharedPrefsManager;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class CustomersFragment extends Fragment {
 
     private FragmentCustomersBinding binding;
-    private List<Customer> originalCustomerList;  // Store the original customer list
     private List<Customer> filteredCustomerList;  // Store the filtered customer list
     private CustomerListAdapter adapter;
     private List<Customer> customerList = new ArrayList<>();  // Sample data
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        ApiService apiService = ApiClient.getClient(requireContext()).create(ApiService.class);
+        SharedPrefsManager sharedPrefsManager = new SharedPrefsManager(requireContext());
+
         CustomersViewModel customersViewModel = new ViewModelProvider(this).get(CustomersViewModel.class);
         binding = FragmentCustomersBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         // Initialize Customer List
-        originalCustomerList = getCustomerList(); // Fetch the original list of customers
-        filteredCustomerList = new ArrayList<>(originalCustomerList); // Start with the original list
+        filteredCustomerList = new ArrayList<>(); // Start with the original list
         adapter = new CustomerListAdapter(filteredCustomerList, this::onCustomerClick);
 
         // Initialize RecyclerView
@@ -64,12 +76,66 @@ public class CustomersFragment extends Fragment {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.navigation_create_customer);
         });
+        try {
+            apiService.getCustomers().enqueue(new Callback<JsonObject>() {
+                @Override
+                public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        JsonObject jsonResponse = response.body();
+                        // Extract fields dynamically
+                        boolean success = jsonResponse.get("success").getAsBoolean();
+                        String message = jsonResponse.get("message").getAsString();
+
+                        // Check if the "data" field exists and is not null
+                        if (jsonResponse.has("data") && !jsonResponse.get("data").isJsonNull()) {
+                            JsonArray dataArray = jsonResponse.getAsJsonArray("data");
+
+                            // Check if the "data" array is empty
+                            if (dataArray.size() > 0) {
+                                // Clear the list before adding new data
+                                filteredCustomerList.clear();
+
+                                // Loop through the data array and add each customer to the list
+                                for (JsonElement customerElement : dataArray) {
+                                    JsonObject customerObject = customerElement.getAsJsonObject();
+                                    Customer customer = new Customer(
+                                            customerObject.get("customer_number").getAsString(), // Use "id" from the API response
+                                            customerObject.get("full_name").getAsString(),
+                                            customerObject.get("phone_number").getAsString(), // Fix the typo
+                                            customerObject.get("rank").getAsString(), // Use "rank" from the API response
+                                            customerObject.get("date_registered").getAsString()
+                                    );
+                                    filteredCustomerList.add(customer);
+                                }
+
+                                // Notify the adapter of data changes
+                                adapter.notifyDataSetChanged();
+                            } else {
+                                // Handle the case where the "data" array is empty
+                                Toast.makeText(requireContext(), "No customers found", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            // Handle the case where the "data" field is missing or null
+                            Toast.makeText(requireContext(), "No data found in the response", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(requireContext(), "Failed to fetch customers", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<JsonObject> call, Throwable t) {
+                    Toast.makeText(requireContext(), "Failed to fetch customers: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return root;
     }
     private void setupRecyclerView() {
-        customerList = getCustomerList(); // Fetch the list of customers
-        adapter.updateCustomerList(customerList); // Update the adapter's data
+        adapter.updateCustomerList(filteredCustomerList); // Update the adapter's data
         RecyclerView recyclerView = binding.customerList;
         recyclerView.setAdapter(adapter); // Set the adapter
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -81,22 +147,6 @@ public class CustomersFragment extends Fragment {
         args.putSerializable("customer", customer); // Assuming Customer implements Serializable
         NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
         navController.navigate(R.id.action_customersFragment_to_customerDetailFragment, args);
-    }
-
-    private List<Customer> getCustomerList() {
-        List<Customer> customers = new ArrayList<>();
-        customers.add(new Customer("C001", "Nguyễn Văn A", "nguyenvana@example.com", "Gold", "01/01/2023"));
-        customers.add(new Customer("C002", "Trần Thị B", "tranthib@example.com", "Silver", "15/02/2023"));
-        customers.add(new Customer("C003", "Lê Văn C", "levanc@example.com", "Bronze", "20/03/2023"));
-        customers.add(new Customer("C004", "Phạm Thị D", "phamthid@example.com", "Gold", "30/04/2023"));
-        customers.add(new Customer("C005", "Đỗ Văn E", "dovanE@example.com", "Silver", "05/05/2023"));
-        customers.add(new Customer("C006", "Hoàng Thị F", "hoangthif@example.com", "Bronze", "12/06/2023"));
-        customers.add(new Customer("C007", "Vũ Văn G", "vuvanG@example.com", "Gold", "25/07/2023"));
-        customers.add(new Customer("C008", "Ngô Thị H", "ngothih@example.com", "Silver", "10/08/2023"));
-        customers.add(new Customer("C009", "Nguyễn Văn I", "nguyenvani@example.com", "Bronze", "15/09/2023"));
-        customers.add(new Customer("C010", "Lê Thị J", "lethij@example.com", "Gold", "20/10/2023"));
-        // Add more customers as needed
-        return customers;
     }
 
 

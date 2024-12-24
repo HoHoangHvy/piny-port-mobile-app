@@ -18,8 +18,7 @@ import com.google.gson.JsonObject;
 
 public interface ApiService {
     @GET("customers")
-    Call<List<Customer>> getCustomers();
-
+    Call<JsonObject> getCustomers();
     @POST("customers")
     Call<Customer> createCustomer(@Body Customer customer);
 
