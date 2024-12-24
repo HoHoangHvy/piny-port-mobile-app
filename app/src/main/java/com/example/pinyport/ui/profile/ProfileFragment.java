@@ -100,6 +100,7 @@ public class ProfileFragment extends Fragment {
             if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
                 Glide.with(this)
                         .load(profileImageUrl)
+                        .circleCrop()
                         .into(binding.profileImage);
             } else {
                 // If no image URL is provided, set a default image
