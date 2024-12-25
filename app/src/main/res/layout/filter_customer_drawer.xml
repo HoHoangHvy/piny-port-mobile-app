@@ -61,7 +61,7 @@
             app:flexWrap="wrap"
             app:alignItems="center">
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/delivering_status_filter"
+                android:id="@+id/diamondFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
@@ -72,7 +72,30 @@
                 app:cardBackgroundColor="@color/filter_item_background"
                 app:strokeWidth="0dp">
                 <TextView
-                    android:id="@+id/delivering_status_text"
+                    android:id="@+id/diamondText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="DIAMOND"
+                    android:textColor="#006FFD"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </com.google.android.material.card.MaterialCardView>
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/goldFilter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:checkable="true"
+                app:checkedIcon="@drawable/icon_empty"
+                app:cardBackgroundColor="@color/filter_item_background"
+                app:strokeWidth="0dp">
+                <TextView
+                    android:id="@+id/goldText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
@@ -84,7 +107,7 @@
                     android:ellipsize="end" />
             </com.google.android.material.card.MaterialCardView>
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/preparing_status_filter"
+                android:id="@+id/silverFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
@@ -95,7 +118,7 @@
                 app:cardBackgroundColor="@color/filter_item_background"
                 app:strokeWidth="0dp">
                 <TextView
-                    android:id="@+id/preparing_status_text"
+                    android:id="@+id/silverText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
@@ -107,7 +130,7 @@
                     android:ellipsize="end" />
             </com.google.android.material.card.MaterialCardView>
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cancelled_status_filter"
+                android:id="@+id/bronzeFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:state_checked="true"
@@ -119,32 +142,11 @@
                 app:cardBackgroundColor="@color/filter_item_background"
                 app:strokeWidth="0dp">
                 <TextView
-                    android:id="@+id/cancelled_status_text"
+                    android:id="@+id/bronzeText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
                     android:text="BRONZE"
-                    android:textColor="#006FFD"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
-            </com.google.android.material.card.MaterialCardView>
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/wait_status_filter"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginTop="5dp"
-                android:clickable="true"
-                android:layout_weight="1"
-                android:checkable="true"
-                app:checkedIcon="@drawable/icon_empty"
-                app:cardBackgroundColor="@color/filter_item_background"
-                app:strokeWidth="0dp">
-                <TextView
-                    android:id="@+id/wait_status_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:text="NONE"
                     android:textColor="#006FFD"
                     android:textSize="11sp"
                     android:textStyle="bold" />

@@ -28,7 +28,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
             <SearchView
-                android:id="@+id/search_view"
+                android:id="@+id/searchView"
                 android:layout_width="330dp"
                 android:layout_height="50dp"
                 android:background="@drawable/search_bar_bg"

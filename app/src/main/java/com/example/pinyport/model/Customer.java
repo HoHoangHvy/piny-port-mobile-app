@@ -78,4 +78,8 @@ public class Customer implements Serializable {
         orderList.add(new Order("MM0877", "17/06/2024", "15:45", "Nguyen Van A", "Preparing", 3, "30000 VND"));
         return orderList;
     }
+
+    public String getDateRegistered() {
+        return date_registered;
+    }
 }
