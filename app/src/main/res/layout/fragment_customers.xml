@@ -2,7 +2,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
-    android:layout_marginBottom="48dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/my_app_surface"
@@ -11,92 +10,69 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/my_app_surface"
-        tools:context=".ui.orders.OrdersFragment">
+        tools:context=".MainActivity"
+        android:layout_marginBottom="48dp"
+        tools:ignore="HardcodedText">
 
-        <!-- Search Bar FrameLayout -->
-        <FrameLayout
-            android:id="@+id/searchBarFrameLayout"
+        <!-- Sort and Filter Buttons -->
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/sortFilterButtons"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:flexDirection="row"
+            app:justifyContent="space_between"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
-
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
             <SearchView
                 android:id="@+id/search_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="330dp"
+                android:layout_height="50dp"
                 android:background="@drawable/search_bar_bg"
                 android:focusable="false"
                 android:iconifiedByDefault="false"
                 android:queryBackground="@android:color/transparent"
-                android:queryHint="Search"
-                tools:layout_editor_absoluteX="27dp"
-                tools:layout_editor_absoluteY="94dp" />
+                android:queryHint="Search" />
 
-        </FrameLayout>
-
-        <!-- Sort Button -->
-        <Button
-            android:id="@+id/sortButton"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="6dp"
-            android:drawableStart="@drawable/sync_alt"
-            android:drawablePadding="8dp"
-            android:padding="10dp"
-            android:text="Sort"
-            android:textColor="#000000"
-            app:icon="@drawable/sync_alt"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/searchBarFrameLayout" />
-
-        <!-- Filter Button -->
-        <Button
-            android:id="@+id/filterButton"
-            style="?attr/materialButtonOutlinedStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:drawablePadding="8dp"
-            android:padding="10dp"
-            android:text="Filter"
-            android:textColor="#000000"
-            app:icon="@drawable/filter_list"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.926"
-            app:layout_constraintStart_toEndOf="@+id/sortButton"
-            app:layout_constraintTop_toBottomOf="@+id/searchBarFrameLayout" />
+            <Button
+                android:id="@+id/filterButton"
+                style="?attr/materialIconButtonFilledStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp"
+                android:textColor="#000000"
+                app:icon="@drawable/filter_list" />
+        </com.google.android.flexbox.FlexboxLayout>
 
         <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/customerList"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginBottom="60dp"
             android:clipToPadding="false"
             android:paddingBottom="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sortButton" />
+            app:layout_constraintTop_toBottomOf="@id/sortFilterButtons"
+            app:layout_constraintVertical_bias="1.0" />
 
         <!-- Create Customer Button (Floating at Bottom-Right) -->
-        <Button
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/createCustomerButton"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_margin="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
             android:background="@drawable/circular_background"
-            app:icon="@drawable/add_24px"
-            android:drawableTint="@android:color/white"
+            android:src="@drawable/add_24px"
+            app:fabSize="normal"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Include the Filter Drawer -->

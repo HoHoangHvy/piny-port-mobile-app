@@ -32,13 +32,17 @@ import com.example.pinyport.model.Order;
 import com.example.pinyport.network.ApiClient;
 import com.example.pinyport.network.ApiService;
 import com.example.pinyport.network.SharedPrefsManager;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -70,7 +74,7 @@ public class CustomersFragment extends Fragment {
         // Initialize Filter UI Components
         initFilterUI(root);
 
-        Button createCustomerButton = binding.createCustomerButton;
+        FloatingActionButton createCustomerButton = binding.createCustomerButton;
 
         createCustomerButton.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
@@ -103,7 +107,7 @@ public class CustomersFragment extends Fragment {
                                             customerObject.get("full_name").getAsString(),
                                             customerObject.get("phone_number").getAsString(), // Fix the typo
                                             customerObject.get("rank").getAsString(), // Use "rank" from the API response
-                                            customerObject.get("date_registered").getAsString()
+                                            formatDate(customerObject.get("date_registered").getAsString())
                                     );
                                     filteredCustomerList.add(customer);
                                 }
@@ -133,6 +137,24 @@ public class CustomersFragment extends Fragment {
         }
 
         return root;
+    }
+    public String formatDate(String inputDate) {
+        try {
+            // Define the input date format (e.g., "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'")
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+
+            // Parse the input date string into a Date object
+            Date date = inputFormat.parse(inputDate);
+
+            // Define the output date format (e.g., "dd/MM/yyyy")
+            SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
+            // Format the Date object into the desired output format
+            return outputFormat.format(date);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Invalid Date";
+        }
     }
     private void setupRecyclerView() {
         adapter.updateCustomerList(filteredCustomerList); // Update the adapter's data
