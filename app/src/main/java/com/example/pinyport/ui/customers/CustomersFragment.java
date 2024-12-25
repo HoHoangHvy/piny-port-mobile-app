@@ -123,7 +123,9 @@ public class CustomersFragment extends Fragment {
                                             customerObject.get("full_name").getAsString(),
                                             customerObject.get("phone_number").getAsString(),
                                             customerObject.get("rank").getAsString(),
-                                            formatDate(customerObject.get("date_registered").getAsString())
+                                            formatDate(customerObject.get("date_registered").getAsString()),
+                                            customerObject.get("total_point").getAsInt(),
+                                            customerObject.get("total_spent").getAsFloat()
                                     );
                                     customerList.add(customer);
                                 }

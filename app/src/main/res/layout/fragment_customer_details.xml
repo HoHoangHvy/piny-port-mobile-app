@@ -12,12 +12,14 @@
         android:id="@+id/customer_info_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="8dp"
         app:cardCornerRadius="8dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:layout_margin="6dp"
             android:padding="16dp">
 
             <!-- Customer ID -->
@@ -105,32 +107,6 @@
                     android:textSize="14sp" />
             </LinearLayout>
 
-            <!-- Customer Birthday -->
-            <LinearLayout
-                android:id="@+id/llCustomerBirthday"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tvBirthdayLabel"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Birthday:"
-                    android:textColor="@color/black"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tvCustomerBirthday"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="35dp"
-                    android:text="09/03/2004"
-                    android:textColor="@color/black"
-                    android:textSize="14sp" />
-            </LinearLayout>
-
             <!-- Start Date -->
             <LinearLayout
                 android:id="@+id/llCustomerStartDate"
@@ -142,7 +118,7 @@
                     android:id="@+id/tvStartDateLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Start Date:"
+                    android:text="Registered at:"
                     android:textColor="@color/black"
                     android:textSize="14sp"
                     android:textStyle="bold" />
@@ -151,7 +127,7 @@
                     android:id="@+id/tvCustomerStartDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
+                    android:layout_marginStart="2dp"
                     android:text="01/01/2024"
                     android:textColor="@color/black"
                     android:textSize="14sp"
@@ -257,7 +233,7 @@
         android:id="@+id/order_history"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_margin="8dp"
         android:orientation="vertical"
         android:padding="10dp">
 

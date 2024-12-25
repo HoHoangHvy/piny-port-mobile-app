@@ -11,14 +11,40 @@ public class Customer implements Serializable {
     private String rank;
 
     private String date_registered;
+    private Integer point;
+    private Float totalSpending;
+
+    public Integer getPoint() {
+        return point;
+    }
+
+    public String getPointText() {
+        return point.toString();
+    }
+
+    public void setPoint(Integer point) {
+        this.point = point;
+    }
+
+    public Float getTotalSpending() {
+        return totalSpending;
+    }
+    public String getTotalSpendingText() {
+        return totalSpending + " VND";
+    }
+    public void setTotalSpending(Float totalSpending) {
+        this.totalSpending = totalSpending;
+    }
 
     // Constructor
-    public Customer(String id, String name, String phone, String rank, String date_registered) {
+    public Customer(String id, String name, String phone, String rank, String date_registered, Integer point, Float totalSpending) {
         this.id = id;
         this.name = name;
         this.phone = phone;
         this.rank = rank;
         this.date_registered = date_registered;
+        this.point = point;
+        this.totalSpending = totalSpending;
     }
 
     public String getPhone() {

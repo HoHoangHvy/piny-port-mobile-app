@@ -48,7 +48,6 @@ public class CustomerDetailFragment extends Fragment {
         customerIdTextView = view.findViewById(R.id.tvCustomerId);
         customerNameTextView = view.findViewById(R.id.tvCustomerName);
         customerPhoneTextView = view.findViewById(R.id.tvCustomerPhone);
-        customerBirthdayTextView = view.findViewById(R.id.tvCustomerBirthday);
         customerStartDateTextView = view.findViewById(R.id.tvCustomerStartDate);
         customerPointTextView = view.findViewById(R.id.tvCustomerPoint);
         customerTotalSpendingTextView = view.findViewById(R.id.tvTotalSpending);
@@ -63,11 +62,10 @@ public class CustomerDetailFragment extends Fragment {
             customerIdTextView.setText(customer.getId());
             customerNameTextView.setText(customer.getName());
             customerPhoneTextView.setText(customer.getPhone());
-//            customerBirthdayTextView.setText(customer.getBirthday());
-//            customerStartDateTextView.setText(customer.getStartDate());
+            customerStartDateTextView.setText(customer.getDateRegistered());
             levelTextView.setText(customer.getRank());
-//            customerPointTextView.setText(customer.getPoint());
-//            customerTotalSpendingTextView.setText(customer.getTotalSpending());
+            customerPointTextView.setText(customer.getPointText());
+            customerTotalSpendingTextView.setText(customer.getTotalSpendingText());
 //            customer.loadOrderHistory();
             orderList = customer.getOrderHistory();
             setupRecyclerView(orderList);
