@@ -6,6 +6,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Body;
+import retrofit2.http.Query;
 
 import com.example.pinyport.DTO.GenOtpRequest;
 import com.example.pinyport.DTO.GenOtpResponse;
@@ -19,6 +20,9 @@ import com.google.gson.JsonObject;
 public interface ApiService {
     @GET("customers")
     Call<JsonObject> getCustomers();
+
+    @GET("loadCustomerOrdersHistory")
+    Call<JsonObject> getOrderHistory(@Query("customerId") String customerId);
     @POST("customers")
     Call<Customer> createCustomer(@Body Customer customer);
 
@@ -30,4 +34,5 @@ public interface ApiService {
 
     @POST("auth/gen-otp") // Replace with your Laravel API login endpoint
     Call<GenOtpResponse> genOtp(@Body GenOtpRequest request);
+
 }

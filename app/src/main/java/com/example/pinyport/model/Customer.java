@@ -6,6 +6,7 @@ import java.util.List;
 
 public class Customer implements Serializable {
     private String id;
+    private String customerNumber;
     private String name;
     private String phone;
     private String rank;
@@ -37,8 +38,9 @@ public class Customer implements Serializable {
     }
 
     // Constructor
-    public Customer(String id, String name, String phone, String rank, String date_registered, Integer point, Float totalSpending) {
+    public Customer(String id, String customerNumber,String name, String phone, String rank, String date_registered, Integer point, Float totalSpending) {
         this.id = id;
+        this.customerNumber = customerNumber;
         this.name = name;
         this.phone = phone;
         this.rank = rank;
@@ -79,6 +81,14 @@ public class Customer implements Serializable {
     // Setters
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getCustomerNumber() {
+        return customerNumber;
+    }
+
+    public void setCustomerNumber(String customerNumber) {
+        this.customerNumber = customerNumber;
     }
 
     public void setName(String name) {

@@ -10,8 +10,8 @@
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/order_card"
-        android:layout_width="386dp"
-        android:layout_height="114dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:clickable="true"
         android:focusable="true"

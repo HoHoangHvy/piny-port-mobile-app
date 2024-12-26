@@ -119,6 +119,7 @@ public class CustomersFragment extends Fragment {
                                 for (JsonElement customerElement : dataArray) {
                                     JsonObject customerObject = customerElement.getAsJsonObject();
                                     Customer customer = new Customer(
+                                            customerObject.get("id").getAsString(),
                                             customerObject.get("customer_number").getAsString(),
                                             customerObject.get("full_name").getAsString(),
                                             customerObject.get("phone_number").getAsString(),

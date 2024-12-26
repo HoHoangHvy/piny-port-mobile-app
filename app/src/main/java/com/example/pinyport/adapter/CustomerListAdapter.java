@@ -57,7 +57,7 @@ public class CustomerListAdapter extends RecyclerView.Adapter<CustomerListAdapte
     @Override
     public void onBindViewHolder(@NonNull CustomerViewHolder holder, int position) {
         Customer customer = customerList.get(position);
-        holder.customerId.setText('#'+customer.getId()); // Use the customer's ID
+        holder.customerId.setText('#'+customer.getCustomerNumber()); // Use the customer's ID
         holder.customerName.setText(customer.getName()); // Use the customer's name
         holder.customerPhone.setText(customer.getPhone()); // Use the customer's email
         holder.customerRank.setText(customer.getRank()); // Use the customer's rank
