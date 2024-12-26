@@ -116,7 +116,8 @@ public class CustomerDetailFragment extends Fragment {
 
                     // Define the input and output date formats
                     @SuppressLint("SimpleDateFormat") SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
-                    @SuppressLint("SimpleDateFormat") SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+                    @SuppressLint("SimpleDateFormat") SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+                    @SuppressLint("SimpleDateFormat") SimpleDateFormat outputTimeFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
 
                     for (int i = 0; i < jsonArray.size(); i++) {
                         JsonObject orderObject = jsonArray.get(i).getAsJsonObject();
@@ -126,12 +127,13 @@ public class CustomerDetailFragment extends Fragment {
 
                             // Format the date into the desired output format
                             String formattedDate = outputDateFormat.format(date);
+                            String formattedTime = outputTimeFormat.format(date); // HH:mm:ss
 
                             // Create an Order object with the formatted date
                             Order order = new Order(
                                     orderObject.get("order_number").getAsString(),
                                     formattedDate, // Use the formatted date for display
-                                    String.valueOf(date.getTime()), // Convert timestamp to string
+                                    formattedTime, // Convert timestamp to string
                                     orderObject.get("receiver_name").getAsString(),
                                     orderObject.get("status").getAsString(),
                                     orderObject.get("count_product").getAsInt(),
