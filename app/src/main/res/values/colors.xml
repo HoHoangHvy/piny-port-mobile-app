@@ -15,6 +15,8 @@
     <color name="status_delivering">#29B6F6</color>
     <color name="status_success">#4CAF50</color>
     <color name="status_cancel">#F44336</color>
+    <color name="status_in_progress">#FFBB86FC</color>
+    <color name="status_delivered">#FF03DAC5</color>
     <color name="filter_item_background">#EAF2FF</color>
     <color name="text_color_secondary">#8696BB</color>
 

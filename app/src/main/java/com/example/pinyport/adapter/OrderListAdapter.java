@@ -82,16 +82,22 @@ public class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapter.Orde
     private void setStatusColor(TextView statusTextView, String status) {
         int color;
         switch (status) {
-            case "Wait":
+            case "Draft":
                 color = ContextCompat.getColor(statusTextView.getContext(), R.color.status_wait);
                 break;
-            case "Preparing":
+            case "Wait For Approval":
                 color = ContextCompat.getColor(statusTextView.getContext(), R.color.status_preparing);
+                break;
+            case "In Progress":
+                color = ContextCompat.getColor(statusTextView.getContext(), R.color.status_in_progress);
                 break;
             case "Delivering":
                 color = ContextCompat.getColor(statusTextView.getContext(), R.color.status_delivering);
                 break;
-            case "Success":
+            case "Delivered":
+                color = ContextCompat.getColor(statusTextView.getContext(), R.color.status_delivered);
+                break;
+            case "Completed":
                 color = ContextCompat.getColor(statusTextView.getContext(), R.color.status_success);
                 break;
             case "Cancelled":

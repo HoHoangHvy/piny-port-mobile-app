@@ -24,6 +24,7 @@ import com.example.pinyport.network.ApiService;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -78,13 +79,16 @@ public class CustomerDetailFragment extends Fragment {
             if (customer == null) {
                 return view;
             }
+            NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+            String formattedPrice = formatter.format(customer.getTotalSpending());
+
             customerIdTextView.setText(customer.getCustomerNumber());
             customerNameTextView.setText(customer.getName());
             customerPhoneTextView.setText(customer.getPhone());
             customerStartDateTextView.setText(customer.getDateRegistered());
             levelTextView.setText(customer.getRank());
             customerPointTextView.setText(customer.getPointText());
-            customerTotalSpendingTextView.setText(customer.getTotalSpendingText());
+            customerTotalSpendingTextView.setText(formattedPrice);
             this.getOrderHistory(customer.getId());
         }
 
