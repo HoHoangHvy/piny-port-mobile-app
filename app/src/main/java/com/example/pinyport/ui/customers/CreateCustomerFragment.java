@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,6 +30,7 @@ public class CreateCustomerFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentCreateCustomerBinding.inflate(inflater, container, false);
         apiService = ApiClient.getClient(requireContext()).create(ApiService.class);
+        setupGenderSpinner();
 
         // Set click listener for the create customer button
         binding.buttonCreateCustomer.setOnClickListener(v -> createCustomer());
@@ -40,7 +42,7 @@ public class CreateCustomerFragment extends Fragment {
         // Collect data from the UI
         String name = binding.nameInput.getText().toString().trim();
         String phone = binding.phoneNumberInput.getText().toString().trim();
-        String gender = binding.genderInput.getText().toString().trim();
+        String gender = binding.genderSpinner.getSelectedItem().toString();
 
         // Validate input fields
         if (name.isEmpty() || phone.isEmpty() || gender.isEmpty()) {
@@ -76,12 +78,25 @@ public class CreateCustomerFragment extends Fragment {
             }
         });
     }
+    private void setupGenderSpinner() {
+        // Define gender options
+        String[] genders = {"Male", "Female"};
+
+        // Create an ArrayAdapter using the gender array and a default spinner layout
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, genders);
+
+        // Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Apply the adapter to the spinner
+        binding.genderSpinner.setAdapter(adapter);
+    }
 
     private void clearForm() {
         // Clear the input fields after successful creation
         binding.nameInput.setText("");
         binding.phoneNumberInput.setText("");
-        binding.genderInput.setText("");
+        binding.genderSpinner.setSelection(0); // Reset the Spinner to the first item
     }
 
     @Override
