@@ -135,13 +135,14 @@ public class CustomerDetailFragment extends Fragment {
 
                             // Create an Order object with the formatted date
                             Order order = new Order(
+                                    orderObject.get("order_id").getAsString(),
                                     orderObject.get("order_number").getAsString(),
-                                    formattedDate, // Use the formatted date for display
-                                    formattedTime, // Convert timestamp to string
+                                    formattedDate,
+                                    formattedTime,
                                     orderObject.get("receiver_name").getAsString(),
                                     orderObject.get("status").getAsString(),
                                     orderObject.get("count_product").getAsInt(),
-                                    orderObject.get("total_price").getAsString()
+                                    orderObject.get("total_price").getAsDouble()
                             );
                             orderList.add(order);
                         } catch (Exception e) {

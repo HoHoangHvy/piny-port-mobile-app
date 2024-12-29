@@ -8,6 +8,7 @@ import retrofit2.http.POST;
 import retrofit2.http.Body;
 import retrofit2.http.Query;
 
+import com.example.pinyport.DTO.CreateOrderRequest;
 import com.example.pinyport.DTO.CustomerRequest;
 import com.example.pinyport.DTO.GenOtpRequest;
 import com.example.pinyport.DTO.GenOtpResponse;
@@ -21,6 +22,11 @@ import com.google.gson.JsonObject;
 public interface ApiService {
     @GET("customers")
     Call<JsonObject> getCustomers();
+
+    @GET("orders")
+    Call<JsonObject> getOrders();
+    @POST("orders")
+    Call<Customer> createOrders(@Body CreateOrderRequest request);
 
     @GET("loadCustomerOrdersHistory")
     Call<JsonObject> getOrderHistory(@Query("customerId") String customerId);

@@ -1,21 +1,19 @@
 package com.example.pinyport.ui.orders;
 
-import android.content.DialogInterface;
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.Spinner;
+import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.util.Pair;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -29,44 +27,45 @@ import com.example.pinyport.R;
 import com.example.pinyport.adapter.OrderListAdapter;
 import com.example.pinyport.databinding.FilterOrderDrawerBinding;
 import com.example.pinyport.databinding.FragmentOrdersBinding;
-import com.example.pinyport.model.Customer;
 import com.example.pinyport.model.Order;
-import com.example.pinyport.ui.dialog.CustomerDialog;
+import com.example.pinyport.network.ApiClient;
+import com.example.pinyport.network.ApiService;
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.datepicker.MaterialDatePicker;
-import com.google.android.material.slider.RangeSlider;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
-import java.text.NumberFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Set;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class OrdersFragment extends Fragment {
 
     private FragmentOrdersBinding binding;
-    private List<Order> orderList = new ArrayList<>();  // Sample data
-    private ArrayList<String> filterStatus = new ArrayList<>(
-            List.of("Wait", "Preparing", "Delivering", "Success", "Cancelled")
-    );
-    private int defaultStep = 1000;
-    private OrderListAdapter adapter = new OrderListAdapter(orderList, this::onOrderClick);
+    private List<Order> orderList = new ArrayList<>();
+    private List<Order> filteredOrderList = new ArrayList<>();
+    private OrderListAdapter adapter;
 
+    private Set<String> selectedStatuses = new HashSet<>(); // Store selected statuses
+    private String selectedDate = ""; // Default: No date filter
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         OrdersViewModel ordersViewModel = new ViewModelProvider(this).get(OrdersViewModel.class);
-
-        // Inflate the layout using View Binding
         binding = FragmentOrdersBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
-        View customView = ((AppCompatActivity) getActivity()).getSupportActionBar().getCustomView();
-        TextView customTitle = customView.findViewById(R.id.customTitle);
 
         // Initialize RecyclerView
         setupRecyclerView();
@@ -74,12 +73,14 @@ public class OrdersFragment extends Fragment {
         // Initialize Filter UI Components
         initFilterUI(root);
 
-        // Set the default date range for the date picker
-        setDefaultDateRange();
+        // Set up the SearchView
+        setupSearchView();
 
-        Button createOrderButton = binding.createOrderButton;
+        // Fetch orders from the API
+        fetchOrders();
 
-        createOrderButton.setOnClickListener(v -> {
+        // Handle create order button click
+        binding.createOrderButton.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
             navController.navigate(R.id.navigation_create_order);
         });
@@ -87,262 +88,249 @@ public class OrdersFragment extends Fragment {
         return root;
     }
 
+    private void setupSearchView() {
+        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                applyFilters(query);
+                return true;
+            }
 
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                applyFilters(newText);
+                return true;
+            }
+        });
+    }
+
+    private void fetchOrders() {
+        ApiService apiService = ApiClient.getClient(requireContext()).create(ApiService.class);
+        apiService.getOrders().enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    JsonObject jsonResponse = response.body();
+                    if (jsonResponse.has("data") && !jsonResponse.get("data").isJsonNull()) {
+                        JsonArray dataArray = jsonResponse.getAsJsonArray("data");
+                        if (dataArray.size() > 0) {
+                            orderList.clear();
+                            // Define the input and output date formats
+                            @SuppressLint("SimpleDateFormat") SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault());
+                            @SuppressLint("SimpleDateFormat") SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+                            @SuppressLint("SimpleDateFormat") SimpleDateFormat outputTimeFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+
+                            for (JsonElement orderElement : dataArray) {
+                                JsonObject orderObject = orderElement.getAsJsonObject();
+
+                                try {
+                                    // Parse the date string into a Date object
+                                    Date date = inputDateFormat.parse(orderObject.get("created_at").getAsString());
+                                    String formattedDate = outputDateFormat.format(date);
+                                    String formattedTime = outputTimeFormat.format(date); // H
+                                    Order order = new Order(
+                                            orderObject.get("id").getAsString(),
+                                            orderObject.get("order_number").getAsString(),
+                                            formattedDate,
+                                            formattedTime,
+                                            orderObject.get("receiver_name").getAsString(),
+                                            orderObject.get("order_status").getAsString(),
+                                            orderObject.get("custom_fields").getAsJsonObject().get("count_product").getAsInt(),
+                                            orderObject.get("order_total").getAsDouble()
+                                    );
+                                    orderList.add(order);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            applyFilters(binding.searchView.getQuery().toString());
+                        } else {
+                            Toast.makeText(requireContext(), "No orders found", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(requireContext(), "No data found in the response", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Failed to fetch orders", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                Toast.makeText(requireContext(), "Failed to fetch orders: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+    public String formatDate(String inputDate) {
+        try {
+            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            Date date = inputFormat.parse(inputDate);
+            SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            return outputFormat.format(date);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Invalid Date";
+        }
+    }
     private void setupRecyclerView() {
-        orderList = getOrderList(); // Fetch the list of orders
-        adapter.updateOrderList(orderList); // Update the adapter's data
+        adapter = new OrderListAdapter(filteredOrderList, this::onOrderClick);
         RecyclerView recyclerView = binding.orderList;
-        recyclerView.setAdapter(adapter); // Set the adapter
+        recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
     }
-    public void onOrderClick(Order order) {
-        // Pass the selected order details to the fragment
-        Bundle args = new Bundle();
-        args.putSerializable("order", order); // Assuming Order implements Serializable
 
-        // Use NavController to navigate to OrderDetailFragment with arguments
+    public void onOrderClick(Order order) {
+        Bundle args = new Bundle();
+        args.putSerializable("order", order);
         NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
         navController.navigate(R.id.action_ordersFragment_to_orderDetailFragment, args);
     }
 
-
-    private List<Order> getOrderList() {
-        List<Order> orders = new ArrayList<>();
-        orders.add(new Order("MM0876", "12/06/2024", "11:30", "Le Thi Loan", "Wait", 2, "170000 VND"));
-        orders.add(new Order("MM0877", "17/06/2024", "15:45", "Nguyen Van A", "Preparing", 3, "30000 VND"));
-        orders.add(new Order("MM088", "14/06/2024", "15:45", "Nguyen Van B", "Delivering", 3, "1200000 VND"));
-        orders.add(new Order("MM0879", "16/06/2024", "15:45", "Nguyen Van C", "Success", 3, "16000 VND"));
-        orders.add(new Order("MM0880", "16/06/2024", "15:45", "Nguyen Van D", "Cancelled", 3, "200000 VND"));
-        return orders;
-    }
     private void initFilterUI(View root) {
         FilterOrderDrawerBinding filterOrderDrawerBinding = FilterOrderDrawerBinding.bind(binding.filterOrderDrawer.getRoot());
         DrawerLayout drawerLayout = binding.drawerLayout;
 
-        // Filter Button Handlers
         Button filterButton = binding.filterButton;
-        Button sortButton = binding.sortButton;
         Button applyFilterButton = filterOrderDrawerBinding.applyFilterButton;
         Button cancelFilterButton = filterOrderDrawerBinding.cancelFilterButton;
-        Button clearAllButton = filterOrderDrawerBinding.clearAllButton; // Add this line
+        Button clearAllButton = filterOrderDrawerBinding.clearAllButton;
 
-        filterButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.END));
-        cancelFilterButton.setOnClickListener(v -> drawerLayout.closeDrawer(GravityCompat.END));
-        applyFilterButton.setOnClickListener(v -> applyFilters(root, drawerLayout));
-        clearAllButton.setOnClickListener(v -> clearAllFilters(filterOrderDrawerBinding)); // Add this line
-        sortButton.setOnClickListener(v -> showSortDialog());
+        MaterialCardView waitFilter = filterOrderDrawerBinding.waitStatusFilter;
+        MaterialCardView preparingFilter = filterOrderDrawerBinding.preparingStatusFilter;
+        MaterialCardView deliveringFilter = filterOrderDrawerBinding.deliveringStatusFilter;
+        MaterialCardView successFilter = filterOrderDrawerBinding.successStatusFilter;
+        MaterialCardView cancelledFilter = filterOrderDrawerBinding.cancelledStatusFilter;
 
-        // Price Range Slider
-        setupPriceRangeSlider(filterOrderDrawerBinding);
+        TextView waitText = filterOrderDrawerBinding.waitStatusText;
+        TextView preparingText = filterOrderDrawerBinding.preparingStatusText;
+        TextView deliveringText = filterOrderDrawerBinding.deliveringStatusText;
+        TextView successText = filterOrderDrawerBinding.successStatusText;
+        TextView cancelledText = filterOrderDrawerBinding.cancelledStatusText;
 
-        // Step Spinner
-        setupStepSpinner(filterOrderDrawerBinding.stepSpinner);
-
-        // Date Picker
-        setupDatePicker(filterOrderDrawerBinding);
-
-        // Initialize Status Filters
-        initStatusFilter(filterOrderDrawerBinding);
-
-        // Initialize Customer Filter
-        initCustomerFilter(filterOrderDrawerBinding);
-    }
-
-    private void initCustomerFilter(FilterOrderDrawerBinding filterOrderDrawerBinding) {
-        TextView selectedCustomerTextView = filterOrderDrawerBinding.selectedCustomerTextView;
-        Button customerFilterButton = filterOrderDrawerBinding.customerPicker;
-
-        customerFilterButton.setOnClickListener(v -> {
-            List<Customer> customers = new ArrayList<>();
-            CustomerDialog.showDialog(getActivity(), customers, selectedCustomerTextView);
-        });
-    }
-
-    private void setupPriceRangeSlider(FilterOrderDrawerBinding filterOrderDrawerBinding) {
-        RangeSlider rangeSlider = filterOrderDrawerBinding.priceRangeSlider;
-        TextView textView = filterOrderDrawerBinding.priceRangeText;
-
-        rangeSlider.setLabelFormatter(value -> formatCurrency(value));
-        List<Float> initialValues = rangeSlider.getValues();
-        updateTextPrice(initialValues.get(0), initialValues.get(1), textView);
-
-        rangeSlider.addOnChangeListener((slider, value, fromUser) -> {
-            List<Float> values = slider.getValues();
-            updateTextPrice(values.get(0), values.get(1), textView);
-        });
-    }
-
-    private void setupStepSpinner(Spinner stepSpinner) {
-        stepSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                defaultStep = parseCurrencyString(parent.getItemAtPosition(position).toString());
-                updateTextPrice(binding.filterOrderDrawer.priceRangeSlider.getValues().get(0),
-                        binding.filterOrderDrawer.priceRangeSlider.getValues().get(1),
-                        binding.filterOrderDrawer.priceRangeText);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // Optional: handle when no item is selected
-            }
-        });
-    }
-
-    private void setupDatePicker(FilterOrderDrawerBinding filterOrderDrawerBinding) {
         Button datePickerButton = filterOrderDrawerBinding.datePickerButton;
         TextView dateTextView = filterOrderDrawerBinding.dateTextView;
 
-        // Get the first and last day of the current month
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        long startDate = calendar.getTimeInMillis();
+        // Open the filter drawer
+        filterButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.END));
 
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-        long endDate = calendar.getTimeInMillis();
+        // Close the filter drawer
+        cancelFilterButton.setOnClickListener(v -> drawerLayout.closeDrawer(GravityCompat.END));
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        AtomicReference<String> startDateStr = new AtomicReference<>(sdf.format(new Date(startDate)));
-        AtomicReference<String> endDateStr = new AtomicReference<>(sdf.format(new Date(endDate)));
-
-        dateTextView.setText("From: " + startDateStr + "\nTo: " + endDateStr);
-
-        datePickerButton.setOnClickListener(v -> {
-            MaterialDatePicker<Pair<Long, Long>> dateRangePicker = MaterialDatePicker.Builder.dateRangePicker()
-                    .setTitleText("Select a date range")
-                    .setSelection(new Pair<>(startDate, endDate))
-                    .setTheme(R.style.CustomDatePickerTheme)
-                    .build();
-
-            dateRangePicker.show(getChildFragmentManager(), "DATE_RANGE_PICKER");
-            dateRangePicker.addOnPositiveButtonClickListener(selection -> {
-                startDateStr.set(sdf.format(new Date(selection.first)));
-                endDateStr.set(sdf.format(new Date(selection.second)));
-                dateTextView.setText("From: " + startDateStr + "\nTo: " + endDateStr);
-            });
+        // Apply filters
+        applyFilterButton.setOnClickListener(v -> {
+            applyFilters(binding.searchView.getQuery().toString());
+            drawerLayout.closeDrawer(GravityCompat.END);
         });
+
+        // Clear all filters
+        clearAllButton.setOnClickListener(v -> {
+            clearAllFilters(waitFilter, preparingFilter, deliveringFilter, successFilter, cancelledFilter, dateTextView);
+            applyFilters(binding.searchView.getQuery().toString());
+        });
+
+        // Set up status filter click listeners
+        waitFilter.setOnClickListener(v -> toggleStatusFilter(waitFilter, "Wait", waitText));
+        preparingFilter.setOnClickListener(v -> toggleStatusFilter(preparingFilter, "Preparing", preparingText));
+        deliveringFilter.setOnClickListener(v -> toggleStatusFilter(deliveringFilter, "Delivering", deliveringText));
+        successFilter.setOnClickListener(v -> toggleStatusFilter(successFilter, "Success", successText));
+        cancelledFilter.setOnClickListener(v -> toggleStatusFilter(cancelledFilter, "Cancelled", cancelledText));
+
+        // Set up the date picker
+        datePickerButton.setOnClickListener(v -> showDatePickerDialog(dateTextView));
+
+        // Set up sort button
+        binding.sortButton.setOnClickListener(v -> showSortDialog());
     }
 
-    private void setDefaultDateRange() {
-        // This can be handled in setupDatePicker if preferred
-        // Placeholder for additional setup if needed
-    }
-
-    private void updateTextPrice(float from, float to, TextView textView) {
-        textView.setText("From: " + formatCurrency(from) + " To: " + formatCurrency(to));
-    }
-
-    private int parseCurrencyString(String currencyString) {
-        currencyString = currencyString.replace(" đ", "").replace(".", "");
-        if (currencyString.endsWith("0") && currencyString.length() > 1) {
-            currencyString = currencyString.substring(0, currencyString.length() - 1);
+    private void toggleStatusFilter(MaterialCardView card, String status, TextView textView) {
+        if (!card.isChecked()) {
+            selectedStatuses.add(status);
+        } else {
+            selectedStatuses.remove(status);
         }
-        try {
-            return Integer.parseInt(currencyString);
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            return 0;
+        card.setChecked(!card.isChecked());
+        if (card.isChecked()) {
+            card.setCardBackgroundColor(getResources().getColor(R.color.blue_500));
+            textView.setTextColor(Color.WHITE);
+        } else {
+            card.setCardBackgroundColor(getResources().getColor(R.color.filter_item_background));
+            textView.setTextColor(Color.parseColor("#006FFD"));
         }
     }
 
-    private String formatCurrency(float value) {
-        return NumberFormat.getCurrencyInstance(new Locale("vi", "VN")).format(value * defaultStep);
-    }
+    private void applyFilters(String query) {
+        filteredOrderList.clear();
 
-    private void initStatusFilter(FilterOrderDrawerBinding filterOrderDrawerBinding) {
-        setupCardClickListener(filterOrderDrawerBinding.waitStatusFilter, filterOrderDrawerBinding.waitStatusText);
-        setupCardClickListener(filterOrderDrawerBinding.cancelledStatusFilter, filterOrderDrawerBinding.cancelledStatusText);
-        setupCardClickListener(filterOrderDrawerBinding.successStatusFilter, filterOrderDrawerBinding.successStatusText);
-        setupCardClickListener(filterOrderDrawerBinding.deliveringStatusFilter, filterOrderDrawerBinding.deliveringStatusText);
-        setupCardClickListener(filterOrderDrawerBinding.preparingStatusFilter, filterOrderDrawerBinding.preparingStatusText);
-    }
+        if (query.isEmpty() && selectedStatuses.isEmpty() && selectedDate.isEmpty()) {
+            filteredOrderList.addAll(orderList);
+        } else {
+            for (Order order : orderList) {
+                boolean matchesStatus = selectedStatuses.isEmpty() || selectedStatuses.contains(order.getStatus());
+                boolean matchesDate = selectedDate.isEmpty() || order.getDate().equals(selectedDate);
 
-    private void setupCardClickListener(final MaterialCardView card, final TextView textView) {
-        card.setOnClickListener(view -> {
-            card.setChecked(!card.isChecked());
-            if (card.isChecked()) {
-                card.setCardBackgroundColor(getResources().getColor(R.color.blue_500));
-                textView.setTextColor(Color.WHITE);
-            } else {
-                card.setCardBackgroundColor(getResources().getColor(R.color.filter_item_background));
-                textView.setTextColor(Color.parseColor("#006FFD"));
+                if ((order.getCustomerName().toLowerCase().contains(query.toLowerCase()) ||
+                        order.getOrderId().toLowerCase().contains(query.toLowerCase()))
+                        && matchesStatus && matchesDate) {
+                    filteredOrderList.add(order);
+                }
             }
-        });
-    }
-
-    private void applyFilters(View root, DrawerLayout drawerLayout) {
-        // Close the drawer after applying filters
-        drawerLayout.closeDrawer(GravityCompat.END);
-    }
-
-    private void clearAllFilters(FilterOrderDrawerBinding filterOrderDrawerBinding) {
-        // Reset Price Range Slider
-        RangeSlider rangeSlider = filterOrderDrawerBinding.priceRangeSlider;
-        rangeSlider.setValues(20f, 70f);
-        updateTextPrice(20f, 70f, filterOrderDrawerBinding.priceRangeText);
-
-        // Reset Step Spinner
-        Spinner stepSpinner = filterOrderDrawerBinding.stepSpinner;
-        stepSpinner.setSelection(0);
-
-        // Reset Date Picker
-        TextView dateTextView = filterOrderDrawerBinding.dateTextView;
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        long startDate = calendar.getTimeInMillis();
-        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
-        long endDate = calendar.getTimeInMillis();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        dateTextView.setText("From: " + sdf.format(new Date(startDate)) + "\nTo: " + sdf.format(new Date(endDate)));
-
-        // Reset Status Filters
-        resetCard(filterOrderDrawerBinding.waitStatusFilter, filterOrderDrawerBinding.waitStatusText);
-        resetCard(filterOrderDrawerBinding.cancelledStatusFilter, filterOrderDrawerBinding.cancelledStatusText);
-        resetCard(filterOrderDrawerBinding.successStatusFilter, filterOrderDrawerBinding.successStatusText);
-        resetCard(filterOrderDrawerBinding.deliveringStatusFilter, filterOrderDrawerBinding.deliveringStatusText);
-        resetCard(filterOrderDrawerBinding.preparingStatusFilter, filterOrderDrawerBinding.preparingStatusText);
-
-        // Reset Customer Filter
-        TextView selectedCustomerTextView = filterOrderDrawerBinding.selectedCustomerTextView;
-        selectedCustomerTextView.setText("Select Customer");
-    }
-
-    private void showSortDialog() {
-        // Define the sorting options
-        String[] sortOptions = {"Sort by Date", "Sort by Price", "Sort by Name"};
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity()); // Use requireActivity() for context
-        builder.setTitle("Select Sort Option")
-                .setItems(sortOptions, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Handle the sorting logic based on the selected option
-                        sortOrders(which); // Call the sorting method
-                    }
-                })
-                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-                .show();
-    }
-    private void sortOrders(int which) {
-        switch (which) {
-            case 0:
-                orderList.sort(Comparator.comparing(Order::getDate));
-                break;
-            case 1:
-                orderList.sort(Comparator.comparing(order -> parseCurrencyString(order.getValue())));
-                break;
-            case 2:
-                orderList.sort(Comparator.comparing(Order::getCustomerName));
-                break;
         }
+
         adapter.notifyDataSetChanged();
     }
 
+    private void clearAllFilters(MaterialCardView waitFilter, MaterialCardView preparingFilter, MaterialCardView deliveringFilter,
+                                 MaterialCardView successFilter, MaterialCardView cancelledFilter, TextView dateTextView) {
+        // Clear status filters
+        waitFilter.setChecked(false);
+        preparingFilter.setChecked(false);
+        deliveringFilter.setChecked(false);
+        successFilter.setChecked(false);
+        cancelledFilter.setChecked(false);
+        selectedStatuses.clear();
 
-    private void resetCard(MaterialCardView card, TextView textView) {
-        card.setChecked(false);
-        card.setCardBackgroundColor(getResources().getColor(R.color.filter_item_background));
-        textView.setTextColor(Color.parseColor("#006FFD"));
+        // Clear date filter
+        selectedDate = "";
+        dateTextView.setText("Selected Date will appear here");
+    }
+
+    private void showDatePickerDialog(TextView dateTextView) {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(), (view, year, month, dayOfMonth) -> {
+            selectedDate = String.format(Locale.getDefault(), "%02d/%02d/%04d", dayOfMonth, month + 1, year);
+            dateTextView.setText(selectedDate);
+        }, 2023, 0, 1);
+
+        datePickerDialog.show();
+    }
+
+    private void showSortDialog() {
+        String[] sortOptions = {"Sort by Date (Newest First)", "Sort by Date (Oldest First)", "Sort by Price (High to Low)", "Sort by Price (Low to High)"};
+
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Sort Orders")
+                .setItems(sortOptions, (dialog, which) -> {
+                    switch (which) {
+                        case 0:
+                            sortOrders(Comparator.comparing(Order::getDate).reversed());
+                            break;
+                        case 1:
+                            sortOrders(Comparator.comparing(Order::getDate));
+                            break;
+                        case 2:
+                            sortOrders(Comparator.comparing(Order::getValue).reversed());
+                            break;
+                        case 3:
+                            sortOrders(Comparator.comparing(Order::getValue));
+                            break;
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void sortOrders(Comparator<Order> comparator) {
+        Collections.sort(filteredOrderList, comparator);
+        adapter.notifyDataSetChanged();
     }
 
     @Override

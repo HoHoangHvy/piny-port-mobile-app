@@ -15,7 +15,9 @@ import com.example.pinyport.R;
 import com.example.pinyport.model.Order;
 import com.google.android.material.card.MaterialCardView;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapter.OrderViewHolder> {
     private List<Order> orderList;
@@ -58,13 +60,16 @@ public class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapter.Orde
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
         Order order = orderList.get(position);
-        holder.orderId.setText("#" + order.getOrderId());
+        holder.orderId.setText("#" + order.getOrderNumber());
         holder.orderDate.setText(order.getDate());
         holder.orderTime.setText(order.getTime());
         holder.orderStatus.setText(order.getStatus());
         setStatusColor(holder.orderStatus, order.getStatus());
         holder.orderItemsCount.setText(order.getItemsCount() + " items");
-        holder.orderValue.setText(order.getValue());
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        String formattedPrice = formatter.format(order.getValue());
+
+        holder.orderValue.setText(formattedPrice);
         holder.orderCustomer.setText(order.getCustomerName());
 
         // Set click listener for the entire item view
