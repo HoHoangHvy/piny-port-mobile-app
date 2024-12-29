@@ -207,9 +207,11 @@
                     android:textSize="16sp"
                     android:textStyle="bold" />
 
+                <!-- Added ID for RecyclerView -->
                 <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvOrderDetails"
                     android:layout_width="match_parent"
-                    android:layout_height="105dp"></androidx.recyclerview.widget.RecyclerView>
+                    android:layout_height="105dp" />
 
                 <View
                     android:layout_width="match_parent"
@@ -233,70 +235,88 @@
                         android:layout_height="wrap_content"
                         app:justifyContent="space_between">
                         <TextView
+                            android:id="@+id/tvTotalItems"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Total (2 items)"
                             android:textSize="14sp"/>
-                        <TextView android:layout_width="wrap_content"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="180.000 VND"
                             android:textSize="14sp"/>
                     </com.google.android.flexbox.FlexboxLayout>
+
+                    <!-- Added ID for Shipping Fee -->
                     <com.google.android.flexbox.FlexboxLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:justifyContent="space_between">
                         <TextView
+                            android:id="@+id/tvShippingFee"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Shipping fee"
                             android:textSize="14sp"/>
-                        <TextView android:layout_width="wrap_content"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="20.000 VND"
                             android:textSize="14sp"/>
                     </com.google.android.flexbox.FlexboxLayout>
+
+                    <!-- Added ID for Discount -->
                     <com.google.android.flexbox.FlexboxLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:justifyContent="space_between">
                         <TextView
+                            android:id="@+id/tvDiscount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Discount"
                             android:textSize="14sp"/>
-                        <TextView android:layout_width="wrap_content"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="-30.000 VND"
                             android:textSize="14sp"/>
                     </com.google.android.flexbox.FlexboxLayout>
+
+                    <!-- Added ID for Total Amount -->
                     <com.google.android.flexbox.FlexboxLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:justifyContent="space_between">
                         <TextView
+                            android:id="@+id/tvTotalAmount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Total amount"
                             android:textSize="14sp"
                             android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="170.000 VND"
                             android:textSize="14sp"
                             android:textStyle="bold"/>
                     </com.google.android.flexbox.FlexboxLayout>
+
+                    <!-- Added ID for Payment Method -->
                     <com.google.android.flexbox.FlexboxLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:justifyContent="space_between">
                         <TextView
+                            android:id="@+id/tvPaymentMethod"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Payment Method: "
                             android:textSize="14sp"
                             android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Momo"
                             android:textSize="14sp"
@@ -305,6 +325,7 @@
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
+
         <!-- Customer Feedback Section -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"

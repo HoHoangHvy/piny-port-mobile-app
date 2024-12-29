@@ -6,6 +6,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Body;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 import com.example.pinyport.DTO.CreateOrderRequest;
@@ -27,7 +28,8 @@ public interface ApiService {
     Call<JsonObject> getOrders();
     @POST("orders")
     Call<Customer> createOrders(@Body CreateOrderRequest request);
-
+    @GET("loadOrderDetail/{orderId}")
+    Call<JsonObject> getOrderDetails(@Path("orderId") String orderId);
     @GET("loadCustomerOrdersHistory")
     Call<JsonObject> getOrderHistory(@Query("customerId") String customerId);
     @POST("customers")
