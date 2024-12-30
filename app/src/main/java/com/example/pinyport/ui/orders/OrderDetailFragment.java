@@ -200,10 +200,11 @@ public class OrderDetailFragment extends Fragment {
             TextView tvVoucherDiscount = voucherView.findViewById(R.id.tvVoucherDiscount);
 
             String discountAmount = voucherObject.get("discount_amount").getAsString();
+            String discountPercent = voucherObject.get("discount_percent").getAsString();
             String discountType = voucherObject.get("discount_type").getAsString();
 
-            tvVoucherType.setText(applyType.equals("discount") ? "Discount Voucher" : "Shipping Fee Voucher");
-            tvVoucherDiscount.setText(discountType.equals("percent") ? discountAmount + "% off" : discountAmount + " VND off");
+            tvVoucherType.setText(voucherObject.get("voucher_code").getAsString());
+            tvVoucherDiscount.setText(discountType.equals("percent") ? discountPercent + "%" : discountAmount + " VND");
 
             // Set background color based on voucher type
             View voucherItemContainer = voucherView.findViewById(R.id.voucherItemContainer);
