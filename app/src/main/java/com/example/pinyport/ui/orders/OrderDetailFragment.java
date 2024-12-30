@@ -90,7 +90,12 @@ public class OrderDetailFragment extends Fragment {
 
         // Fetch order details
         if (order != null) {
-            fetchOrderDetails(order.getOrderId());
+            try {
+                fetchOrderDetails(order.getOrderId());
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(requireContext(), "Failed to fetch order details", Toast.LENGTH_SHORT).show();
+            }
         } else {
             Toast.makeText(requireContext(), "Order not found", Toast.LENGTH_SHORT).show();
         }
