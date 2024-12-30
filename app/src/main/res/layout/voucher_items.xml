@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/layout/voucher_item.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/voucherItemContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="@drawable/voucher_background_discount"> <!-- Default background for discount vouchers -->
+
+    <TextView
+        android:id="@+id/tvVoucherType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Discount Voucher"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvVoucherDiscount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="10% off"
+        android:textSize="14sp" />
+</LinearLayout>

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,7 +39,7 @@ public class OrderDetailFragment extends Fragment {
 
     private Order order;
     private TextView tvCustomerName, tvCustomerPhone, tvCustomerLevel;
-    private TextView tvOrderId, tvOrderDateTime, tvOrderFromName, tvOrderFromAddress, tvOrderToName, tvOrderToAddress;
+    private TextView tvOrderId, tvOrderDateTime, tvOrderFromName, tvOrderFromAddress, tvOrderToName, tvOrderToAddress, tvTotalPrice;
     private TextView tvTotalItems, tvShippingFee, tvDiscount, tvTotalAmount, tvPaymentMethod;
     private TextView tvFeedbackTime, tvFeedbackRating, tvFeedbackContent;
     private RecyclerView rvOrderDetails;
@@ -73,6 +75,7 @@ public class OrderDetailFragment extends Fragment {
         tvOrderToName = view.findViewById(R.id.order_to_name);
         tvOrderToAddress = view.findViewById(R.id.order_to_address);
 
+        tvTotalPrice = view.findViewById(R.id.tvTotalPrice);
         tvTotalItems = view.findViewById(R.id.tvTotalItems);
         tvShippingFee = view.findViewById(R.id.tvShippingFee);
         tvDiscount = view.findViewById(R.id.tvDiscount);
@@ -128,6 +131,8 @@ public class OrderDetailFragment extends Fragment {
     }
 
     private void bindOrderDetails(JsonObject orderObject) {
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+
         // Bind customer details
         tvCustomerName.setText("Name: " + orderObject.get("customer_name").getAsString());
         tvCustomerPhone.setText("Phone: " + orderObject.get("customer_phone").getAsString());
@@ -142,10 +147,11 @@ public class OrderDetailFragment extends Fragment {
         tvOrderToAddress.setText(orderObject.get("to_address").getAsString());
 
         // Bind payment details
+        tvTotalPrice.setText(formatter.format(orderObject.get("total_price").getAsDouble()));
         tvTotalItems.setText("Total (" + orderObject.get("count_product").getAsString() + " items)");
-        tvShippingFee.setText(orderObject.get("shipping_fee").getAsString() + " VND");
-        tvDiscount.setText("-" + orderObject.get("discount").getAsString() + " VND");
-        tvTotalAmount.setText(orderObject.get("total_price").getAsString() + " VND");
+        tvShippingFee.setText(formatter.format(orderObject.get("shipping_fee").getAsDouble()));
+        tvDiscount.setText("-" + formatter.format(orderObject.get("discount").getAsDouble()));
+        tvTotalAmount.setText(formatter.format(orderObject.get("order_total").getAsDouble()));
         tvPaymentMethod.setText(orderObject.get("payment_method").getAsString());
 
         // Bind feedback details
@@ -160,8 +166,59 @@ public class OrderDetailFragment extends Fragment {
         JsonArray orderDetailsArray = orderObject.getAsJsonArray("order_detail");
         List<OrderDetail> orderDetails = parseOrderDetails(orderDetailsArray);
         orderDetailAdapter.updateOrderDetails(orderDetails);
-    }
 
+        // Bind vouchers
+        if (orderObject.has("vouchers") && !orderObject.get("vouchers").isJsonNull()) {
+            JsonArray vouchersArray = orderObject.getAsJsonArray("vouchers");
+            LinearLayout voucherContainer = getView().findViewById(R.id.voucher_container);
+            bindVouchers(vouchersArray, voucherContainer);
+        }
+    }
+    private void bindVouchers(JsonArray vouchersArray, LinearLayout voucherContainer) {
+        voucherContainer.removeAllViews(); // Clear existing views
+
+        // Track selected vouchers
+        boolean hasDiscountVoucher = false;
+        boolean hasShippingVoucher = false;
+
+        for (JsonElement element : vouchersArray) {
+            JsonObject voucherObject = element.getAsJsonObject();
+
+            String applyType = voucherObject.get("apply_type").getAsString();
+
+            // Allow only one voucher of each type
+            if ((applyType.equals("discount") && hasDiscountVoucher) ||
+                    (applyType.equals("shipping_fee") && hasShippingVoucher)) {
+                continue;
+            }
+
+            // Inflate voucher item layout
+            View voucherView = LayoutInflater.from(requireContext()).inflate(R.layout.voucher_items, voucherContainer, false);
+
+            // Bind voucher data
+            TextView tvVoucherType = voucherView.findViewById(R.id.tvVoucherType);
+            TextView tvVoucherDiscount = voucherView.findViewById(R.id.tvVoucherDiscount);
+
+            String discountAmount = voucherObject.get("discount_amount").getAsString();
+            String discountType = voucherObject.get("discount_type").getAsString();
+
+            tvVoucherType.setText(applyType.equals("discount") ? "Discount Voucher" : "Shipping Fee Voucher");
+            tvVoucherDiscount.setText(discountType.equals("percent") ? discountAmount + "% off" : discountAmount + " VND off");
+
+            // Set background color based on voucher type
+            View voucherItemContainer = voucherView.findViewById(R.id.voucherItemContainer);
+            if (applyType.equals("discount")) {
+                voucherItemContainer.setBackgroundResource(R.drawable.voucher_background_discount);
+                hasDiscountVoucher = true;
+            } else if (applyType.equals("shipping_fee")) {
+                voucherItemContainer.setBackgroundResource(R.drawable.voucher_background_shipping);
+                hasShippingVoucher = true;
+            }
+
+            // Add the voucher view to the container
+            voucherContainer.addView(voucherView);
+        }
+    }
     private List<OrderDetail> parseOrderDetails(JsonArray orderDetailsArray) {
         List<OrderDetail> orderDetails = new ArrayList<>();
         for (JsonElement element : orderDetailsArray) {
