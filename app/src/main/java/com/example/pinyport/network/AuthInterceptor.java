@@ -24,6 +24,8 @@ public class AuthInterceptor implements Interceptor {
         if (token != null) {
             // Add the token to the request headers
             Request newRequest = originalRequest.newBuilder()
+                    .header("Content-Type", "application/json")
+                    .header("Accept", "application/json")
                     .header("Authorization", "Bearer " + token) // Add "Bearer" prefix if required
                     .build();
             return chain.proceed(newRequest);

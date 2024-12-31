@@ -4,8 +4,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,7 +50,17 @@ public class OrderDetailFragment extends Fragment {
     private RecyclerView rvOrderDetails;
     private OrderDetailAdapter orderDetailAdapter;
     private LinearLayout starContainer;
-
+    private Spinner spinnerStatus;
+    private Button btnUpdateStatus;
+    private ApiService apiService;
+    private static final String[] STATUS_LIST = {
+            "Wait For Approval",
+            "In Progress",
+            "Delivering",
+            "Delivered",
+            "Completed",
+            "Cancelled"
+    };
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,11 +73,12 @@ public class OrderDetailFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.order_detail_fragment, container, false);
-    }
+            }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        apiService = ApiClient.getClient(requireContext()).create(ApiService.class);
 
         // Initialize views
         tvCustomerName = view.findViewById(R.id.customer_name);
@@ -95,6 +109,21 @@ public class OrderDetailFragment extends Fragment {
         rvOrderDetails.setAdapter(orderDetailAdapter);
         starContainer = view.findViewById(R.id.starContainer);
 
+        spinnerStatus = view.findViewById(R.id.spinnerStatus);
+        btnUpdateStatus = view.findViewById(R.id.btnUpdateStatus);
+
+        // Set up the Spinner
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_spinner_item,
+                STATUS_LIST
+        );
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerStatus.setAdapter(adapter);
+
+        // Set up the Update Button
+        btnUpdateStatus.setOnClickListener(v -> updateOrderStatus());
+
         // Fetch order details
         if (order != null) {
             try {
@@ -108,8 +137,30 @@ public class OrderDetailFragment extends Fragment {
         }
     }
 
+    private void updateOrderStatus() {
+        String newStatus = spinnerStatus.getSelectedItem().toString();
+        String orderId = order.getOrderId();
+
+        JsonObject requestBody = new JsonObject();
+        requestBody.addProperty("order_status", newStatus);
+
+        apiService.updateOrderStatus(orderId, requestBody).enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful()) {
+                    Toast.makeText(requireContext(), "Status updated successfully", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(requireContext(), "Failed to update status", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                Toast.makeText(requireContext(), "Failed to update status: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
     private void fetchOrderDetails(String orderId) {
-        ApiService apiService = ApiClient.getClient(requireContext()).create(ApiService.class);
         apiService.getOrderDetails(orderId).enqueue(new Callback<JsonObject>() {
             @Override
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
@@ -177,6 +228,18 @@ public class OrderDetailFragment extends Fragment {
             LinearLayout voucherContainer = getView().findViewById(R.id.voucher_container);
             bindVouchers(vouchersArray, voucherContainer);
         }
+
+        //Bind status
+        spinnerStatus.setSelection(getStatusIndex(orderObject.get("status").getAsString()));
+    }
+
+    private int getStatusIndex(String status) {
+        for (int i = 0; i < STATUS_LIST.length; i++) {
+            if (STATUS_LIST[i].equals(status)) {
+                return i;
+            }
+        }
+        return 0;
     }
 
     private void bindVouchers(JsonArray vouchersArray, LinearLayout voucherContainer) {

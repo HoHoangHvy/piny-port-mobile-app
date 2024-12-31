@@ -6,6 +6,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Body;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -46,4 +47,7 @@ public interface ApiService {
 
     @POST("customers") // Replace with your actual endpoint
     Call<JsonObject> createCustomer(@Body CustomerRequest customerRequest);
+
+    @POST("orders/status/{orderId}")
+    Call<JsonObject> updateOrderStatus(@Path("orderId") String orderId, @Body JsonObject requestBody);
 }
