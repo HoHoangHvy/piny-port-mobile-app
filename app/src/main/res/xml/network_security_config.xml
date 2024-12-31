@@ -4,5 +4,6 @@
         <domain includeSubdomains="true">10.0.2.2</domain> <!-- Allow traffic to the emulator's localhost -->
         <domain includeSubdomains="true">localhost</domain> <!-- Allow traffic to localhost -->
         <domain includeSubdomains="true">127.0.0.1</domain> <!-- Allow traffic to 127.0.0.1 -->
+        <domain includeSubdomains="true">weevil-exotic-thankfully.ngrok-free.app</domain>
     </domain-config>
 </network-security-config>

@@ -4,10 +4,20 @@ import java.util.List;
 
 public class OrderDetail {
     private String productName;
-    private String productPrice;
+    private double productPrice;
     private int quantity;
     private List<Topping> toppings;
+    private String productImageUrl; // Add this field
 
+    public OrderDetail(String productName, double productPrice, int quantity, List<Topping> toppings, String productImageUrl) {
+        this.productName = productName;
+        this.productPrice = productPrice;
+        this.quantity = quantity;
+        this.toppings = toppings;
+        this.productImageUrl = productImageUrl;
+    }
+
+    // Getters and setters
     public String getProductName() {
         return productName;
     }
@@ -16,11 +26,11 @@ public class OrderDetail {
         this.productName = productName;
     }
 
-    public String getProductPrice() {
+    public double getProductPrice() {
         return productPrice;
     }
 
-    public void setProductPrice(String productPrice) {
+    public void setProductPrice(double productPrice) {
         this.productPrice = productPrice;
     }
 
@@ -40,14 +50,13 @@ public class OrderDetail {
         this.toppings = toppings;
     }
 
-    public OrderDetail(String productName, String productPrice, int quantity, List<Topping> toppings) {
-        this.productName = productName;
-        this.productPrice = productPrice;
-        this.quantity = quantity;
-        this.toppings = toppings;
+    public String getProductImageUrl() {
+        return productImageUrl;
     }
 
-    // Getters and setters
+    public void setProductImageUrl(String productImageUrl) {
+        this.productImageUrl = productImageUrl;
+    }
 
     public static class Topping {
         private String name;
@@ -59,8 +68,6 @@ public class OrderDetail {
         }
 
         // Getters and setters
-
-
         public String getName() {
             return name;
         }

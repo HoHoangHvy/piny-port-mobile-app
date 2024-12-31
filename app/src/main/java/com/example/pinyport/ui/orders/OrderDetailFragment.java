@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -14,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.pinyport.R;
 import com.example.pinyport.adapter.OrderDetailAdapter;
 import com.example.pinyport.model.Order;
@@ -44,6 +46,7 @@ public class OrderDetailFragment extends Fragment {
     private TextView tvFeedbackTime, tvFeedbackRating, tvFeedbackContent;
     private RecyclerView rvOrderDetails;
     private OrderDetailAdapter orderDetailAdapter;
+    private LinearLayout starContainer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,6 +93,7 @@ public class OrderDetailFragment extends Fragment {
         rvOrderDetails.setLayoutManager(new LinearLayoutManager(getContext()));
         orderDetailAdapter = new OrderDetailAdapter(new ArrayList<>());
         rvOrderDetails.setAdapter(orderDetailAdapter);
+        starContainer = view.findViewById(R.id.starContainer);
 
         // Fetch order details
         if (order != null) {
@@ -158,8 +162,8 @@ public class OrderDetailFragment extends Fragment {
         if (orderObject.has("feedback") && !orderObject.get("feedback").isJsonNull()) {
             JsonObject feedbackObject = orderObject.getAsJsonObject("feedback");
             tvFeedbackTime.setText(formatDateTime(feedbackObject.get("feedback_time").getAsString()));
-            tvFeedbackRating.setText("Rating: " + feedbackObject.get("rating").getAsString());
             tvFeedbackContent.setText("Content: " + feedbackObject.get("content").getAsString());
+            setStarRating(starContainer, feedbackObject.get("rating").getAsInt());
         }
 
         // Bind order items
@@ -174,6 +178,7 @@ public class OrderDetailFragment extends Fragment {
             bindVouchers(vouchersArray, voucherContainer);
         }
     }
+
     private void bindVouchers(JsonArray vouchersArray, LinearLayout voucherContainer) {
         voucherContainer.removeAllViews(); // Clear existing views
 
@@ -197,14 +202,12 @@ public class OrderDetailFragment extends Fragment {
 
             // Bind voucher data
             TextView tvVoucherType = voucherView.findViewById(R.id.tvVoucherType);
-            TextView tvVoucherDiscount = voucherView.findViewById(R.id.tvVoucherDiscount);
 
             String discountAmount = voucherObject.get("discount_amount").getAsString();
             String discountPercent = voucherObject.get("discount_percent").getAsString();
             String discountType = voucherObject.get("discount_type").getAsString();
 
             tvVoucherType.setText(voucherObject.get("voucher_code").getAsString());
-            tvVoucherDiscount.setText(discountType.equals("percent") ? discountPercent + "%" : discountAmount + " VND");
 
             // Set background color based on voucher type
             View voucherItemContainer = voucherView.findViewById(R.id.voucherItemContainer);
@@ -220,15 +223,38 @@ public class OrderDetailFragment extends Fragment {
             voucherContainer.addView(voucherView);
         }
     }
+    public static void setStarRating(LinearLayout starContainer, int rating) {
+        starContainer.removeAllViews(); // Clear existing stars
+
+        for (int i = 0; i < 5; i++) {
+            ImageView star = new ImageView(starContainer.getContext());
+            if (i < rating) {
+                star.setImageResource(R.drawable.star_full); // Full star
+            } else {
+                star.setImageResource(R.drawable.star_empty); // Empty star
+            }
+
+            // Set star size and margins
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(4, 0, 4, 0); // Adjust margins as needed
+            star.setLayoutParams(params);
+
+            starContainer.addView(star);
+        }
+    }
     private List<OrderDetail> parseOrderDetails(JsonArray orderDetailsArray) {
         List<OrderDetail> orderDetails = new ArrayList<>();
         for (JsonElement element : orderDetailsArray) {
             JsonObject detailObject = element.getAsJsonObject();
             OrderDetail orderDetail = new OrderDetail(
                     detailObject.get("product_name").getAsString(),
-                    detailObject.get("product_price").getAsString(),
+                    detailObject.get("total_price").getAsDouble(),
                     detailObject.get("quantity").getAsInt(),
-                    parseToppings(detailObject.getAsJsonArray("toppings"))
+                    parseToppings(detailObject.getAsJsonArray("toppings")),
+                    detailObject.get("image").getAsString() // Add image URL
             );
             orderDetails.add(orderDetail);
         }

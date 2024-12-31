@@ -3,15 +3,19 @@ package com.example.pinyport.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.pinyport.R;
 import com.example.pinyport.model.OrderDetail;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.OrderDetailViewHolder> {
 
@@ -45,10 +49,12 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
     }
 
     static class OrderDetailViewHolder extends RecyclerView.ViewHolder {
+        private ImageView ivProductImage;
         private TextView tvProductName, tvProductPrice, tvQuantity, tvToppings;
 
         public OrderDetailViewHolder(@NonNull View itemView) {
             super(itemView);
+            ivProductImage = itemView.findViewById(R.id.ivProductImage);
             tvProductName = itemView.findViewById(R.id.tvProductName);
             tvProductPrice = itemView.findViewById(R.id.tvProductPrice);
             tvQuantity = itemView.findViewById(R.id.tvQuantity);
@@ -56,9 +62,16 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
         }
 
         public void bind(OrderDetail orderDetail) {
+            NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+
             tvProductName.setText(orderDetail.getProductName());
-            tvProductPrice.setText(String.format("Price: %s VND", orderDetail.getProductPrice()));
-            tvQuantity.setText(String.format("Quantity: %d", orderDetail.getQuantity()));
+            tvProductPrice.setText(String.format("%s", formatter.format((orderDetail.getProductPrice()))));
+            tvQuantity.setText(String.format("x%d", orderDetail.getQuantity()));
+
+            // Load product image using Glide
+            Glide.with(itemView.getContext())
+                    .load(orderDetail.getProductImageUrl())// Add an error image
+                    .into(ivProductImage);
 
             // Display toppings
             StringBuilder toppingsBuilder = new StringBuilder("Toppings: ");
