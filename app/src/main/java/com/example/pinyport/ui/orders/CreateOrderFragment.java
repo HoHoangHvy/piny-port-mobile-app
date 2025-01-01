@@ -88,7 +88,7 @@ public class CreateOrderFragment extends Fragment {
                                 if (selectedCustomer != null) {
                                     // Update the AutoCompleteTextView with the customer's name
                                     autoCompleteCustomer.setText(selectedCustomer.getName());
-
+                                    selectedCustomerId = selectedCustomer.getId();
                                     // Optional: Display a toast or handle additional logic
                                     Toast.makeText(requireContext(), "Selected: " + selectedCustomer.getName(), Toast.LENGTH_SHORT).show();
                                 }
