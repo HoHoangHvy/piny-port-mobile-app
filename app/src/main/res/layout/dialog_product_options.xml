@@ -1,12 +1,19 @@
-<!-- dialog_product_selection.xml -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="16dp">
 
+    <!-- SearchView for searching products -->
+    <SearchView
+        android:id="@+id/search_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:queryHint="Search products" />
+
+    <!-- RecyclerView for displaying products -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_products"
         android:layout_width="match_parent"
-        android:layout_height="300dp" />
-
+        android:layout_height="500dp" />
 </LinearLayout>

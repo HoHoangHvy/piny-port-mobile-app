@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -43,6 +44,8 @@ public class CreateOrderFragment extends Fragment {
     private AutoCompleteTextView autoCompleteCustomer;
     private CustomerOptionAdapter customerAdapter;
     private String selectedCustomerId;
+    private ProductAdapter productAdapter;
+    private List<Product> filteredProducts;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -147,10 +150,11 @@ public class CreateOrderFragment extends Fragment {
         });
     }
 
-
     private void showProductSelectionDialog(List<Product> products) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_product_options, null);
+
+        SearchView searchView = dialogView.findViewById(R.id.search_view);
         RecyclerView rvProducts = dialogView.findViewById(R.id.rv_products);
 
         AlertDialog dialog = builder.setView(dialogView)
@@ -158,15 +162,48 @@ public class CreateOrderFragment extends Fragment {
                 .setNegativeButton("Cancel", (dialog1, which) -> dialog1.dismiss())
                 .create();
 
-        ProductAdapter adapter = new ProductAdapter(requireContext(), products, product -> {
+        filteredProducts = new ArrayList<>(products); // Start with all products
+        productAdapter = new ProductAdapter(requireContext(), filteredProducts, product -> {
             dialog.dismiss();
             addProductToOrder(product);
         });
 
-        rvProducts.setAdapter(adapter);
+        rvProducts.setAdapter(productAdapter);
         rvProducts.setLayoutManager(new LinearLayoutManager(requireContext()));
+
+        // Set up search functionality
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                filterProducts(query, products);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filterProducts(newText, products);
+                return true;
+            }
+        });
+
         dialog.show();
     }
+
+    private void filterProducts(String query, List<Product> originalProducts) {
+        filteredProducts.clear();
+        if (query == null || query.trim().isEmpty()) {
+            filteredProducts.addAll(originalProducts); // Reset to full list
+        } else {
+            String lowerCaseQuery = query.toLowerCase();
+            for (Product product : originalProducts) {
+                if (product.getName().toLowerCase().contains(lowerCaseQuery)) {
+                    filteredProducts.add(product);
+                }
+            }
+        }
+        productAdapter.setProducts(filteredProducts); // Refresh the RecyclerView
+    }
+
 
     private void addProductToOrder(Product product) {
         OrderDetail orderDetail = new OrderDetail(

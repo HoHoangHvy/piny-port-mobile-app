@@ -1,6 +1,7 @@
 package com.example.pinyport.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,16 +15,21 @@ import com.bumptech.glide.Glide;
 import com.example.pinyport.R;
 import com.example.pinyport.model.Product;
 
+import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductViewHolder> {
     private Context context;
-    private List<Product> products;
+    private List<Product> originalProducts;
+    private List<Product> filteredProducts;
     private OnProductClickListener listener;
 
     public ProductAdapter(Context context, List<Product> products, OnProductClickListener listener) {
         this.context = context;
-        this.products = products;
+        this.originalProducts = new ArrayList<>(products);
+        this.filteredProducts = new ArrayList<>(products);
         this.listener = listener;
     }
 
@@ -36,13 +42,31 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
 
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
-        Product product = products.get(position);
+        Product product = filteredProducts.get(position);
         holder.bind(product);
     }
 
     @Override
     public int getItemCount() {
-        return products.size();
+        return filteredProducts.size();
+    }
+    public void setProducts(List<Product> products) {
+        this.filteredProducts = products;
+        notifyDataSetChanged();
+    }
+    // Method to filter products based on search query
+    public void filter(String query) {
+        if (TextUtils.isEmpty(query)) {
+            filteredProducts = new ArrayList<>(originalProducts);
+        } else {
+            filteredProducts = new ArrayList<>();
+            for (Product product : originalProducts) {
+                if (product.getName().toLowerCase().contains(query.toLowerCase())) {
+                    filteredProducts.add(product);
+                }
+            }
+        }
+        notifyDataSetChanged();
     }
 
     public interface OnProductClickListener {
@@ -62,18 +86,19 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
         }
 
         public void bind(Product product) {
-            Glide.with(itemView.getContext())
+            Glide.with(context)
                     .load(product.getImageUrl())
                     .into(productImage);
-            productName.setText(product.getName());
-            productPrice.setText("Price: $" + product.getPrice());
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (listener != null) {
-                        listener.onProductClick(product);
-                    }
+            productName.setText(product.getName());
+
+            // Format price to Vietnamese Dong
+            NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+            productPrice.setText(format.format(product.getPrice()));
+
+            itemView.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onProductClick(product);
                 }
             });
         }
