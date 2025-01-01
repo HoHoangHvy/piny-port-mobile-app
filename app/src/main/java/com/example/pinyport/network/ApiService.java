@@ -8,7 +8,10 @@ import com.example.pinyport.DTO.LoginOtpRequest;
 import com.example.pinyport.DTO.LoginRequest;
 import com.example.pinyport.DTO.LoginResponse;
 import com.example.pinyport.model.Customer;
+import com.example.pinyport.model.Topping;
 import com.google.gson.JsonObject;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -49,12 +52,14 @@ public interface ApiService {
 
     @GET("products/options")
     Call<JsonObject> getProductOptions();
-    @GET("customers/options")
-    Call<JsonObject> getCustomerOptions();
-
     @GET("toppings/options")
     Call<JsonObject> getToppingOptions();
 
     @POST("orders/create")
     Call<JsonObject> createOrder(@Body JsonObject orderRequest);
+
+    @GET("customer/options")
+    Call<JsonObject> getCustomerOptions();
+    @GET("products/{product_id}/toppings")
+    Call<List<Topping>> getToppingsForProduct(@Path("product_id") String productId);
 }

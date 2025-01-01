@@ -49,15 +49,22 @@ public class CustomerOptionAdapter extends ArrayAdapter<CustomerOption> implemen
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                clear();
-                addAll((List<CustomerOption>) results.values);
+                if (results.values != null) {
+                    clear();
+                    addAll((List<CustomerOption>) results.values);
+                }
                 notifyDataSetChanged();
             }
+
         };
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        if (filteredCustomers == null || position >= filteredCustomers.size()) {
+            return new View(getContext()); // Return a dummy view
+        }
+
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(android.R.layout.simple_dropdown_item_1line, parent, false);
         }
@@ -66,4 +73,5 @@ public class CustomerOptionAdapter extends ArrayAdapter<CustomerOption> implemen
         textView.setText(customer.getName() + " - " + customer.getPhone());
         return convertView;
     }
+
 }

@@ -14,4 +14,6 @@
     <string name="filter">Filter</string>
     <string name="clear_all">Clear All</string>
     <string name="cancel">Cancel</string>
+    <string name="select_method">Select method</string>
+    <string name="payment_method_prompt">Payment method</string>
 </resources>
