@@ -1,10 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/my_app_surface"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:background="@color/my_app_surface">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,110 +12,32 @@
         android:orientation="vertical">
 
         <!-- Customer Section -->
-        <LinearLayout
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="16dp">
-            <TextView
-                android:id="@+id/tv_customer"
-                android:layout_width="75dp"
-                android:layout_height="25dp"
-                android:text="Customer"
-                android:textStyle="bold"
-                android:gravity="center_vertical" />
-            <Spinner
-                android:id="@+id/spinner_customer"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/blue_500" />
-        </LinearLayout>
-
-        <!-- Date Section -->
-        <LinearLayout
+            android:text="Customer"
+            android:textStyle="bold"
+            android:paddingBottom="8dp" />
+        <AutoCompleteTextView
+            android:id="@+id/autoCompleteCustomer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="16dp"
-            android:gravity="center_vertical">
-
-            <!-- TextView for Date -->
-            <TextView
-                android:id="@+id/tv_date"
-                android:layout_width="75dp"
-                android:layout_height="48dp"
-                android:text="Date"
-                android:textStyle="bold"
-                android:gravity="center_vertical" />
-
-            <!-- EditText for Input -->
-            <EditText
-                android:id="@+id/et_date_value"
-                android:layout_width="0dp"
-                android:layout_height="25dp"
-                android:layout_weight="1"
-                android:textSize="15dp"
-                android:background="@drawable/rounded_corners"
-                android:paddingLeft="5dp" />
-        </LinearLayout>
-
-        <!-- Branch Section -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="16dp">
-            <TextView
-                android:id="@+id/tv_branch"
-                android:layout_width="75dp"
-                android:layout_height="25dp"
-                android:text="Branch"
-                android:textStyle="bold"
-                android:gravity="center_vertical" />
-            <Spinner
-                android:id="@+id/spinner_branch"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/blue_500" />
-        </LinearLayout>
-
-        <!-- Destination Section -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="16dp">
-            <TextView
-                android:id="@+id/tv_destination"
-                android:layout_width="75dp"
-                android:layout_height="48dp"
-                android:text="Destination"
-                android:textStyle="bold"
-                android:gravity="center_vertical" />
-            <EditText
-                android:id="@+id/et_destination"
-                android:layout_width="0dp"
-                android:layout_height="25dp"
-                android:layout_weight="1"
-                android:textSize="15dp"
-                android:background="@drawable/rounded_corners"
-                android:paddingLeft="5dp" />
-        </LinearLayout>
+            android:layout_height="48dp"
+            android:backgroundTint="@color/grey"
+            android:hint="Search for customer"
+            android:threshold="1" />
 
         <!-- Products Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Products"
+            android:textStyle="bold"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp" />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <TextView
-                android:id="@+id/tv_products"
-                android:layout_width="75dp"
-                android:layout_height="25dp"
-                android:text="Products"
-                android:textStyle="bold"
-                android:gravity="center_vertical" />
             <Spinner
                 android:id="@+id/spinner_product"
                 android:layout_width="0dp"
@@ -124,64 +45,108 @@
                 android:layout_weight="1"
                 android:backgroundTint="@color/blue_500" />
             <Button
-                android:id="@+id/btn_add_spinner"
-                android:layout_width="60dp"
-                android:layout_height="wrap_content"
-                android:text="+"
-                android:textColor="@color/blue_500"
-                android:backgroundTint="@color/white"
-                android:textSize="15dp"
+                android:id="@+id/btnAddProduct"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="+ Add"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/blue_500"
                 android:layout_marginStart="8dp" />
         </LinearLayout>
-
         <LinearLayout
             android:id="@+id/layout_products"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"></LinearLayout>
-
-        <!-- Total Section -->
+            android:orientation="vertical" />
         <TextView
-            android:id="@+id/tv_total"
-            android:layout_width="75dp"
-            android:layout_height="25dp"
-            android:text="Total"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Payment method"
             android:textStyle="bold"
-            android:gravity="center_vertical"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp" />
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp" />
 
-        <!-- Payment Section -->
+        <Spinner
+            android:id="@+id/spinner_payment_method"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:prompt="Select method"/>
+        <!-- Voucher Section -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Voucher"
+            android:textStyle="bold"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="16dp">
-            <TextView
-                android:id="@+id/tv_payment_method"
-                android:layout_width="75dp"
-                android:layout_height="25dp"
-                android:text="Payment"
-                android:textStyle="bold"
-                android:gravity="center_vertical" />
-            <Spinner
-                android:id="@+id/spinner_payment"
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/et_voucher"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
-                android:backgroundTint="@color/blue_500" />
+                android:hint="Enter voucher code"
+                android:background="@drawable/rounded_corners"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp" />
+            <Button
+                android:id="@+id/btn_apply_voucher"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="Apply"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/blue_500"
+                android:layout_marginStart="8dp" />
         </LinearLayout>
+
+        <!-- Total Section -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:cardElevation="4dp"
+            android:cardBackgroundColor="@color/white">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Total"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/tv_total_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="$0.00"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- Create Button -->
         <Button
             android:id="@+id/btn_create"
-            android:layout_width="100dp"
-            android:layout_gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Create Order"
+            android:textColor="@color/white"
+            android:backgroundTint="@color/blue_500"
+            android:layout_marginTop="16dp" />
+
+        <!-- Progress Bar -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Create"
-            android:backgroundTint="#0080FF"
-            android:textColor="#FFFFFF" />
-
+            android:layout_gravity="center"
+            android:visibility="gone" />
     </LinearLayout>
-
 </ScrollView>

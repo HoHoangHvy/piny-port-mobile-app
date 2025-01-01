@@ -6,15 +6,35 @@ public class OrderDetail {
     private String productName;
     private double productPrice;
     private int quantity;
+    private String size;
     private List<Topping> toppings;
-    private String productImageUrl; // Add this field
 
-    public OrderDetail(String productName, double productPrice, int quantity, List<Topping> toppings, String productImageUrl) {
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+
+    public String getProductId() {
+        return productId;
+    }
+
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
+
+    private String productImageUrl; // Add this field
+    private String productId;
+    public OrderDetail(String productId, String productName, double productPrice, int quantity, List<Topping> toppings, String productImageUrl, String size) {
+        this.productId = productId;
         this.productName = productName;
         this.productPrice = productPrice;
         this.quantity = quantity;
         this.toppings = toppings;
         this.productImageUrl = productImageUrl;
+        this.size = size;
     }
 
     // Getters and setters
@@ -59,10 +79,12 @@ public class OrderDetail {
     }
 
     public static class Topping {
+        private String id;
         private String name;
-        private String price;
+        private double price;
 
-        public Topping(String name, String price) {
+        public Topping(String id, String name, double price) {
+            this.id = id;
             this.name = name;
             this.price = price;
         }
@@ -72,15 +94,23 @@ public class OrderDetail {
             return name;
         }
 
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
         public void setName(String name) {
             this.name = name;
         }
 
-        public String getPrice() {
+        public double getPrice() {
             return price;
         }
 
-        public void setPrice(String price) {
+        public void setPrice(double price) {
             this.price = price;
         }
     }

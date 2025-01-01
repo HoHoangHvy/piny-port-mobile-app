@@ -18,7 +18,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
 import com.example.pinyport.R;
 import com.example.pinyport.adapter.OrderDetailAdapter;
 import com.example.pinyport.model.Order;
@@ -313,11 +312,13 @@ public class OrderDetailFragment extends Fragment {
         for (JsonElement element : orderDetailsArray) {
             JsonObject detailObject = element.getAsJsonObject();
             OrderDetail orderDetail = new OrderDetail(
+                    detailObject.get("product_id").getAsString(),
                     detailObject.get("product_name").getAsString(),
                     detailObject.get("total_price").getAsDouble(),
                     detailObject.get("quantity").getAsInt(),
                     parseToppings(detailObject.getAsJsonArray("toppings")),
-                    detailObject.get("image").getAsString() // Add image URL
+                    detailObject.get("image").getAsString(), // Add image URL
+                    detailObject.get("size").getAsString()
             );
             orderDetails.add(orderDetail);
         }
@@ -329,8 +330,9 @@ public class OrderDetailFragment extends Fragment {
         for (JsonElement element : toppingsArray) {
             JsonObject toppingObject = element.getAsJsonObject();
             OrderDetail.Topping topping = new OrderDetail.Topping(
+                    toppingObject.get("topping_id").getAsString(),
                     toppingObject.get("name").getAsString(),
-                    toppingObject.get("price").getAsString()
+                    toppingObject.get("price").getAsDouble()
             );
             toppings.add(topping);
         }

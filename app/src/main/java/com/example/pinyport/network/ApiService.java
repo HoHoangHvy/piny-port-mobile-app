@@ -1,25 +1,21 @@
 package com.example.pinyport.network;
 
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.http.GET;
-import retrofit2.http.POST;
-import retrofit2.http.Body;
-import retrofit2.http.PUT;
-import retrofit2.http.Path;
-import retrofit2.http.Query;
-
 import com.example.pinyport.DTO.CreateOrderRequest;
 import com.example.pinyport.DTO.CustomerRequest;
 import com.example.pinyport.DTO.GenOtpRequest;
 import com.example.pinyport.DTO.GenOtpResponse;
 import com.example.pinyport.DTO.LoginOtpRequest;
-import com.example.pinyport.DTO.LoginOtpResponse;
 import com.example.pinyport.DTO.LoginRequest;
 import com.example.pinyport.DTO.LoginResponse;
 import com.example.pinyport.model.Customer;
 import com.google.gson.JsonObject;
+
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 public interface ApiService {
     @GET("customers")
@@ -50,4 +46,15 @@ public interface ApiService {
 
     @POST("orders/status/{orderId}")
     Call<JsonObject> updateOrderStatus(@Path("orderId") String orderId, @Body JsonObject requestBody);
+
+    @GET("products/options")
+    Call<JsonObject> getProductOptions();
+    @GET("customers/options")
+    Call<JsonObject> getCustomerOptions();
+
+    @GET("toppings/options")
+    Call<JsonObject> getToppingOptions();
+
+    @POST("orders/create")
+    Call<JsonObject> createOrder(@Body JsonObject orderRequest);
 }

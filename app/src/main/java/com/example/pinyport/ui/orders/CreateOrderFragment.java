@@ -1,210 +1,199 @@
 package com.example.pinyport.ui.orders;
 
-import android.app.DatePickerDialog;
-import android.content.res.ColorStateList;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
+import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.example.pinyport.R;
+import com.example.pinyport.adapter.CustomerAdapter;
+import com.example.pinyport.adapter.CustomerOptionAdapter;
 import com.example.pinyport.databinding.FragmentCreateOrderBinding;
+import com.example.pinyport.model.Customer;
+import com.example.pinyport.model.CustomerOption;
+import com.example.pinyport.model.OrderDetail;
+import com.example.pinyport.network.ApiClient;
+import com.example.pinyport.network.ApiService;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
-import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CreateOrderFragment extends Fragment {
     private FragmentCreateOrderBinding binding;
-    private Spinner lastAddedSpinner;
-    private Button lastAddedButton;
-    private boolean isFirstButtonHidden = false;
+    private List<OrderDetail> orderDetails = new ArrayList<>();
+    private ApiService apiService; // Initialize this using your Retrofit instance
+    private double totalPrice = 0.0;
+    private List<CustomerOption> customers = new ArrayList<>();
+    private AutoCompleteTextView autoCompleteCustomer;
+    private CustomerOptionAdapter customerAdapter;
+    private String selectedCustomerId;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentCreateOrderBinding.inflate(inflater, container, false);
-        setupcustomerSpinner();
-        setupbranchSpinner();
-        setupproductSpinner();
-        setuppaymentSpinner();
-        setupDateTimePicker();
+        apiService = ApiClient.getClient(requireContext()).create(ApiService.class);
+
+        // Initialize AutoCompleteTextView
+        autoCompleteCustomer = binding.autoCompleteCustomer;
+
+        setupCustomerSearch();
+        binding.btnAddProduct.setOnClickListener(v -> addNewProduct());
+        binding.btnApplyVoucher.setOnClickListener(v -> applyVoucher());
+        binding.btnCreate.setOnClickListener(v -> createOrder());
+
         return binding.getRoot();
     }
 
-    private void setupDateTimePicker() {
-        EditText dateTimeEditText = binding.etDateValue;  // Liên kết với EditText
-        dateTimeEditText.setOnClickListener(v -> showDatePicker());
-    }
-
-    private void showDatePicker() {
-        Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-        DatePickerDialog datePickerDialog = new DatePickerDialog(
-                requireContext(),
-                (view, selectedYear, selectedMonth, selectedDay) -> {
-                    // Định dạng ngày trước khi hiển thị lên EditText
-                    String date = selectedDay + "/" + (selectedMonth + 1) + "/" + selectedYear;
-                    binding.etDateValue.setText(date);  // Hiển thị ngày đã chọn vào EditText
-                }, year, month, day);
-        datePickerDialog.show();
-    }
-
-
-
-    private void setupcustomerSpinner() {
-        String[] customerOptions = {"Customer A", "Customer B", "Customer C", "Customer D"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                requireContext(), // Context từ Fragment
-                android.R.layout.simple_spinner_item, // Layout hiển thị cho mỗi mục
-                customerOptions // Dữ liệu
-        );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        binding.spinnerCustomer.setAdapter(adapter);
-        binding.spinnerCustomer.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+    private void setupCustomerSearch() {
+        // Fetch customers
+        apiService.getCustomerOptions().enqueue(new Callback<JsonObject>() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedCustomer = customerOptions[position];
-                Toast.makeText(requireContext(), "Selected: " + selectedCustomer, Toast.LENGTH_SHORT).show();
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    JsonObject jsonResponse = response.body();
+                    if (jsonResponse.has("data") && !jsonResponse.get("data").isJsonNull()) {
+                        JsonArray dataArray = jsonResponse.getAsJsonArray("data");
+                        customers.clear();
+                        for (JsonElement customerElement : dataArray) {
+                            if (customerElement.isJsonObject()) {
+                                JsonObject customerObject = customerElement.getAsJsonObject();
+                                String customerId = customerObject.get("id").getAsString();
+                                String customerName = customerObject.get("name").getAsString();
+                                String customerPhone = customerObject.get("phone").getAsString();
+                                CustomerOption customer = new CustomerOption(customerId, customerName, customerPhone);
+                                customers.add(customer);
+                            }
+                        }
+                        // Set up adapter
+                        customerAdapter = new CustomerOptionAdapter(requireContext(), customers);
+                        autoCompleteCustomer.setAdapter(customerAdapter);
+
+                        // Handle customer selection
+                        autoCompleteCustomer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                CustomerOption selectedCustomer = customers.get(position);
+                                selectedCustomerId = selectedCustomer.getId();
+                            }
+                        });
+                    }
+                }
             }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-    }
 
-    private void setupbranchSpinner() {
-        String[] branchOptions = {"Branch A", "Branch B", "Branch C", "Branch D"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                requireContext(), // Context từ Fragment
-                android.R.layout.simple_spinner_item, // Layout hiển thị cho mỗi mục
-                branchOptions // Dữ liệu
-        );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        binding.spinnerBranch.setAdapter(adapter);
-        binding.spinnerBranch.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedBranch = branchOptions[position];
-                Toast.makeText(requireContext(), "Selected: " + selectedBranch, Toast.LENGTH_SHORT).show();
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                Toast.makeText(requireContext(), "Error loading customers: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
-
-    private void setupproductSpinner() {
-        String[] productOptions = {"Cà phê muối", "Ô long lài sữa"};
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_spinner_item, productOptions);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        binding.spinnerProduct.setAdapter(adapter);
-
-        binding.btnAddSpinner.setOnClickListener(v -> addNewSpinner(productOptions));
-    }
-
-    private void addNewSpinner(String[] productOptions) {
-        if (lastAddedButton != null) {
-            lastAddedButton.setVisibility(View.GONE);
+    // Update createOrder() method
+    private void createOrder() {
+        if (selectedCustomerId == null) {
+            Toast.makeText(requireContext(), "Please select a customer.", Toast.LENGTH_SHORT).show();
+            return;
         }
 
-        if (!isFirstButtonHidden) {
-            binding.btnAddSpinner.setVisibility(View.GONE);
-            isFirstButtonHidden = true;
+        // Get selected payment method
+        String paymentMethod = binding.spinnerPaymentMethod.getSelectedItem().toString();
+
+        // Get voucher code
+        String voucherCode = binding.etVoucher.getText().toString();
+
+        // Build order details JSON array
+        JsonArray orderDetailsArray = new JsonArray();
+        for (OrderDetail orderDetail : orderDetails) {
+            JsonObject detailObject = new JsonObject();
+            detailObject.addProperty("product_id", orderDetail.getProductId());
+            detailObject.addProperty("size", orderDetail.getSize());
+            detailObject.addProperty("quantity", orderDetail.getQuantity());
+            detailObject.addProperty("total_price", calculateTotalPriceOfProduct(orderDetail));
+
+            JsonArray toppingsArray = new JsonArray();
+            for (OrderDetail.Topping topping : orderDetail.getToppings()) {
+                JsonObject toppingObject = new JsonObject();
+                toppingObject.addProperty("product_id", topping.getId());
+                toppingsArray.add(toppingObject);
+            }
+            detailObject.add("toppings", toppingsArray);
+            orderDetailsArray.add(detailObject);
         }
 
-        LinearLayout horizontalLayout = new LinearLayout(requireContext());
-        horizontalLayout.setOrientation(LinearLayout.HORIZONTAL);
-        horizontalLayout.setId(View.generateViewId());
+        // Build main JSON object
+        JsonObject orderRequest = new JsonObject();
+        orderRequest.addProperty("payment_method", paymentMethod);
+        orderRequest.addProperty("customer_id", selectedCustomerId);
+        orderRequest.add("order_details", orderDetailsArray);
+        orderRequest.addProperty("order_total", totalPrice);
+        orderRequest.addProperty("voucher_code", voucherCode);
 
-        LinearLayout.LayoutParams horizontalLayoutParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        horizontalLayoutParams.setMargins(0, 0, 0, 0); // Khoảng cách trên và dưới
-        horizontalLayout.setLayoutParams(horizontalLayoutParams);
-
-        View newView = new View(requireContext());
-        newView.setId(View.generateViewId());
-        int widthInPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 75, getResources().getDisplayMetrics());
-        int heightInPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 25, getResources().getDisplayMetrics());
-        LinearLayout.LayoutParams viewLayoutParams = new LinearLayout.LayoutParams(widthInPx, heightInPx);
-        newView.setLayoutParams(viewLayoutParams);
-
-        Spinner newSpinner = new Spinner(requireContext());
-        newSpinner.setId(View.generateViewId()); // Đảm bảo Spinner có ID duy nhất
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_spinner_item, productOptions);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        newSpinner.setAdapter(adapter);
-
-        newSpinner.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.blue_500)));
-
-        int heightspInPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 48, getResources().getDisplayMetrics());
-
-        LinearLayout.LayoutParams spinnerLayoutParams = new LinearLayout.LayoutParams(
-                0, heightspInPx, 1.0f);
-        newSpinner.setLayoutParams(spinnerLayoutParams);
-
-        Button newButton = new Button(requireContext());
-        newButton.setId(View.generateViewId());
-        newButton.setText("+");
-        newButton.setBackground(null); // Không có nền
-        newButton.setTextColor(ContextCompat.getColor(requireContext(), R.color.blue_500)); // Chữ màu blue_500
-        int widthbtInPx = (int) (60 * getResources().getDisplayMetrics().density); // 55dp chuyển thành px
-        LinearLayout.LayoutParams buttonLayoutParams = new LinearLayout.LayoutParams(widthbtInPx, LinearLayout.LayoutParams.WRAP_CONTENT);
-        newButton.setLayoutParams(buttonLayoutParams);
-
-
-        horizontalLayout.addView(newView);
-        horizontalLayout.addView(newSpinner);
-        horizontalLayout.addView(newButton);
-
-        LinearLayout layoutProducts = binding.layoutProducts;
-        layoutProducts.setOrientation(LinearLayout.VERTICAL);
-        layoutProducts.addView(horizontalLayout);
-
-        newButton.setOnClickListener(v -> addNewSpinner(productOptions));
-
-        lastAddedSpinner = newSpinner;
-        lastAddedButton = newButton;
-
-        layoutProducts.requestLayout();
-    }
-
-
-    private void setuppaymentSpinner() {
-        String[] paymentOptions = {"Momo", "Bank"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                requireContext(), // Context từ Fragment
-                android.R.layout.simple_spinner_item, // Layout hiển thị cho mỗi mục
-                paymentOptions // Dữ liệu
-        );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        binding.spinnerPayment.setAdapter(adapter);
-        binding.spinnerPayment.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        // Send POST request
+        binding.progressBar.setVisibility(View.VISIBLE);
+        apiService.createOrder(orderRequest).enqueue(new Callback<JsonObject>() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String selectedBranch = paymentOptions[position];
-                Toast.makeText(requireContext(), "Selected: " + selectedBranch, Toast.LENGTH_SHORT).show();
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                binding.progressBar.setVisibility(View.GONE);
+                if (response.isSuccessful()) {
+                    Toast.makeText(requireContext(), "Order created successfully!", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(requireContext(), "Failed to create order. Error code: " + response.code(), Toast.LENGTH_SHORT).show();
+                }
             }
+
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                binding.progressBar.setVisibility(View.GONE);
+                Toast.makeText(requireContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    private double calculateTotalPriceOfProduct(OrderDetail orderDetail) {
+        //Return product price * quantity + toppings price
+        double productPrice = orderDetail.getProductPrice();
+        int quantity = orderDetail.getQuantity();
+        double toppingsPrice = 0.0;
+        for (OrderDetail.Topping topping : orderDetail.getToppings()) {
+            toppingsPrice += topping.getPrice();
+        }
+        return productPrice * quantity + toppingsPrice;
+    }
+    private void addNewProduct() {
+        // Logic to add a new product with toppings
+        OrderDetail newProduct = new OrderDetail("productId123", "Large", 1, 10.0);
+        newProduct.addTopping(new OrderDetail.Topping("toppingId456", "Small", 1, 2.0));
+        orderDetails.add(newProduct);
+
+        // Update total price
+        totalPrice += newProduct.getTotalPrice();
+        updateTotalPrice();
+    }
+
+    private void applyVoucher() {
+        String voucherCode = binding.etVoucher.getText().toString();
+        if (voucherCode.isEmpty()) {
+            Toast.makeText(requireContext(), "Please enter a voucher code.", Toast.LENGTH_SHORT).show();
+        } else {
+            // Apply voucher logic
+            totalPrice -= 5.0; // Example discount
+            updateTotalPrice();
+            Toast.makeText(requireContext(), "Voucher applied!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void updateTotalPrice() {
+        binding.tvTotalPrice.setText(String.format("$%.2f", totalPrice));
     }
 
     @Override
