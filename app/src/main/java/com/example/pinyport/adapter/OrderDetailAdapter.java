@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.pinyport.R;
 import com.example.pinyport.model.OrderDetail;
+import com.example.pinyport.model.Topping;
 
 import java.text.NumberFormat;
 import java.util.List;
@@ -75,7 +76,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
 
             // Display toppings
             StringBuilder toppingsBuilder = new StringBuilder("Toppings: ");
-            for (OrderDetail.Topping topping : orderDetail.getToppings()) {
+            for (Topping topping : orderDetail.getToppings()) {
                 toppingsBuilder.append(topping.getName()).append(", ");
             }
             if (orderDetail.getToppings().size() > 0) {

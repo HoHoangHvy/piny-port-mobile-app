@@ -22,6 +22,7 @@ import com.example.pinyport.R;
 import com.example.pinyport.adapter.OrderDetailAdapter;
 import com.example.pinyport.model.Order;
 import com.example.pinyport.model.OrderDetail;
+import com.example.pinyport.model.Topping;
 import com.example.pinyport.network.ApiClient;
 import com.example.pinyport.network.ApiService;
 import com.google.gson.JsonArray;
@@ -325,11 +326,11 @@ public class OrderDetailFragment extends Fragment {
         return orderDetails;
     }
 
-    private List<OrderDetail.Topping> parseToppings(JsonArray toppingsArray) {
-        List<OrderDetail.Topping> toppings = new ArrayList<>();
+    private List<Topping> parseToppings(JsonArray toppingsArray) {
+        List<Topping> toppings = new ArrayList<>();
         for (JsonElement element : toppingsArray) {
             JsonObject toppingObject = element.getAsJsonObject();
-            OrderDetail.Topping topping = new OrderDetail.Topping(
+            Topping topping = new Topping(
                     toppingObject.get("topping_id").getAsString(),
                     toppingObject.get("name").getAsString(),
                     toppingObject.get("price").getAsDouble()

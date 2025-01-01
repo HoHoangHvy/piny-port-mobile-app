@@ -5,9 +5,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,10 +23,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.pinyport.R;
 import com.example.pinyport.adapter.CustomerOptionAdapter;
 import com.example.pinyport.adapter.ProductAdapter;
+import com.example.pinyport.adapter.ToppingsAdapter;
 import com.example.pinyport.databinding.FragmentCreateOrderBinding;
 import com.example.pinyport.model.CustomerOption;
 import com.example.pinyport.model.OrderDetail;
 import com.example.pinyport.model.Product;
+import com.example.pinyport.model.Topping;
 import com.example.pinyport.network.ApiClient;
 import com.example.pinyport.network.ApiService;
 import com.google.gson.JsonArray;
@@ -29,7 +36,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -46,6 +55,7 @@ public class CreateOrderFragment extends Fragment {
     private String selectedCustomerId;
     private ProductAdapter productAdapter;
     private List<Product> filteredProducts;
+    private LinearLayout layoutProducts;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,7 +63,7 @@ public class CreateOrderFragment extends Fragment {
         apiService = ApiClient.getClient(requireContext()).create(ApiService.class);
 
         autoCompleteCustomer = binding.autoCompleteCustomer;
-
+        layoutProducts = binding.layoutProducts;
         setupCustomerSearch();
         binding.btnAddProduct.setOnClickListener(v -> fetchProducts());
         binding.btnApplyVoucher.setOnClickListener(v -> applyVoucher());
@@ -82,19 +92,12 @@ public class CreateOrderFragment extends Fragment {
                         }
                         customerAdapter = new CustomerOptionAdapter(requireContext(), customers);
                         autoCompleteCustomer.setAdapter(customerAdapter);
-                        autoCompleteCustomer.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                            @Override
-                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                // Get the selected customer
-                                CustomerOption selectedCustomer = customerAdapter.getItem(position);
-
-                                if (selectedCustomer != null) {
-                                    // Update the AutoCompleteTextView with the customer's name
-                                    autoCompleteCustomer.setText(selectedCustomer.getName());
-                                    selectedCustomerId = selectedCustomer.getId();
-                                    // Optional: Display a toast or handle additional logic
-                                    Toast.makeText(requireContext(), "Selected: " + selectedCustomer.getName(), Toast.LENGTH_SHORT).show();
-                                }
+                        autoCompleteCustomer.setOnItemClickListener((parent, view, position, id) -> {
+                            CustomerOption selectedCustomer = customerAdapter.getItem(position);
+                            if (selectedCustomer != null) {
+                                autoCompleteCustomer.setText(selectedCustomer.getName());
+                                selectedCustomerId = selectedCustomer.getId();
+                                Toast.makeText(requireContext(), "Selected: " + selectedCustomer.getName(), Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -149,7 +152,119 @@ public class CreateOrderFragment extends Fragment {
             }
         });
     }
+    private void showProductOptionsDialog(Product product) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_product_search, null);
 
+        Spinner spinnerSize = dialogView.findViewById(R.id.spinner_size);
+        RecyclerView rvToppings = dialogView.findViewById(R.id.rv_toppings);
+        EditText etNote = dialogView.findViewById(R.id.et_note);
+        TextView tvQuantity = dialogView.findViewById(R.id.tv_quantity);
+        TextView tvTotalPrice = dialogView.findViewById(R.id.tv_total_price);
+        Button btnConfirm = dialogView.findViewById(R.id.btn_confirm);
+        Button btnCancel = dialogView.findViewById(R.id.btn_cancel);
+        Button btnDecrease = dialogView.findViewById(R.id.btn_decrease);
+        Button btnIncrease = dialogView.findViewById(R.id.btn_increase);
+
+        // Setup size Spinner
+        List<String> sizes = Arrays.asList("S", "M", "L");
+        ArrayAdapter<String> sizeAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, sizes);
+        sizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerSize.setAdapter(sizeAdapter);
+
+        // Setup toppings RecyclerView
+        List<Topping> toppings = product.getToppings();
+        ToppingsAdapter toppingsAdapter = new ToppingsAdapter(toppings);
+        rvToppings.setAdapter(toppingsAdapter);
+        rvToppings.setLayoutManager(new LinearLayoutManager(requireContext()));
+
+        // Setup quantity
+        AtomicInteger initialQuantity = new AtomicInteger(1);
+        tvQuantity.setText(String.valueOf(initialQuantity.get()));
+
+        // Setup total price
+        updateTotalPriceProduct(product, toppingsAdapter.getSelectedToppings(), initialQuantity.get(), tvTotalPrice);
+
+        // Setup quantity adjustment
+        btnIncrease.setOnClickListener(v -> {
+            initialQuantity.getAndIncrement();
+            tvQuantity.setText(String.valueOf(initialQuantity.get()));
+            updateTotalPriceProduct(product, toppingsAdapter.getSelectedToppings(), initialQuantity.get(), tvTotalPrice);
+        });
+
+        btnDecrease.setOnClickListener(v -> {
+            if (initialQuantity.get() > 1) {
+                initialQuantity.getAndDecrement();
+                tvQuantity.setText(String.valueOf(initialQuantity.get()));
+                updateTotalPriceProduct(product, toppingsAdapter.getSelectedToppings(), initialQuantity.get(), tvTotalPrice);
+            }
+        });
+        AlertDialog dialog = builder.setView(dialogView)
+                .setTitle("Product Options")
+                .create();
+        // Setup confirm button
+        btnConfirm.setOnClickListener(v -> {
+            String selectedSize = spinnerSize.getSelectedItem().toString();
+            List<Topping> selectedToppings = toppingsAdapter != null ? toppingsAdapter.getSelectedToppings() : new ArrayList<>();
+            String note = etNote.getText().toString();
+            int quantity = Integer.parseInt(tvQuantity.getText().toString());
+
+            OrderDetail orderDetail = new OrderDetail(
+                    product.getProductId(),
+                    product.getName(),
+                    product.getPrice(),
+                    quantity,
+                    selectedToppings,
+                    product.getImageUrl(),
+                    selectedSize
+            );
+            orderDetails.add(orderDetail);
+            updateTotalPrice();
+            // Display product in layoutProducts
+            View productView = LayoutInflater.from(requireContext()).inflate(R.layout.item_selected_product, layoutProducts, false);
+            TextView tvProductName = productView.findViewById(R.id.tv_product_name);
+            TextView tvProductPrice = productView.findViewById(R.id.tv_product_price);
+            Button btnRemove = productView.findViewById(R.id.btn_remove);
+
+            tvProductName.setText(product.getName());
+            tvProductPrice.setText(String.format("$%.2f", calculateTotalPriceOfProduct(orderDetail)));
+            btnRemove.setOnClickListener(v1 -> {
+                layoutProducts.removeView(productView);
+                orderDetails.remove(orderDetail);
+                updateTotalPrice();
+                Toast.makeText(requireContext(), "Product removed: " + product.getName(), Toast.LENGTH_SHORT).show();
+            });
+            layoutProducts.addView(productView);
+
+            Toast.makeText(requireContext(), "Product added: " + product.getName(), Toast.LENGTH_SHORT).show();
+            dialog.dismiss();
+        });
+
+        // Setup cancel button
+        btnCancel.setOnClickListener(v -> {
+            Toast.makeText(requireContext(), "Product selection cancelled.", Toast.LENGTH_SHORT).show();
+            dialog.dismiss();
+        });
+        dialog.show();
+    }
+
+    private void updateTotalPriceProduct(Product product, List<Topping> selectedToppings, int quantity, TextView tvTotalPrice) {
+        double basePrice = product.getPrice();
+        double toppingsPrice = 0.0;
+        for (Topping topping : selectedToppings) {
+            toppingsPrice += topping.getPrice();
+        }
+        double totalPrice = (basePrice + toppingsPrice) * quantity;
+        tvTotalPrice.setText(String.format("$%.2f", totalPrice));
+    }
+    private void updateTotalPrice(Product product, List<Topping> selectedToppings, int quantity) {
+        double basePrice = product.getPrice();
+        double toppingsPrice = 0.0;
+        for (Topping topping : selectedToppings) {
+            toppingsPrice += topping.getPrice();
+        }
+        double totalPrice = (basePrice + toppingsPrice) * quantity;
+    }
     private void showProductSelectionDialog(List<Product> products) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_product_options, null);
@@ -162,16 +277,15 @@ public class CreateOrderFragment extends Fragment {
                 .setNegativeButton("Cancel", (dialog1, which) -> dialog1.dismiss())
                 .create();
 
-        filteredProducts = new ArrayList<>(products); // Start with all products
-        productAdapter = new ProductAdapter(requireContext(), filteredProducts, product -> {
+        filteredProducts = new ArrayList<>(products);
+        productAdapter = new ProductAdapter(requireContext(), filteredProducts,this, product -> {
             dialog.dismiss();
-            addProductToOrder(product);
+            showProductOptionsDialog(product);
         });
 
         rvProducts.setAdapter(productAdapter);
         rvProducts.setLayoutManager(new LinearLayoutManager(requireContext()));
 
-        // Set up search functionality
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -192,7 +306,7 @@ public class CreateOrderFragment extends Fragment {
     private void filterProducts(String query, List<Product> originalProducts) {
         filteredProducts.clear();
         if (query == null || query.trim().isEmpty()) {
-            filteredProducts.addAll(originalProducts); // Reset to full list
+            filteredProducts.addAll(originalProducts);
         } else {
             String lowerCaseQuery = query.toLowerCase();
             for (Product product : originalProducts) {
@@ -201,9 +315,8 @@ public class CreateOrderFragment extends Fragment {
                 }
             }
         }
-        productAdapter.setProducts(filteredProducts); // Refresh the RecyclerView
+        productAdapter.setProducts(filteredProducts);
     }
-
 
     private void addProductToOrder(Product product) {
         OrderDetail orderDetail = new OrderDetail(
@@ -214,9 +327,29 @@ public class CreateOrderFragment extends Fragment {
                 new ArrayList<>(),
                 product.getImageUrl(),
                 "M"
-                );
+        );
         orderDetails.add(orderDetail);
         updateTotalPrice();
+
+        // Create a new TextView for the product
+        View productView = LayoutInflater.from(requireContext()).inflate(R.layout.item_selected_product, layoutProducts, false);
+
+        TextView tvProductName = productView.findViewById(R.id.tv_product_name);
+        TextView tvProductPrice = productView.findViewById(R.id.tv_product_price);
+        Button btnRemove = productView.findViewById(R.id.btn_remove);
+
+        tvProductName.setText(product.getName());
+        tvProductPrice.setText(String.format("$%.2f", product.getPrice()));
+
+        btnRemove.setOnClickListener(v -> {
+            layoutProducts.removeView(productView);
+            orderDetails.remove(orderDetail);
+            updateTotalPrice();
+            Toast.makeText(requireContext(), "Product removed: " + product.getName(), Toast.LENGTH_SHORT).show();
+        });
+
+        layoutProducts.addView(productView);
+
         Toast.makeText(requireContext(), "Product added: " + product.getName(), Toast.LENGTH_SHORT).show();
     }
 
@@ -253,7 +386,7 @@ public class CreateOrderFragment extends Fragment {
             detailObject.addProperty("total_price", calculateTotalPriceOfProduct(orderDetail));
 
             JsonArray toppingsArray = new JsonArray();
-            for (OrderDetail.Topping topping : orderDetail.getToppings()) {
+            for (Topping topping : orderDetail.getToppings()) {
                 JsonObject toppingObject = new JsonObject();
                 toppingObject.addProperty("product_id", topping.getId());
                 toppingsArray.add(toppingObject);
@@ -293,7 +426,7 @@ public class CreateOrderFragment extends Fragment {
         double productPrice = orderDetail.getProductPrice();
         int quantity = orderDetail.getQuantity();
         double toppingsPrice = 0.0;
-        for (OrderDetail.Topping topping : orderDetail.getToppings()) {
+        for (Topping topping : orderDetail.getToppings()) {
             toppingsPrice += topping.getPrice();
         }
         return productPrice * quantity + toppingsPrice;

@@ -3,7 +3,7 @@ package com.example.pinyport.model;
 import com.google.gson.annotations.SerializedName;
 
 public class Topping {
-    @SerializedName("id")
+    @SerializedName("topping_id")
     private String toppingId;
 
     @SerializedName("name")
@@ -20,11 +20,11 @@ public class Topping {
     }
 
     // Getters and Setters
-    public String getToppingId() {
+    public String getId() {
         return toppingId;
     }
 
-    public void setToppingId(String toppingId) {
+    public void setId(String toppingId) {
         this.toppingId = toppingId;
     }
 

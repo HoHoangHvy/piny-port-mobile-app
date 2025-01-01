@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.pinyport.R;
 import com.example.pinyport.model.Product;
+import com.example.pinyport.ui.orders.CreateOrderFragment;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -24,12 +25,17 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     private Context context;
     private List<Product> originalProducts;
     private List<Product> filteredProducts;
-    private OnProductClickListener listener;
+    private CreateOrderFragment fragment;
+    private ProductSelectionListener listener;
 
-    public ProductAdapter(Context context, List<Product> products, OnProductClickListener listener) {
+    public interface ProductSelectionListener {
+        void onProductSelected(Product product);
+    }
+    public ProductAdapter(Context context, List<Product> products, CreateOrderFragment fragment, ProductSelectionListener listener) {
         this.context = context;
         this.originalProducts = new ArrayList<>(products);
         this.filteredProducts = new ArrayList<>(products);
+        this.fragment = fragment;
         this.listener = listener;
     }
 
@@ -44,7 +50,13 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
         Product product = filteredProducts.get(position);
         holder.bind(product);
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onProductSelected(product);
+            }
+        });
     }
+
 
     @Override
     public int getItemCount() {
@@ -83,6 +95,11 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             productImage = itemView.findViewById(R.id.product_image);
             productName = itemView.findViewById(R.id.product_name);
             productPrice = itemView.findViewById(R.id.product_price);
+
+            itemView.setOnClickListener(v -> {
+                Product product = filteredProducts.get(getAdapterPosition());
+                fragment.showProductOptionsDialog(product);
+            });
         }
 
         public void bind(Product product) {
@@ -95,12 +112,5 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ProductV
             // Format price to Vietnamese Dong
             NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
             productPrice.setText(format.format(product.getPrice()));
-
-            itemView.setOnClickListener(v -> {
-                if (listener != null) {
-                    listener.onProductClick(product);
-                }
-            });
         }
-    }
-}
+    }}
