@@ -152,7 +152,7 @@ public class CreateOrderFragment extends Fragment {
             }
         });
     }
-    private void showProductOptionsDialog(Product product) {
+    public void showProductOptionsDialog(Product product) {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
         View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_product_search, null);
 
