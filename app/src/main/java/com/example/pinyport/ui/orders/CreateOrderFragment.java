@@ -2,9 +2,13 @@ package com.example.pinyport.ui.orders;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -36,6 +40,7 @@ import com.example.pinyport.model.Topping;
 import com.example.pinyport.model.VoucherOption;
 import com.example.pinyport.network.ApiClient;
 import com.example.pinyport.network.ApiService;
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -49,6 +54,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import io.socket.client.IO;
+import io.socket.client.Socket;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -68,6 +75,8 @@ public class CreateOrderFragment extends Fragment {
     private LinearLayout layoutProducts;
     private final Map<String, Double> sizePrices = new HashMap<>();
     private List<String> paymentMethods = Arrays.asList("Cash", "Banking");
+    private Socket socket;
+    private AlertDialog paymentDialog; // Reference to the payment dialog
 
     private NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
 
@@ -81,6 +90,7 @@ public class CreateOrderFragment extends Fragment {
         setupCustomerSearch();
         setupVoucherSearch();
         setupPaymentMethodSpinner();
+
         binding.btnAddProduct.setOnClickListener(v -> fetchProducts());
         binding.btnCreate.setOnClickListener(v -> createOrder());
         binding.btnRemoveVoucher.setOnClickListener(v -> removeVoucher());
@@ -91,6 +101,64 @@ public class CreateOrderFragment extends Fragment {
 
         return binding.getRoot();
     }
+    private void initializeSocket(String orderId) {
+        try {
+            String socketURL = "https://socket.dotb.cloud/";
+            Log.d("Socket", "Initializing socket with URL: " + socketURL);
+
+            // Initialize socket connection
+            socket = IO.socket(socketURL, new IO.Options() {{
+                path = "";
+                transports = new String[]{"websocket"};
+                reconnection = true;
+            }});
+
+            // On successful connection
+            socket.on(Socket.EVENT_CONNECT, args -> {
+                Log.d("Socket", "Socket server is live!");
+                socket.emit("join", "/triggerPaymentStatus/" + orderId);
+            });
+
+            socket.on(Socket.EVENT_CONNECT_ERROR, args -> {
+                Log.e("Socket", "Connection error: " + Arrays.toString(args));
+            });
+
+            socket.on(Socket.EVENT_DISCONNECT, args -> {
+                Log.d("Socket", "Disconnected: " + Arrays.toString(args));
+            });
+
+            socket.on("event-phenikaa", args -> requireActivity().runOnUiThread(() -> {
+                Log.d("Socket", "Received event-phenikaa: " + Arrays.toString(args));
+                JsonObject response = new Gson().fromJson(args[0].toString(), JsonObject.class);
+                String orderIdFromSocket = response.get("order_id").getAsString();
+                boolean success = response.get("success").getAsBoolean();
+
+                if (success) {
+                    // Close the payment dialog
+                    if (paymentDialog != null && paymentDialog.isShowing()) {
+                        paymentDialog.dismiss();
+                    }
+                    if (orderIdFromSocket.equals(orderId)) {
+                        Toast.makeText(requireContext(), "Order status updated: " + response.get("status").getAsString(), Toast.LENGTH_SHORT).show();
+                    }
+                    // Show a success notification
+                    Toast.makeText(requireContext(), "Payment successful!", Toast.LENGTH_SHORT).show();
+                }
+            }));
+
+            socket.connect();
+        } catch (Exception e) {
+            Log.e("Socket", "Exception during socket initialization: ", e);
+        }
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (socket != null) {
+            socket.disconnect();
+        }
+    }
+
     private void setupPaymentMethodSpinner() {
         ArrayAdapter<String> paymentMethodAdapter = new ArrayAdapter<>(
                 requireContext(),
@@ -553,7 +621,14 @@ public class CreateOrderFragment extends Fragment {
             public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                 binding.progressBar.setVisibility(View.GONE);
                 if (response.isSuccessful()) {
-                    Toast.makeText(requireContext(), "Order created successfully!", Toast.LENGTH_SHORT).show();
+                    JsonObject data = response.body().get("data").getAsJsonObject();
+                    initializeSocket(data.get("id").getAsString());
+                    if (paymentMethod.equals("Banking")) {
+                        String paymentUrl = data.get("payment").getAsString();
+                        showPaymentDialog(paymentUrl);
+                    } else {
+                        Toast.makeText(requireContext(), "Order created successfully!", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
                     Toast.makeText(requireContext(), "Failed to create order. Error code: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
@@ -565,6 +640,43 @@ public class CreateOrderFragment extends Fragment {
                 Toast.makeText(requireContext(), "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+    private void showPaymentDialog(String paymentUrl) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
+        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_payment_webview, null);
+
+        WebView webView = dialogView.findViewById(R.id.webView);
+
+        // Configure WebView
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true); // Enable JavaScript (if required by the payment page)
+        webSettings.setDomStorageEnabled(true); // Enable DOM storage (if required by the payment page)
+
+        // Set a WebViewClient to handle page navigation within the WebView
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                // Load all URLs within the WebView
+                view.loadUrl(url);
+                return true;
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                // Handle page load completion (if needed)
+                super.onPageFinished(view, url);
+            }
+        });
+
+        // Load the payment URL
+        webView.loadUrl(paymentUrl);
+
+        // Build and show the dialog
+        paymentDialog = builder.setView(dialogView)
+                .setTitle("Payment")
+                .setPositiveButton("Close", (dialog, which) -> dialog.dismiss())
+                .create();
+        paymentDialog.show();
     }
     private void updateTotalPrice() {
         totalPrice = 0.0;

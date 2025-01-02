@@ -75,4 +75,8 @@ public interface ApiService {
 
     @GET("vouchers/loadEmployeeVoucher")
     Call<JsonObject> getVouchers();
+    @POST("payos/create-payment-link")
+    Call<JsonObject> generatePayOs();
+
+
 }
