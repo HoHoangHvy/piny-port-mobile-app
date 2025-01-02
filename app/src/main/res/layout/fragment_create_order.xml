@@ -18,6 +18,7 @@
             android:layout_height="wrap_content"
             android:text="Customer"
             android:textStyle="bold"
+            android:textSize="16dp"
             android:paddingBottom="8dp" />
         <AutoCompleteTextView
             android:id="@+id/autoCompleteCustomer"
@@ -26,34 +27,29 @@
             android:backgroundTint="@color/grey"
             android:hint="Search for customer" />
 
-        <!-- Products Section -->
-        <TextView
+        <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Products"
-            android:textStyle="bold"
-            android:paddingTop="16dp"
-            android:paddingBottom="8dp" />
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <Spinner
-                android:id="@+id/spinner_product"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/blue_500"
-                android:prompt="@string/select_method" />
+            app:justifyContent="space_between">
+            <!-- Products Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Products"
+                android:textStyle="bold"
+                android:textSize="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp" />
             <Button
+                style="?attr/materialIconButtonStyle"
                 android:id="@+id/btnAddProduct"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
-                android:text="+ Add"
                 android:textColor="@color/white"
-                android:backgroundTint="@color/blue_500"
-                android:layout_marginStart="8dp" />
-        </LinearLayout>
+                android:backgroundTint="@color/blue_sky"
+                android:layout_marginStart="8dp"
+                app:icon="@drawable/add_24px"/>
+        </com.google.android.flexbox.FlexboxLayout>
         <LinearLayout
             android:id="@+id/layout_products"
             android:layout_width="match_parent"
@@ -63,6 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Payment method"
+            android:textSize="16dp"
             android:textStyle="bold"
             android:paddingTop="16dp"
             android:paddingBottom="8dp" />

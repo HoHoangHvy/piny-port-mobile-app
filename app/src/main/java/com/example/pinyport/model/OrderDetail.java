@@ -7,6 +7,7 @@ public class OrderDetail {
     private double productPrice;
     private int quantity;
     private String size;
+    private String notes;
     private List<Topping> toppings;
 
     public String getSize() {
@@ -27,7 +28,16 @@ public class OrderDetail {
 
     private String productImageUrl; // Add this field
     private String productId;
-    public OrderDetail(String productId, String productName, double productPrice, int quantity, List<Topping> toppings, String productImageUrl, String size) {
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public OrderDetail(String productId, String productName, double productPrice, int quantity, List<Topping> toppings, String productImageUrl, String size, String notes) {
         this.productId = productId;
         this.productName = productName;
         this.productPrice = productPrice;
@@ -35,6 +45,7 @@ public class OrderDetail {
         this.toppings = toppings;
         this.productImageUrl = productImageUrl;
         this.size = size;
+        this.notes = notes;
     }
 
     // Getters and setters

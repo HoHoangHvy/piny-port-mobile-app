@@ -319,7 +319,8 @@ public class OrderDetailFragment extends Fragment {
                     detailObject.get("quantity").getAsInt(),
                     parseToppings(detailObject.getAsJsonArray("toppings")),
                     detailObject.get("image").getAsString(), // Add image URL
-                    detailObject.get("size").getAsString()
+                    detailObject.get("size").getAsString(),
+                    detailObject.get("note").getAsString()
             );
             orderDetails.add(orderDetail);
         }

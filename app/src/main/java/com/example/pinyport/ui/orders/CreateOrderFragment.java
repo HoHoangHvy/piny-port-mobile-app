@@ -9,6 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.Spinner;
@@ -20,6 +21,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.pinyport.R;
 import com.example.pinyport.adapter.CustomerOptionAdapter;
 import com.example.pinyport.adapter.ProductAdapter;
@@ -35,9 +37,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import retrofit2.Call;
@@ -112,7 +116,19 @@ public class CreateOrderFragment extends Fragment {
             }
         });
     }
-
+    private List<Topping> parseToppings(JsonArray toppingsArray) {
+        List<Topping> toppings = new ArrayList<>();
+        for (JsonElement toppingElement : toppingsArray) {
+            if (toppingElement.isJsonObject()) {
+                JsonObject toppingObject = toppingElement.getAsJsonObject();
+                String id = toppingObject.get("id").getAsString();
+                String name = toppingObject.get("name").getAsString();
+                double price = toppingObject.get("price").getAsDouble();
+                toppings.add(new Topping(id, name, price));
+            }
+        }
+        return toppings;
+    }
     private void fetchProducts() {
         apiService.getProductOptions().enqueue(new Callback<JsonObject>() {
             @Override
@@ -128,12 +144,15 @@ public class CreateOrderFragment extends Fragment {
                                 String productId = productObject.get("id").getAsString();
                                 String productName = productObject.get("name").getAsString();
                                 double productPrice = productObject.get("price").getAsDouble();
+                                JsonArray toppingsArray = productObject.getAsJsonArray("toppings");
+                                // Convert JsonArray to List<Topping>
+                                List<Topping> toppings = parseToppings(toppingsArray);
                                 products.add(new Product(
                                         productId,
                                         productName,
                                         productPrice,
                                         productObject.get("image_url").getAsString(),
-                                        new ArrayList<>()
+                                        toppings
                                 ));
                             }
                         }
@@ -216,18 +235,35 @@ public class CreateOrderFragment extends Fragment {
                     quantity,
                     selectedToppings,
                     product.getImageUrl(),
-                    selectedSize
+                    selectedSize,
+                    note
             );
             orderDetails.add(orderDetail);
             updateTotalPrice();
             // Display product in layoutProducts
             View productView = LayoutInflater.from(requireContext()).inflate(R.layout.item_selected_product, layoutProducts, false);
-            TextView tvProductName = productView.findViewById(R.id.tv_product_name);
-            TextView tvProductPrice = productView.findViewById(R.id.tv_product_price);
+            ImageView ivProductImage = productView.findViewById(R.id.ivProductImage);
+            TextView tvProductName = productView.findViewById(R.id.tvProductName);
+            TextView tvToppings = productView.findViewById(R.id.tvToppings);
+            TextView tvNotes = productView.findViewById(R.id.tvNotes);
+            TextView tvProductPrice = productView.findViewById(R.id.tvProductPrice);
             Button btnRemove = productView.findViewById(R.id.btn_remove);
 
-            tvProductName.setText(product.getName());
-            tvProductPrice.setText(String.format("$%.2f", calculateTotalPriceOfProduct(orderDetail)));
+            Glide.with(requireContext()).load(orderDetail.getProductImageUrl()).into(ivProductImage);
+            tvProductName.setText(orderDetail.getProductName() + " (" + orderDetail.getSize() + ") x" + orderDetail.getQuantity());
+            // Display toppings
+            StringBuilder toppingsBuilder = new StringBuilder("Toppings: ");
+            for (Topping topping : orderDetail.getToppings()) {
+                toppingsBuilder.append(topping.getName()).append(", ");
+            }
+            if (orderDetail.getToppings().size() > 0) {
+                toppingsBuilder.setLength(toppingsBuilder.length() - 2); // Remove the last comma
+            }
+            tvToppings.setText(toppingsBuilder.toString());
+            tvNotes.setText("Notes: " + orderDetail.getNotes());
+            NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+            tvProductPrice.setText(format.format(calculateTotalPriceOfProduct(orderDetail)));
+
             btnRemove.setOnClickListener(v1 -> {
                 layoutProducts.removeView(productView);
                 orderDetails.remove(orderDetail);
@@ -318,40 +354,41 @@ public class CreateOrderFragment extends Fragment {
         productAdapter.setProducts(filteredProducts);
     }
 
-    private void addProductToOrder(Product product) {
-        OrderDetail orderDetail = new OrderDetail(
-                product.getProductId(),
-                product.getName(),
-                product.getPrice(),
-                1,
-                new ArrayList<>(),
-                product.getImageUrl(),
-                "M"
-        );
-        orderDetails.add(orderDetail);
-        updateTotalPrice();
-
-        // Create a new TextView for the product
-        View productView = LayoutInflater.from(requireContext()).inflate(R.layout.item_selected_product, layoutProducts, false);
-
-        TextView tvProductName = productView.findViewById(R.id.tv_product_name);
-        TextView tvProductPrice = productView.findViewById(R.id.tv_product_price);
-        Button btnRemove = productView.findViewById(R.id.btn_remove);
-
-        tvProductName.setText(product.getName());
-        tvProductPrice.setText(String.format("$%.2f", product.getPrice()));
-
-        btnRemove.setOnClickListener(v -> {
-            layoutProducts.removeView(productView);
-            orderDetails.remove(orderDetail);
-            updateTotalPrice();
-            Toast.makeText(requireContext(), "Product removed: " + product.getName(), Toast.LENGTH_SHORT).show();
-        });
-
-        layoutProducts.addView(productView);
-
-        Toast.makeText(requireContext(), "Product added: " + product.getName(), Toast.LENGTH_SHORT).show();
-    }
+//    private void addProductToOrder(Product product) {
+//        OrderDetail orderDetail = new OrderDetail(
+//                product.getProductId(),
+//                product.getName(),
+//                product.getPrice(),
+//                1,
+//                new ArrayList<>(),
+//                product.getImageUrl(),
+//                "M",
+//                ""
+//        );
+//        orderDetails.add(orderDetail);
+//        updateTotalPrice();
+//
+//        // Create a new TextView for the product
+//        View productView = LayoutInflater.from(requireContext()).inflate(R.layout.item_selected_product, layoutProducts, false);
+//
+//        TextView tvProductName = productView.findViewById(R.id.tv_product_name);
+//        TextView tvProductPrice = productView.findViewById(R.id.tv_product_price);
+//        Button btnRemove = productView.findViewById(R.id.btn_remove);
+//
+//        tvProductName.setText(product.getName());
+//        tvProductPrice.setText(String.format("$%.2f", product.getPrice()));
+//
+//        btnRemove.setOnClickListener(v -> {
+//            layoutProducts.removeView(productView);
+//            orderDetails.remove(orderDetail);
+//            updateTotalPrice();
+//            Toast.makeText(requireContext(), "Product removed: " + product.getName(), Toast.LENGTH_SHORT).show();
+//        });
+//
+//        layoutProducts.addView(productView);
+//
+//        Toast.makeText(requireContext(), "Product added: " + product.getName(), Toast.LENGTH_SHORT).show();
+//    }
 
     private void applyVoucher() {
         String voucherCode = binding.etVoucher.getText().toString();

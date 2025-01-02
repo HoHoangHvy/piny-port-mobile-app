@@ -1,20 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp">
-
-    <!-- Title -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Customize Your Product"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        android:gravity="center"
-        android:paddingBottom="16dp" />
-
     <!-- Size Section -->
     <TextView
         android:layout_width="match_parent"
@@ -33,6 +22,7 @@
             android:id="@+id/spinner_size"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/grey"
             android:backgroundTint="@color/grey" />
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -45,19 +35,23 @@
         android:textColor="@color/black"
         android:paddingBottom="4dp" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_toppings"
+    <com.google.android.material.card.MaterialCardView
+        android:layout_marginTop="8dp"
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/rounded_corners"
-        android:padding="8dp" />
-
+        android:layout_height="wrap_content">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_toppings"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginBottom="16dp"
+            android:padding="8dp" />
+    </com.google.android.material.card.MaterialCardView>
     <!-- Note Section -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Note"
+        android:layout_marginTop="8dp"
         android:textStyle="bold"
         android:textColor="@color/black"
         android:paddingBottom="4dp" />
@@ -91,14 +85,14 @@
         android:orientation="horizontal">
 
         <Button
+            style="?attr/materialIconButtonStyle"
             android:id="@+id/btn_decrease"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:backgroundTint="@color/blue_500"
-            android:text="-"
+            app:icon="@drawable/remove_24px"
+            android:backgroundTint="@color/blue_sky"
             android:textColor="@color/white"
             android:textSize="16sp" />
-
         <TextView
             android:id="@+id/tv_quantity"
             android:layout_width="wrap_content"
@@ -110,11 +104,12 @@
             android:textSize="18sp" />
 
         <Button
+            style="?attr/materialIconButtonStyle"
             android:id="@+id/btn_increase"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:backgroundTint="@color/blue_500"
-            android:text="+"
+            android:backgroundTint="@color/blue_sky"
+            app:icon="@drawable/add_24px"
             android:textColor="@color/white"
             android:textSize="16sp" />
     </LinearLayout>

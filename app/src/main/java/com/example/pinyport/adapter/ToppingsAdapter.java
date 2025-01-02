@@ -63,7 +63,7 @@ public class ToppingsAdapter extends RecyclerView.Adapter<ToppingsAdapter.Toppin
 
         public void bind(Topping topping) {
             this.topping = topping;
-            checkBox.setText(topping.getName());
+            checkBox.setText(topping.getName() + " + " + topping.getPrice());
         }
     }
 }
