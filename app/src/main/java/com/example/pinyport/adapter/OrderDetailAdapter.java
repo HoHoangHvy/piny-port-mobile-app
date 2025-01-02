@@ -66,7 +66,7 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
             NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
 
             tvProductName.setText(orderDetail.getProductName());
-            tvProductPrice.setText(String.format("%s", formatter.format((orderDetail.getProductPrice()))));
+            tvProductPrice.setText(String.format("%s", formatter.format((orderDetail.getTotalPrice()))));
             tvQuantity.setText(String.format("x%d", orderDetail.getQuantity()));
 
             // Load product image using Glide

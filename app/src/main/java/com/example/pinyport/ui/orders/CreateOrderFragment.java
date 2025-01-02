@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -40,8 +41,10 @@ import com.google.gson.JsonObject;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import retrofit2.Call;
@@ -60,6 +63,7 @@ public class CreateOrderFragment extends Fragment {
     private ProductAdapter productAdapter;
     private List<Product> filteredProducts;
     private LinearLayout layoutProducts;
+    private final Map<String, Double> sizePrices = new HashMap<>();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -72,6 +76,10 @@ public class CreateOrderFragment extends Fragment {
         binding.btnAddProduct.setOnClickListener(v -> fetchProducts());
         binding.btnApplyVoucher.setOnClickListener(v -> applyVoucher());
         binding.btnCreate.setOnClickListener(v -> createOrder());
+
+        sizePrices.put("S", 0.0);
+        sizePrices.put("M", 5000.0);
+        sizePrices.put("L", 10000.0);
 
         return binding.getRoot();
     }
@@ -185,6 +193,10 @@ public class CreateOrderFragment extends Fragment {
         Button btnDecrease = dialogView.findViewById(R.id.btn_decrease);
         Button btnIncrease = dialogView.findViewById(R.id.btn_increase);
 
+        // Setup quantity
+        AtomicInteger initialQuantity = new AtomicInteger(1);
+        tvQuantity.setText(String.valueOf(initialQuantity.get()));
+
         // Setup size Spinner
         List<String> sizes = Arrays.asList("S", "M", "L");
         ArrayAdapter<String> sizeAdapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, sizes);
@@ -196,28 +208,43 @@ public class CreateOrderFragment extends Fragment {
         ToppingsAdapter toppingsAdapter = new ToppingsAdapter(toppings);
         rvToppings.setAdapter(toppingsAdapter);
         rvToppings.setLayoutManager(new LinearLayoutManager(requireContext()));
+        toppingsAdapter.setOnToppingSelectedListener(selectedToppings -> {
+            String selectedSize = spinnerSize.getSelectedItem().toString();
+            updateTotalPriceProduct(product, selectedToppings, initialQuantity.get(), selectedSize, tvTotalPrice);
+        });
 
-        // Setup quantity
-        AtomicInteger initialQuantity = new AtomicInteger(1);
-        tvQuantity.setText(String.valueOf(initialQuantity.get()));
+        spinnerSize.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedSize = sizes.get(position);
+                updateTotalPriceProduct(product, toppingsAdapter.getSelectedToppings(), initialQuantity.get(), selectedSize, tvTotalPrice);
+            }
 
-        // Setup total price
-        updateTotalPriceProduct(product, toppingsAdapter.getSelectedToppings(), initialQuantity.get(), tvTotalPrice);
-
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing
+            }
+        });
         // Setup quantity adjustment
         btnIncrease.setOnClickListener(v -> {
             initialQuantity.getAndIncrement();
             tvQuantity.setText(String.valueOf(initialQuantity.get()));
-            updateTotalPriceProduct(product, toppingsAdapter.getSelectedToppings(), initialQuantity.get(), tvTotalPrice);
+            String selectedSize = spinnerSize.getSelectedItem().toString();
+            updateTotalPriceProduct(product, toppingsAdapter.getSelectedToppings(), initialQuantity.get(), selectedSize, tvTotalPrice);
         });
 
         btnDecrease.setOnClickListener(v -> {
             if (initialQuantity.get() > 1) {
                 initialQuantity.getAndDecrement();
                 tvQuantity.setText(String.valueOf(initialQuantity.get()));
-                updateTotalPriceProduct(product, toppingsAdapter.getSelectedToppings(), initialQuantity.get(), tvTotalPrice);
+                String selectedSize = spinnerSize.getSelectedItem().toString();
+                updateTotalPriceProduct(product, toppingsAdapter.getSelectedToppings(), initialQuantity.get(), selectedSize, tvTotalPrice);
             }
         });
+
+        updateTotalPriceProduct(product, toppingsAdapter.getSelectedToppings(), initialQuantity.get(), "S", tvTotalPrice);
+
+
         AlertDialog dialog = builder.setView(dialogView)
                 .setTitle("Product Options")
                 .create();
@@ -231,7 +258,7 @@ public class CreateOrderFragment extends Fragment {
             OrderDetail orderDetail = new OrderDetail(
                     product.getProductId(),
                     product.getName(),
-                    product.getPrice(),
+                    getTotalPrice(product, selectedToppings, quantity, selectedSize),
                     quantity,
                     selectedToppings,
                     product.getImageUrl(),
@@ -262,7 +289,7 @@ public class CreateOrderFragment extends Fragment {
             tvToppings.setText(toppingsBuilder.toString());
             tvNotes.setText("Notes: " + orderDetail.getNotes());
             NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-            tvProductPrice.setText(format.format(calculateTotalPriceOfProduct(orderDetail)));
+            tvProductPrice.setText(format.format(orderDetail.getTotalPrice()));
 
             btnRemove.setOnClickListener(v1 -> {
                 layoutProducts.removeView(productView);
@@ -283,15 +310,19 @@ public class CreateOrderFragment extends Fragment {
         });
         dialog.show();
     }
-
-    private void updateTotalPriceProduct(Product product, List<Topping> selectedToppings, int quantity, TextView tvTotalPrice) {
+    private double getTotalPrice(Product product, List<Topping> selectedToppings, int quantity, String selectedSize) {
         double basePrice = product.getPrice();
+        double sizePrice = sizePrices.getOrDefault(selectedSize, 0.0);
         double toppingsPrice = 0.0;
         for (Topping topping : selectedToppings) {
             toppingsPrice += topping.getPrice();
         }
-        double totalPrice = (basePrice + toppingsPrice) * quantity;
-        tvTotalPrice.setText(String.format("$%.2f", totalPrice));
+        return (basePrice + sizePrice + toppingsPrice) * quantity;
+    }
+    private void updateTotalPriceProduct(Product product, List<Topping> selectedToppings, int quantity, String selectedSize, TextView tvTotalPrice) {
+        double totalPrice = getTotalPrice(product, selectedToppings, quantity, selectedSize);
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        tvTotalPrice.setText(formatter.format(totalPrice));
     }
     private void updateTotalPrice(Product product, List<Topping> selectedToppings, int quantity) {
         double basePrice = product.getPrice();
@@ -420,7 +451,7 @@ public class CreateOrderFragment extends Fragment {
             detailObject.addProperty("product_id", orderDetail.getProductId());
             detailObject.addProperty("size", orderDetail.getSize());
             detailObject.addProperty("quantity", orderDetail.getQuantity());
-            detailObject.addProperty("total_price", calculateTotalPriceOfProduct(orderDetail));
+            detailObject.addProperty("total_price", orderDetail.getTotalPrice());
 
             JsonArray toppingsArray = new JsonArray();
             for (Topping topping : orderDetail.getToppings()) {
@@ -458,23 +489,13 @@ public class CreateOrderFragment extends Fragment {
             }
         });
     }
-
-    private double calculateTotalPriceOfProduct(OrderDetail orderDetail) {
-        double productPrice = orderDetail.getProductPrice();
-        int quantity = orderDetail.getQuantity();
-        double toppingsPrice = 0.0;
-        for (Topping topping : orderDetail.getToppings()) {
-            toppingsPrice += topping.getPrice();
-        }
-        return productPrice * quantity + toppingsPrice;
-    }
-
     private void updateTotalPrice() {
         totalPrice = 0.0;
         for (OrderDetail orderDetail : orderDetails) {
-            totalPrice += calculateTotalPriceOfProduct(orderDetail);
+            totalPrice += orderDetail.getTotalPrice();
         }
-        binding.tvTotalPrice.setText(String.format("$%.2f", totalPrice));
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        binding.tvTotalPrice.setText(formatter.format(totalPrice));
     }
 
     @Override

@@ -4,7 +4,7 @@ import java.util.List;
 
 public class OrderDetail {
     private String productName;
-    private double productPrice;
+    private double totalPrice;
     private int quantity;
     private String size;
     private String notes;
@@ -37,10 +37,10 @@ public class OrderDetail {
         this.notes = notes;
     }
 
-    public OrderDetail(String productId, String productName, double productPrice, int quantity, List<Topping> toppings, String productImageUrl, String size, String notes) {
+    public OrderDetail(String productId, String productName, double totalPrice, int quantity, List<Topping> toppings, String productImageUrl, String size, String notes) {
         this.productId = productId;
         this.productName = productName;
-        this.productPrice = productPrice;
+        this.totalPrice = totalPrice;
         this.quantity = quantity;
         this.toppings = toppings;
         this.productImageUrl = productImageUrl;
@@ -57,12 +57,12 @@ public class OrderDetail {
         this.productName = productName;
     }
 
-    public double getProductPrice() {
-        return productPrice;
+    public double getTotalPrice() {
+        return totalPrice;
     }
 
-    public void setProductPrice(double productPrice) {
-        this.productPrice = productPrice;
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
     public int getQuantity() {

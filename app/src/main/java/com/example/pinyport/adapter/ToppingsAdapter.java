@@ -17,10 +17,15 @@ import java.util.List;
 public class ToppingsAdapter extends RecyclerView.Adapter<ToppingsAdapter.ToppingViewHolder> {
     private List<Topping> toppings;
     private List<Topping> selectedToppings;
+    private OnToppingSelectedListener listener;
 
     public ToppingsAdapter(List<Topping> toppings) {
         this.toppings = toppings;
         this.selectedToppings = new ArrayList<>();
+    }
+
+    public void setOnToppingSelectedListener(OnToppingSelectedListener listener) {
+        this.listener = listener;
     }
 
     @NonNull
@@ -52,11 +57,18 @@ public class ToppingsAdapter extends RecyclerView.Adapter<ToppingsAdapter.Toppin
         public ToppingViewHolder(View itemView) {
             super(itemView);
             checkBox = itemView.findViewById(R.id.checkbox_topping);
+
+            // Handle checkbox state changes
             checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked) {
                     selectedToppings.add(topping);
                 } else {
                     selectedToppings.remove(topping);
+                }
+
+                // Notify the listener when a topping is selected or deselected
+                if (listener != null) {
+                    listener.onToppingSelected(selectedToppings);
                 }
             });
         }
@@ -64,6 +76,12 @@ public class ToppingsAdapter extends RecyclerView.Adapter<ToppingsAdapter.Toppin
         public void bind(Topping topping) {
             this.topping = topping;
             checkBox.setText(topping.getName() + " + " + topping.getPrice());
+            checkBox.setChecked(selectedToppings.contains(topping)); // Maintain state on rebind
         }
+    }
+
+    // Interface to notify when toppings are selected or deselected
+    public interface OnToppingSelectedListener {
+        void onToppingSelected(List<Topping> selectedToppings);
     }
 }
