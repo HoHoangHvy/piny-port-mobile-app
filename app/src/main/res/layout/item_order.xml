@@ -133,27 +133,38 @@
                     android:layout_marginTop="5dp"
                     android:background="#006FFD" />
 
-                <LinearLayout
+                <com.google.android.flexbox.FlexboxLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="5dp"
-                    android:orientation="horizontal">
+                    app:justifyContent="space_between">
 
-                    <TextView
-                        android:id="@+id/order_customer_label"
+                    <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="2dp"
-                        android:text="Customer: "
-                        android:textSize="14sp" />
+                        android:layout_height="wrap_content">
+                        <TextView
+                            android:id="@+id/order_customer_label"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="2dp"
+                            android:text="Customer: "
+                            android:textSize="14sp" />
 
+                        <TextView
+                            android:id="@+id/order_customer"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:text="Customer Name"
+                            android:textSize="14sp" />
+                    </LinearLayout>
                     <TextView
-                        android:id="@+id/order_customer"
+                        android:id="@+id/order_payment_status"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:text="Customer Name"
+                        android:text="Unpaid"
                         android:textSize="14sp" />
-                </LinearLayout>
+
+                </com.google.android.flexbox.FlexboxLayout>
             </LinearLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>

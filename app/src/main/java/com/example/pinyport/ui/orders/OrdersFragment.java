@@ -38,7 +38,6 @@ import com.google.gson.JsonObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -136,7 +135,8 @@ public class OrdersFragment extends Fragment {
                                             orderObject.get("receiver_name").getAsString(),
                                             orderObject.get("order_status").getAsString(),
                                             orderObject.get("custom_fields").getAsJsonObject().get("count_product").getAsInt(),
-                                            orderObject.get("order_total").getAsDouble()
+                                            orderObject.get("order_total").getAsDouble(),
+                                            orderObject.get("payment_status").getAsString()
                                     );
                                     orderList.add(order);
                                 } catch (ParseException e) {

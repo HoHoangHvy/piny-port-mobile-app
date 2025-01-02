@@ -9,6 +9,16 @@ public class Order implements Serializable {
     private String time;
     private String customerName;
     private String status;
+    private String paymentStatus;
+
+    public String getPaymentStatus() {
+        return paymentStatus;
+    }
+
+    public void setPaymentStatus(String paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
     private int totalItems;
 
     public void setDate(String date) {
@@ -59,7 +69,7 @@ public class Order implements Serializable {
     }
 
 
-    public Order(String orderId, String orderNumber, String date, String time, String customerName, String status, int itemsCount, double value) {
+    public Order(String orderId, String orderNumber, String date, String time, String customerName, String status, int itemsCount, double value, String paymentStatus) {
         this.orderId = orderId;
         this.orderNumber = orderNumber;
         this.date = date;
@@ -68,6 +78,7 @@ public class Order implements Serializable {
         this.status = status;
         this.itemsCount = itemsCount;
         this.value = value;
+        this.paymentStatus = paymentStatus;
     }
 
     // Getters for all fields

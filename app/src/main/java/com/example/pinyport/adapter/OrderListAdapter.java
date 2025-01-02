@@ -29,7 +29,7 @@ public class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapter.Orde
     }
 
     public static class OrderViewHolder extends RecyclerView.ViewHolder {
-        public TextView orderId, orderDate, orderTime, orderStatus, orderItemsCount, orderValue, orderCustomer;
+        public TextView orderId, orderDate, orderTime, orderStatus, orderItemsCount, orderValue, orderCustomer, orderPaymentStatus;
         public MaterialCardView orderCard;
         public OrderViewHolder(View itemView) {
             super(itemView);
@@ -40,6 +40,7 @@ public class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapter.Orde
             orderItemsCount = itemView.findViewById(R.id.order_items_count);
             orderValue = itemView.findViewById(R.id.order_value);
             orderCustomer = itemView.findViewById(R.id.order_customer);
+            orderPaymentStatus = itemView.findViewById(R.id.order_payment_status);
             orderCard = itemView.findViewById(R.id.order_card);
         }
     }
@@ -68,7 +69,13 @@ public class OrderListAdapter extends RecyclerView.Adapter<OrderListAdapter.Orde
         holder.orderItemsCount.setText(order.getItemsCount() + " items");
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
         String formattedPrice = formatter.format(order.getValue());
-
+        if(order.getPaymentStatus().equals("paid")){
+            holder.orderPaymentStatus.setText("Paid");
+            holder.orderPaymentStatus.setTextColor(ContextCompat.getColor(holder.orderPaymentStatus.getContext(), R.color.status_success));
+        } else {
+            holder.orderPaymentStatus.setText("Unpaid");
+            holder.orderPaymentStatus.setTextColor(ContextCompat.getColor(holder.orderPaymentStatus.getContext(), R.color.status_cancel));
+        }
         holder.orderValue.setText(formattedPrice);
         holder.orderCustomer.setText(order.getCustomerName());
 

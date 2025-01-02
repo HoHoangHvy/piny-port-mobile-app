@@ -142,7 +142,8 @@ public class CustomerDetailFragment extends Fragment {
                                     orderObject.get("receiver_name").getAsString(),
                                     orderObject.get("status").getAsString(),
                                     orderObject.get("count_product").getAsInt(),
-                                    orderObject.get("total_price").getAsDouble()
+                                    orderObject.get("total_price").getAsDouble(),
+                                    orderObject.get("payment_status").getAsString()
                             );
                             orderList.add(order);
                         } catch (Exception e) {
