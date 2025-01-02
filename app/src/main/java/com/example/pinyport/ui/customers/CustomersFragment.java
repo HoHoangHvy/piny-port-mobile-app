@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,11 +24,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.pinyport.R;
 import com.example.pinyport.adapter.CustomerListAdapter;
 import com.example.pinyport.databinding.FilterCustomerDrawerBinding;
-import com.example.pinyport.databinding.FilterOrderDrawerBinding;
 import com.example.pinyport.databinding.FragmentCustomersBinding;
 import com.example.pinyport.model.Customer;
 import com.example.pinyport.network.ApiClient;
 import com.example.pinyport.network.ApiService;
+import com.example.pinyport.network.PermissionManager;
 import com.example.pinyport.network.SharedPrefsManager;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -63,6 +62,7 @@ public class CustomersFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ApiService apiService = ApiClient.getClient(requireContext()).create(ApiService.class);
         SharedPrefsManager sharedPrefsManager = new SharedPrefsManager(requireContext());
+        PermissionManager permissionManager = new PermissionManager(requireContext());
 
         CustomersViewModel customersViewModel = new ViewModelProvider(this).get(CustomersViewModel.class);
         binding = FragmentCustomersBinding.inflate(inflater, container, false);
@@ -79,7 +79,12 @@ public class CustomersFragment extends Fragment {
 
         // Fetch customers from the API
         fetchCustomers(apiService);
-
+        boolean canCreate = permissionManager.hasPermission("orders", "create", "123");
+        if(canCreate) {
+            binding.createCustomerButton.setVisibility(View.VISIBLE);
+        } else {
+            binding.createCustomerButton.setVisibility(View.GONE);
+        }
         // Handle create customer button click
         FloatingActionButton createCustomerButton = binding.createCustomerButton;
         createCustomerButton.setOnClickListener(v -> {

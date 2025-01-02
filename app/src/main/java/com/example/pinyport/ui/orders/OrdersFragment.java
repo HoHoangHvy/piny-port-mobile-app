@@ -30,6 +30,7 @@ import com.example.pinyport.databinding.FragmentOrdersBinding;
 import com.example.pinyport.model.Order;
 import com.example.pinyport.network.ApiClient;
 import com.example.pinyport.network.ApiService;
+import com.example.pinyport.network.PermissionManager;
 import com.google.android.material.card.MaterialCardView;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -65,6 +66,7 @@ public class OrdersFragment extends Fragment {
         OrdersViewModel ordersViewModel = new ViewModelProvider(this).get(OrdersViewModel.class);
         binding = FragmentOrdersBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
+        PermissionManager permissionManager = new PermissionManager(requireContext());
 
         // Initialize RecyclerView
         setupRecyclerView();
@@ -77,7 +79,12 @@ public class OrdersFragment extends Fragment {
 
         // Fetch orders from the API
         fetchOrders();
-
+        boolean canCreate = permissionManager.hasPermission("orders", "create", "123");
+        if(canCreate) {
+            binding.createOrderButton.setVisibility(View.VISIBLE);
+        } else {
+            binding.createOrderButton.setVisibility(View.GONE);
+        }
         // Handle create order button click
         binding.createOrderButton.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
