@@ -58,16 +58,14 @@ public class OrderDetailAdapter extends RecyclerView.Adapter<OrderDetailAdapter.
             ivProductImage = itemView.findViewById(R.id.ivProductImage);
             tvProductName = itemView.findViewById(R.id.tvProductName);
             tvProductPrice = itemView.findViewById(R.id.tvProductPrice);
-            tvQuantity = itemView.findViewById(R.id.tvQuantity);
             tvToppings = itemView.findViewById(R.id.tvToppings);
         }
 
         public void bind(OrderDetail orderDetail) {
             NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
 
-            tvProductName.setText(orderDetail.getProductName());
+            tvProductName.setText(orderDetail.getProductName() + " " + String.format("x%d", orderDetail.getQuantity()));
             tvProductPrice.setText(String.format("%s", formatter.format((orderDetail.getTotalPrice()))));
-            tvQuantity.setText(String.format("x%d", orderDetail.getQuantity()));
 
             // Load product image using Glide
             Glide.with(itemView.getContext())

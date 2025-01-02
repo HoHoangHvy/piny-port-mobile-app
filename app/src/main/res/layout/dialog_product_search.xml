@@ -40,7 +40,7 @@
         app:cardBackgroundColor="@color/my_app_surface"
         android:backgroundTint="@color/my_app_surface"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="300dp">
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_toppings"
             android:layout_width="match_parent"
