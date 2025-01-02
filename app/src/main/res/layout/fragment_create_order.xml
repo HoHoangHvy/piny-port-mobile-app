@@ -1,4 +1,4 @@
-<ScrollView
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -11,14 +11,13 @@
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:orientation="vertical">
-
         <!-- Customer Section -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Customer"
             android:textStyle="bold"
-            android:textSize="16dp"
+            android:textSize="16sp"
             android:paddingBottom="8dp" />
         <AutoCompleteTextView
             android:id="@+id/autoCompleteCustomer"
@@ -27,17 +26,17 @@
             android:backgroundTint="@color/grey"
             android:hint="Search for customer" />
 
+        <!-- Products Section -->
         <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:justifyContent="space_between">
-            <!-- Products Section -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Products"
                 android:textStyle="bold"
-                android:textSize="16dp"
+                android:textSize="16sp"
                 android:paddingTop="16dp"
                 android:paddingBottom="8dp" />
             <Button
@@ -50,82 +49,110 @@
                 android:layout_marginStart="8dp"
                 app:icon="@drawable/add_24px"/>
         </com.google.android.flexbox.FlexboxLayout>
-        <LinearLayout
-            android:id="@+id/layout_products"
+
+        <!-- Scrollable Products Layout -->
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:layout_height="230dp"
+            android:fillViewport="true">
+            <LinearLayout
+                android:id="@+id/layout_products"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </androidx.core.widget.NestedScrollView>
+
+        <!-- Payment Method Section -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Payment method"
-            android:textSize="16dp"
+            android:textSize="16sp"
             android:textStyle="bold"
             android:paddingTop="16dp"
             android:paddingBottom="8dp" />
-
         <Spinner
             android:id="@+id/spinner_payment_method"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:prompt="@string/payment_method_prompt"/>
+
         <!-- Voucher Section -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Voucher"
             android:textStyle="bold"
+            android:textSize="16sp"
+
             android:paddingTop="16dp"
             android:paddingBottom="8dp" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-            <EditText
+            <AutoCompleteTextView
                 android:id="@+id/et_voucher"
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_weight="1"
-                android:hint="Enter voucher code"
-                android:background="@drawable/rounded_corners"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp" />
-            <Button
-                android:id="@+id/btn_apply_voucher"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:text="Apply"
-                android:textColor="@color/white"
-                android:backgroundTint="@color/blue_500"
-                android:layout_marginStart="8dp" />
+                android:backgroundTint="@color/grey"
+                android:hint="Search for customer" />
         </LinearLayout>
 
         <!-- Total Section -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/my_app_surface"
             android:layout_marginTop="16dp"
-            app:cardElevation="4dp"
-            app:cardBackgroundColor="@color/white">
+            app:cardElevation="4dp">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:orientation="horizontal">
-                <TextView
-                    android:layout_width="0dp"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Total"
-                    android:textStyle="bold" />
-                <TextView
-                    android:id="@+id/tv_total_price"
-                    android:layout_width="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="16dp"
+                    android:paddingRight="16dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Total"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/tv_total_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="$0.00"
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="$0.00"
-                    android:textColor="@color/black"
-                    android:textStyle="bold" />
+                    android:paddingBottom="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="0dp"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Discount"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/tv_discount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="-0.00đ"
+                        android:textStyle="bold" />
+                </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
@@ -147,4 +174,4 @@
             android:layout_gravity="center"
             android:visibility="gone" />
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

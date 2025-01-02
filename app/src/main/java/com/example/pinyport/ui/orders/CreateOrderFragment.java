@@ -74,7 +74,6 @@ public class CreateOrderFragment extends Fragment {
         layoutProducts = binding.layoutProducts;
         setupCustomerSearch();
         binding.btnAddProduct.setOnClickListener(v -> fetchProducts());
-        binding.btnApplyVoucher.setOnClickListener(v -> applyVoucher());
         binding.btnCreate.setOnClickListener(v -> createOrder());
 
         sizePrices.put("S", 0.0);
