@@ -528,6 +528,7 @@ public class CreateOrderFragment extends Fragment {
             detailObject.addProperty("size", orderDetail.getSize());
             detailObject.addProperty("quantity", orderDetail.getQuantity());
             detailObject.addProperty("total_price", orderDetail.getTotalPrice());
+            detailObject.addProperty("note", orderDetail.getNotes());
 
             JsonArray toppingsArray = new JsonArray();
             for (Topping topping : orderDetail.getToppings()) {
@@ -544,7 +545,7 @@ public class CreateOrderFragment extends Fragment {
         orderRequest.addProperty("customer_id", selectedCustomerId);
         orderRequest.add("order_details", orderDetailsArray);
         orderRequest.addProperty("order_total", totalPrice);
-        orderRequest.addProperty("voucher_code", voucherCode);
+        orderRequest.addProperty("voucher_id", selectedVoucher != null ? selectedVoucher.getId() : null);
 
         binding.progressBar.setVisibility(View.VISIBLE);
         apiService.createOrder(orderRequest).enqueue(new Callback<JsonObject>() {

@@ -44,10 +44,9 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_toppings"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
+            android:layout_height="match_parent"
             android:backgroundTint="@color/my_app_surface"
             android:background="@color/my_app_surface"
-            android:layout_marginBottom="16dp"
             android:padding="8dp" />
     </com.google.android.material.card.MaterialCardView>
     <!-- Note Section -->
@@ -72,7 +71,6 @@
             android:hint="Enter note"
             android:backgroundTint="@color/grey" />
     </com.google.android.material.textfield.TextInputLayout>
-
     <!-- Quantity Section -->
     <TextView
         android:layout_width="match_parent"
