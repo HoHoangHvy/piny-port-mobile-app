@@ -93,10 +93,19 @@
             android:orientation="horizontal">
             <AutoCompleteTextView
                 android:id="@+id/et_voucher"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="48dp"
+                android:layout_weight="1"
                 android:backgroundTint="@color/grey"
-                android:hint="Search for customer" />
+                android:hint="Search for voucher" />
+            <Button
+                style="?attr/materialIconButtonStyle"
+                android:id="@+id/btn_remove_voucher"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/remove_button"
+                app:iconTint="@color/status_cancel"
+                app:icon="@drawable/delete_24px" />
         </LinearLayout>
 
         <!-- Total Section -->

@@ -67,6 +67,7 @@ public class CreateOrderFragment extends Fragment {
     private List<Product> filteredProducts;
     private LinearLayout layoutProducts;
     private final Map<String, Double> sizePrices = new HashMap<>();
+    private List<String> paymentMethods = Arrays.asList("Cash", "Banking");
 
     private NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
 
@@ -79,8 +80,10 @@ public class CreateOrderFragment extends Fragment {
         layoutProducts = binding.layoutProducts;
         setupCustomerSearch();
         setupVoucherSearch();
+        setupPaymentMethodSpinner();
         binding.btnAddProduct.setOnClickListener(v -> fetchProducts());
         binding.btnCreate.setOnClickListener(v -> createOrder());
+        binding.btnRemoveVoucher.setOnClickListener(v -> removeVoucher());
 
         sizePrices.put("S", 0.0);
         sizePrices.put("M", 5000.0);
@@ -88,7 +91,26 @@ public class CreateOrderFragment extends Fragment {
 
         return binding.getRoot();
     }
+    private void setupPaymentMethodSpinner() {
+        ArrayAdapter<String> paymentMethodAdapter = new ArrayAdapter<>(
+                requireContext(),
+                android.R.layout.simple_spinner_item,
+                paymentMethods
+        );
+        paymentMethodAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        binding.spinnerPaymentMethod.setAdapter(paymentMethodAdapter);
+    }
+    private void removeVoucher() {
+        // Clear the selected voucher
+        selectedVoucher = null;
+        binding.etVoucher.setText(""); // Clear the voucher input field
+        binding.tvDiscount.setText(formatter.format(0)); // Reset the discount display
 
+        // Recalculate the total price without the voucher
+        updateTotalPrice();
+
+        Toast.makeText(requireContext(), "Voucher removed.", Toast.LENGTH_SHORT).show();
+    }
     private void setupCustomerSearch() {
         apiService.getCustomerOptions().enqueue(new Callback<JsonObject>() {
             @Override
@@ -480,7 +502,7 @@ public class CreateOrderFragment extends Fragment {
 
     private void applyVoucher(VoucherOption voucher) {
         selectedVoucher = voucher;
-        binding.tvDiscount.setText(formatter.format("- " + calculateDiscount(totalPrice, voucher)));
+        binding.tvDiscount.setText("- " + formatter.format(calculateDiscount(totalPrice, voucher)));
         updateTotalPrice();
 
         Toast.makeText(requireContext(), "Voucher applied: " + voucher.getName(), Toast.LENGTH_SHORT).show();
@@ -518,7 +540,7 @@ public class CreateOrderFragment extends Fragment {
         }
 
         JsonObject orderRequest = new JsonObject();
-        orderRequest.addProperty("payment_method", paymentMethod);
+        orderRequest.addProperty("payment_method", paymentMethod); // Include payment method
         orderRequest.addProperty("customer_id", selectedCustomerId);
         orderRequest.add("order_details", orderDetailsArray);
         orderRequest.addProperty("order_total", totalPrice);
