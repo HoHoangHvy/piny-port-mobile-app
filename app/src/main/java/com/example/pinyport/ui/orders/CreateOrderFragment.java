@@ -27,11 +27,13 @@ import com.example.pinyport.R;
 import com.example.pinyport.adapter.CustomerOptionAdapter;
 import com.example.pinyport.adapter.ProductAdapter;
 import com.example.pinyport.adapter.ToppingsAdapter;
+import com.example.pinyport.adapter.VoucherOptionAdapter;
 import com.example.pinyport.databinding.FragmentCreateOrderBinding;
 import com.example.pinyport.model.CustomerOption;
 import com.example.pinyport.model.OrderDetail;
 import com.example.pinyport.model.Product;
 import com.example.pinyport.model.Topping;
+import com.example.pinyport.model.VoucherOption;
 import com.example.pinyport.network.ApiClient;
 import com.example.pinyport.network.ApiService;
 import com.google.gson.JsonArray;
@@ -60,10 +62,13 @@ public class CreateOrderFragment extends Fragment {
     private AutoCompleteTextView autoCompleteCustomer;
     private CustomerOptionAdapter customerAdapter;
     private String selectedCustomerId;
+    private VoucherOption selectedVoucher;
     private ProductAdapter productAdapter;
     private List<Product> filteredProducts;
     private LinearLayout layoutProducts;
     private final Map<String, Double> sizePrices = new HashMap<>();
+
+    private NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,6 +78,7 @@ public class CreateOrderFragment extends Fragment {
         autoCompleteCustomer = binding.autoCompleteCustomer;
         layoutProducts = binding.layoutProducts;
         setupCustomerSearch();
+        setupVoucherSearch();
         binding.btnAddProduct.setOnClickListener(v -> fetchProducts());
         binding.btnCreate.setOnClickListener(v -> createOrder());
 
@@ -135,6 +141,47 @@ public class CreateOrderFragment extends Fragment {
             }
         }
         return toppings;
+    }
+    private void setupVoucherSearch() {
+        apiService.getVouchers().enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    JsonObject jsonResponse = response.body();
+                    List<VoucherOption> vouchers = new ArrayList<>();
+                    if (jsonResponse.has("data") && !jsonResponse.get("data").isJsonNull()) {
+                        JsonArray dataArray = jsonResponse.getAsJsonArray("data");
+                        for (JsonElement voucherElement : dataArray) {
+                            JsonObject voucherObject = voucherElement.getAsJsonObject();
+                            VoucherOption voucher = new VoucherOption(
+                                    voucherObject.get("id").getAsString(),
+                                    voucherObject.get("voucher_code").getAsString(),
+                                    voucherObject.get("discount_amount").getAsDouble(),
+                                    voucherObject.get("discount_percent").getAsDouble(),
+                                    voucherObject.get("discount_type").getAsString()
+                            );
+                            vouchers.add(voucher);
+                        }
+                    }
+                    VoucherOptionAdapter voucherAdapter = new VoucherOptionAdapter(requireContext(), vouchers);
+                    binding.etVoucher.setAdapter(voucherAdapter);
+                    binding.etVoucher.setOnItemClickListener((parent, view, position, id) -> {
+                        VoucherOption selectedVoucher = voucherAdapter.getItem(position);
+                        if (selectedVoucher != null) {
+                            binding.etVoucher.setText(selectedVoucher.getName());
+                            applyVoucher(selectedVoucher);
+                        }
+                    });
+                } else {
+                    Toast.makeText(requireContext(), "Failed to load vouchers.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                Toast.makeText(requireContext(), "Error loading vouchers: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
     private void fetchProducts() {
         apiService.getProductOptions().enqueue(new Callback<JsonObject>() {
@@ -287,8 +334,7 @@ public class CreateOrderFragment extends Fragment {
             }
             tvToppings.setText(toppingsBuilder.toString());
             tvNotes.setText("Notes: " + orderDetail.getNotes());
-            NumberFormat format = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
-            tvProductPrice.setText(format.format(orderDetail.getTotalPrice()));
+            tvProductPrice.setText(formatter.format(orderDetail.getTotalPrice()));
 
             btnRemove.setOnClickListener(v1 -> {
                 layoutProducts.removeView(productView);
@@ -320,7 +366,7 @@ public class CreateOrderFragment extends Fragment {
     }
     private void updateTotalPriceProduct(Product product, List<Topping> selectedToppings, int quantity, String selectedSize, TextView tvTotalPrice) {
         double totalPrice = getTotalPrice(product, selectedToppings, quantity, selectedSize);
-        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+
         tvTotalPrice.setText(formatter.format(totalPrice));
     }
     private void updateTotalPrice(Product product, List<Topping> selectedToppings, int quantity) {
@@ -420,16 +466,25 @@ public class CreateOrderFragment extends Fragment {
 //        Toast.makeText(requireContext(), "Product added: " + product.getName(), Toast.LENGTH_SHORT).show();
 //    }
 
-    private void applyVoucher() {
-        String voucherCode = binding.etVoucher.getText().toString();
-        if (voucherCode.isEmpty()) {
-            Toast.makeText(requireContext(), "Please enter a voucher code.", Toast.LENGTH_SHORT).show();
-            return;
+    private double calculateDiscount(double totalPrice, VoucherOption voucher) {
+        if (voucher == null) {
+            return 0.0;
         }
-        // Add API call to validate the voucher here
-        Toast.makeText(requireContext(), "Voucher applied: " + voucherCode, Toast.LENGTH_SHORT).show();
+
+        if (voucher.getDiscount_type().equals("percent")) {
+            return totalPrice * voucher.getDiscount_percent() / 100;
+        } else {
+            return voucher.getDiscount_amount();
+        }
     }
 
+    private void applyVoucher(VoucherOption voucher) {
+        selectedVoucher = voucher;
+        binding.tvDiscount.setText(formatter.format("- " + calculateDiscount(totalPrice, voucher)));
+        updateTotalPrice();
+
+        Toast.makeText(requireContext(), "Voucher applied: " + voucher.getName(), Toast.LENGTH_SHORT).show();
+    }
     private void createOrder() {
         if (selectedCustomerId == null) {
             Toast.makeText(requireContext(), "Please select a customer.", Toast.LENGTH_SHORT).show();
@@ -490,11 +545,23 @@ public class CreateOrderFragment extends Fragment {
     }
     private void updateTotalPrice() {
         totalPrice = 0.0;
+        int countProduct = 0;
         for (OrderDetail orderDetail : orderDetails) {
             totalPrice += orderDetail.getTotalPrice();
+            countProduct++;
         }
-        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("vi", "VN"));
+        double discountedTotal = totalPrice;
+        if(selectedVoucher == null) {
+            binding.tvDiscount.setText(formatter.format(0));
+        } else {
+            discountedTotal = discountedTotal - calculateDiscount(totalPrice, selectedVoucher);
+            if(discountedTotal < 0) {
+                discountedTotal = 0;
+            }
+        }
         binding.tvTotalPrice.setText(formatter.format(totalPrice));
+        binding.tvNetTotal.setText(formatter.format(discountedTotal));
+        binding.tvTotalLabel.setText("Total (" + countProduct + " products)");
     }
 
     @Override

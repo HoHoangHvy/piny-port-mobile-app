@@ -26,25 +26,33 @@ public interface ApiService {
 
     @GET("orders")
     Call<JsonObject> getOrders();
+
     @POST("orders")
     Call<Customer> createOrders(@Body CreateOrderRequest request);
+
     @GET("loadOrderDetail/{orderId}")
     Call<JsonObject> getOrderDetails(@Path("orderId") String orderId);
+
     @GET("loadCustomerOrdersHistory")
     Call<JsonObject> getOrderHistory(@Query("customerId") String customerId);
+
     @POST("customers")
     Call<Customer> createCustomer(@Body Customer customer);
 
-    @POST("auth/login") // Replace with your Laravel API login endpoint
+    @POST("auth/login")
+        // Replace with your Laravel API login endpoint
     Call<LoginResponse> login(@Body LoginRequest request);
 
-    @POST("auth/auth-otp") // Replace with your Laravel API login endpoint
+    @POST("auth/auth-otp")
+        // Replace with your Laravel API login endpoint
     Call<JsonObject> verifyOtp(@Body LoginOtpRequest request);
 
-    @POST("auth/gen-otp") // Replace with your Laravel API login endpoint
+    @POST("auth/gen-otp")
+        // Replace with your Laravel API login endpoint
     Call<GenOtpResponse> genOtp(@Body GenOtpRequest request);
 
-    @POST("customers") // Replace with your actual endpoint
+    @POST("customers")
+        // Replace with your actual endpoint
     Call<JsonObject> createCustomer(@Body CustomerRequest customerRequest);
 
     @POST("orders/status/{orderId}")
@@ -52,6 +60,7 @@ public interface ApiService {
 
     @GET("products/options")
     Call<JsonObject> getProductOptions();
+
     @GET("toppings/options")
     Call<JsonObject> getToppingOptions();
 
@@ -60,6 +69,10 @@ public interface ApiService {
 
     @GET("customer/options")
     Call<JsonObject> getCustomerOptions();
+
     @GET("products/{product_id}/toppings")
     Call<List<Topping>> getToppingsForProduct(@Path("product_id") String productId);
+
+    @GET("vouchers/loadEmployeeVoucher")
+    Call<JsonObject> getVouchers();
 }
