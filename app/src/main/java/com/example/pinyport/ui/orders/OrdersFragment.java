@@ -8,8 +8,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.SearchView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,14 +27,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pinyport.R;
+import com.example.pinyport.adapter.CustomerOptionAdapter;
 import com.example.pinyport.adapter.OrderListAdapter;
 import com.example.pinyport.databinding.FilterOrderDrawerBinding;
 import com.example.pinyport.databinding.FragmentOrdersBinding;
+import com.example.pinyport.model.CustomerOption;
 import com.example.pinyport.model.Order;
 import com.example.pinyport.network.ApiClient;
 import com.example.pinyport.network.ApiService;
 import com.example.pinyport.network.PermissionManager;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.slider.RangeSlider;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -60,6 +66,14 @@ public class OrdersFragment extends Fragment {
 
     private Set<String> selectedStatuses = new HashSet<>(); // Store selected statuses
     private String selectedDate = ""; // Default: No date filter
+    private double minPrice = 0.0; // Default minimum price
+    private double maxPrice = 1000000.0; // Default maximum price
+    private String selectedCustomerId = ""; // Default: No customer filter
+    private String selectedCustomerName = ""; // Default: No customer filter
+    private Comparator<Order> currentComparator = null; // Store current sorting comparator
+
+    private List<CustomerOption> customers = new ArrayList<>(); // List to store customer options
+    private CustomerOptionAdapter customerAdapter; // Adapter for customer options
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -79,12 +93,15 @@ public class OrdersFragment extends Fragment {
 
         // Fetch orders from the API
         fetchOrders();
+
+        // Handle create order button visibility based on permissions
         boolean canCreate = permissionManager.hasPermission("orders", "create", "123");
-        if(canCreate) {
+        if (canCreate) {
             binding.createOrderButton.setVisibility(View.VISIBLE);
         } else {
             binding.createOrderButton.setVisibility(View.GONE);
         }
+
         // Handle create order button click
         binding.createOrderButton.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(requireActivity(), R.id.nav_host_fragment_activity_main);
@@ -143,7 +160,8 @@ public class OrdersFragment extends Fragment {
                                             orderObject.get("order_status").getAsString(),
                                             orderObject.get("custom_fields").getAsJsonObject().get("count_product").getAsInt(),
                                             orderObject.get("order_total").getAsDouble(),
-                                            orderObject.get("payment_status").getAsString()
+                                            orderObject.get("payment_status").getAsString(),
+                                            orderObject.get("host_id").getAsString()
                                     );
                                     orderList.add(order);
                                 } catch (ParseException e) {
@@ -168,18 +186,9 @@ public class OrdersFragment extends Fragment {
             }
         });
     }
-    public String formatDate(String inputDate) {
-        try {
-            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-            Date date = inputFormat.parse(inputDate);
-            SimpleDateFormat outputFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            return outputFormat.format(date);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "Invalid Date";
-        }
-    }
+
     private void setupRecyclerView() {
+        filteredOrderList.addAll(orderList); // Initialize with all orders
         adapter = new OrderListAdapter(filteredOrderList, this::onOrderClick);
         RecyclerView recyclerView = binding.orderList;
         recyclerView.setAdapter(adapter);
@@ -193,6 +202,8 @@ public class OrdersFragment extends Fragment {
         navController.navigate(R.id.action_ordersFragment_to_orderDetailFragment, args);
     }
 
+
+    // Update the initFilterUI method to include the step Spinner
     private void initFilterUI(View root) {
         FilterOrderDrawerBinding filterOrderDrawerBinding = FilterOrderDrawerBinding.bind(binding.filterOrderDrawer.getRoot());
         DrawerLayout drawerLayout = binding.drawerLayout;
@@ -202,20 +213,60 @@ public class OrdersFragment extends Fragment {
         Button cancelFilterButton = filterOrderDrawerBinding.cancelFilterButton;
         Button clearAllButton = filterOrderDrawerBinding.clearAllButton;
 
-        MaterialCardView waitFilter = filterOrderDrawerBinding.waitStatusFilter;
-        MaterialCardView preparingFilter = filterOrderDrawerBinding.preparingStatusFilter;
+        MaterialCardView waitForApprovalFilter = filterOrderDrawerBinding.waitForApprovalStatusFilter;
+        MaterialCardView inProgressFilter = filterOrderDrawerBinding.inProgressStatusFilter;
         MaterialCardView deliveringFilter = filterOrderDrawerBinding.deliveringStatusFilter;
-        MaterialCardView successFilter = filterOrderDrawerBinding.successStatusFilter;
+        MaterialCardView deliveredFilter = filterOrderDrawerBinding.deliveredStatusFilter;
         MaterialCardView cancelledFilter = filterOrderDrawerBinding.cancelledStatusFilter;
+        MaterialCardView completedFilter = filterOrderDrawerBinding.completedStatusFilter;
 
-        TextView waitText = filterOrderDrawerBinding.waitStatusText;
-        TextView preparingText = filterOrderDrawerBinding.preparingStatusText;
+        TextView waitForApprovalText = filterOrderDrawerBinding.waitForApprovalStatusText;
+        TextView inProgressText = filterOrderDrawerBinding.inProgressStatusText;
         TextView deliveringText = filterOrderDrawerBinding.deliveringStatusText;
-        TextView successText = filterOrderDrawerBinding.successStatusText;
+        TextView deliveredText = filterOrderDrawerBinding.deliveredStatusText;
         TextView cancelledText = filterOrderDrawerBinding.cancelledStatusText;
+        TextView completedText = filterOrderDrawerBinding.completedStatusText;
 
         Button datePickerButton = filterOrderDrawerBinding.datePickerButton;
         TextView dateTextView = filterOrderDrawerBinding.dateTextView;
+
+        RangeSlider priceRangeSlider = filterOrderDrawerBinding.priceRangeSlider;
+        TextView priceRangeText = filterOrderDrawerBinding.priceRangeText;
+
+        Button customerPickerButton = filterOrderDrawerBinding.customerPicker;
+        TextView selectedCustomerTextView = filterOrderDrawerBinding.selectedCustomerTextView;
+
+        // Step Spinner
+        Spinner stepSpinner = filterOrderDrawerBinding.stepSpinner;
+        ArrayAdapter<CharSequence> stepAdapter = ArrayAdapter.createFromResource(requireContext(),
+                R.array.step_values, android.R.layout.simple_spinner_item);
+        stepAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        stepSpinner.setAdapter(stepAdapter);
+
+        // Set up step Spinner listener
+        stepSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedStep = parent.getItemAtPosition(position).toString();
+                switch (selectedStep) {
+                    case "10.000 đ":
+                        currentStep = STEP_10K;
+                        break;
+                    case "100.000 đ":
+                        currentStep = STEP_100K;
+                        break;
+                    case "1.000.000 đ":
+                        currentStep = STEP_1M;
+                        break;
+                }
+                updatePriceRangeSlider(priceRangeSlider, priceRangeText);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // Do nothing
+            }
+        });
 
         // Open the filter drawer
         filterButton.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.END));
@@ -231,24 +282,62 @@ public class OrdersFragment extends Fragment {
 
         // Clear all filters
         clearAllButton.setOnClickListener(v -> {
-            clearAllFilters(waitFilter, preparingFilter, deliveringFilter, successFilter, cancelledFilter, dateTextView);
+            clearAllFilters(waitForApprovalFilter, inProgressFilter, deliveringFilter, deliveredFilter, cancelledFilter, completedFilter, dateTextView, priceRangeSlider, priceRangeText, selectedCustomerTextView);
             applyFilters(binding.searchView.getQuery().toString());
         });
 
         // Set up status filter click listeners
-        waitFilter.setOnClickListener(v -> toggleStatusFilter(waitFilter, "Wait", waitText));
-        preparingFilter.setOnClickListener(v -> toggleStatusFilter(preparingFilter, "Preparing", preparingText));
+        waitForApprovalFilter.setOnClickListener(v -> toggleStatusFilter(waitForApprovalFilter, "Wait for Approval", waitForApprovalText));
+        inProgressFilter.setOnClickListener(v -> toggleStatusFilter(inProgressFilter, "In Progress", inProgressText));
         deliveringFilter.setOnClickListener(v -> toggleStatusFilter(deliveringFilter, "Delivering", deliveringText));
-        successFilter.setOnClickListener(v -> toggleStatusFilter(successFilter, "Success", successText));
+        deliveredFilter.setOnClickListener(v -> toggleStatusFilter(deliveredFilter, "Delivered", deliveredText));
         cancelledFilter.setOnClickListener(v -> toggleStatusFilter(cancelledFilter, "Cancelled", cancelledText));
+        completedFilter.setOnClickListener(v -> toggleStatusFilter(completedFilter, "Completed", completedText));
 
         // Set up the date picker
         datePickerButton.setOnClickListener(v -> showDatePickerDialog(dateTextView));
 
+        // Set up the price range slider
+        updatePriceRangeSlider(priceRangeSlider, priceRangeText);
+
+        // Set up the customer picker
+        customerPickerButton.setOnClickListener(v -> showCustomerPickerDialog(selectedCustomerTextView));
+
         // Set up sort button
         binding.sortButton.setOnClickListener(v -> showSortDialog());
     }
+    // Add these constants for step options
+    private static final double STEP_10K = 10000;
+    private static final double STEP_100K = 100000;
+    private static final double STEP_1M = 1000000;
+    private double currentStep = STEP_10K; // Default step size
+    // Helper method to update the price range slider
+    private void updatePriceRangeSlider(RangeSlider priceRangeSlider, TextView priceRangeText) {
+        // Set the slider's valueFrom, valueTo, and stepSize based on the current step
+        priceRangeSlider.setValueFrom(0f);
+        priceRangeSlider.setValueTo((float) (currentStep * 10)); // Adjust the max value based on the step
+        priceRangeSlider.setStepSize((float) currentStep);
 
+        // Set initial values
+        priceRangeSlider.setValues(0f, (float) (currentStep * 10));
+
+        // Update the price range text
+        priceRangeSlider.addOnChangeListener((slider, value, fromUser) -> {
+            minPrice = slider.getValues().get(0);
+            maxPrice = slider.getValues().get(1);
+            priceRangeText.setText(String.format(Locale.getDefault(), "Selected Price Range: %s - %s",
+                    formatCurrency(minPrice), formatCurrency(maxPrice)));
+        });
+
+        // Set initial text
+        priceRangeText.setText(String.format(Locale.getDefault(), "Selected Price Range: %s - %s",
+                formatCurrency(0), formatCurrency(currentStep * 10)));
+    }
+
+    // Helper method to format currency in VND
+    private String formatCurrency(double amount) {
+        return String.format(Locale.getDefault(), "%,.0f VND", amount);
+    }
     private void toggleStatusFilter(MaterialCardView card, String status, TextView textView) {
         if (!card.isChecked()) {
             selectedStatuses.add(status);
@@ -268,37 +357,87 @@ public class OrdersFragment extends Fragment {
     private void applyFilters(String query) {
         filteredOrderList.clear();
 
-        if (query.isEmpty() && selectedStatuses.isEmpty() && selectedDate.isEmpty()) {
-            filteredOrderList.addAll(orderList);
-        } else {
-            for (Order order : orderList) {
-                boolean matchesStatus = selectedStatuses.isEmpty() || selectedStatuses.contains(order.getStatus());
-                boolean matchesDate = selectedDate.isEmpty() || order.getDate().equals(selectedDate);
+        for (Order order : orderList) {
+            boolean matchesStatus = selectedStatuses.isEmpty() || selectedStatuses.contains(order.getStatus());
+            boolean matchesDate = selectedDate.isEmpty() || order.getDate().equals(selectedDate);
+            boolean matchesPrice = order.getValue() >= minPrice && order.getValue() <= maxPrice;
+            boolean matchesCustomer = selectedCustomerId.isEmpty() || order.getCustomerId().equals(selectedCustomerId);
+            boolean matchesQuery = query.isEmpty() ||
+                    order.getCustomerName().toLowerCase().contains(query.toLowerCase()) ||
+                    order.getOrderId().toLowerCase().contains(query.toLowerCase());
 
-                if ((order.getCustomerName().toLowerCase().contains(query.toLowerCase()) ||
-                        order.getOrderId().toLowerCase().contains(query.toLowerCase()))
-                        && matchesStatus && matchesDate) {
-                    filteredOrderList.add(order);
-                }
+            if (matchesStatus && matchesDate && matchesPrice && matchesCustomer && matchesQuery) {
+                filteredOrderList.add(order);
             }
         }
 
-        adapter.notifyDataSetChanged();
+        // Apply sorting if needed
+        if (currentComparator != null) {
+            sortOrders(currentComparator);
+        } else {
+            adapter.notifyDataSetChanged();
+        }
     }
 
-    private void clearAllFilters(MaterialCardView waitFilter, MaterialCardView preparingFilter, MaterialCardView deliveringFilter,
-                                 MaterialCardView successFilter, MaterialCardView cancelledFilter, TextView dateTextView) {
+    private void clearAllFilters(MaterialCardView waitForApprovalFilter, MaterialCardView inProgressFilter, MaterialCardView deliveringFilter,
+                                 MaterialCardView deliveredFilter, MaterialCardView cancelledFilter, MaterialCardView completedFilter,
+                                 TextView dateTextView, RangeSlider priceRangeSlider, TextView priceRangeText, TextView selectedCustomerTextView) {
         // Clear status filters
-        waitFilter.setChecked(false);
-        preparingFilter.setChecked(false);
+        waitForApprovalFilter.setChecked(false);
+        inProgressFilter.setChecked(false);
         deliveringFilter.setChecked(false);
-        successFilter.setChecked(false);
+        deliveredFilter.setChecked(false);
         cancelledFilter.setChecked(false);
+        completedFilter.setChecked(false);
+
+        // Reset card background colors
+        waitForApprovalFilter.setCardBackgroundColor(getResources().getColor(R.color.filter_item_background));
+        inProgressFilter.setCardBackgroundColor(getResources().getColor(R.color.filter_item_background));
+        deliveringFilter.setCardBackgroundColor(getResources().getColor(R.color.filter_item_background));
+        deliveredFilter.setCardBackgroundColor(getResources().getColor(R.color.filter_item_background));
+        cancelledFilter.setCardBackgroundColor(getResources().getColor(R.color.filter_item_background));
+        completedFilter.setCardBackgroundColor(getResources().getColor(R.color.filter_item_background));
+
+        // Reset text colors to black
+        TextView waitForApprovalText = binding.filterOrderDrawer.waitForApprovalStatusText;
+        TextView inProgressText = binding.filterOrderDrawer.inProgressStatusText;
+        TextView deliveringText = binding.filterOrderDrawer.deliveringStatusText;
+        TextView deliveredText = binding.filterOrderDrawer.deliveredStatusText;
+        TextView cancelledText = binding.filterOrderDrawer.cancelledStatusText;
+        TextView completedText = binding.filterOrderDrawer.completedStatusText;
+
+        waitForApprovalText.setTextColor(Color.parseColor("#006FFD"));
+        inProgressText.setTextColor(Color.parseColor("#006FFD"));
+        deliveringText.setTextColor(Color.parseColor("#006FFD"));
+        deliveredText.setTextColor(Color.parseColor("#006FFD"));
+        cancelledText.setTextColor(Color.parseColor("#006FFD"));
+        completedText.setTextColor(Color.parseColor("#006FFD"));
+
         selectedStatuses.clear();
 
         // Clear date filter
         selectedDate = "";
         dateTextView.setText("Selected Date will appear here");
+
+        // Reset price range slider and text
+        priceRangeSlider.setValues(0f, (float) (currentStep * 10));
+        priceRangeText.setText("Selected Price Range: " + formatCurrency(0) + " - " + formatCurrency(currentStep * 10));
+
+        // Clear customer filter
+        selectedCustomerId = "";
+        selectedCustomerName = "";
+        selectedCustomerTextView.setText("Selected Customer: None");
+
+        // Reset filtered list to original list
+        filteredOrderList.clear();
+        filteredOrderList.addAll(orderList);
+
+        // Reapply sorting if needed
+        if (currentComparator != null) {
+            sortOrders(currentComparator);
+        } else {
+            adapter.notifyDataSetChanged();
+        }
     }
 
     private void showDatePickerDialog(TextView dateTextView) {
@@ -308,6 +447,56 @@ public class OrdersFragment extends Fragment {
         }, 2023, 0, 1);
 
         datePickerDialog.show();
+    }
+
+    private void showCustomerPickerDialog(TextView selectedCustomerTextView) {
+        // Fetch customer options from the API
+        ApiService apiService = ApiClient.getClient(requireContext()).create(ApiService.class);
+        apiService.getCustomerOptions().enqueue(new Callback<JsonObject>() {
+            @Override
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    JsonObject jsonResponse = response.body();
+                    customers.clear();
+                    if (jsonResponse.has("data") && !jsonResponse.get("data").isJsonNull()) {
+                        JsonArray dataArray = jsonResponse.getAsJsonArray("data");
+                        for (JsonElement customerElement : dataArray) {
+                            JsonObject customerObject = customerElement.getAsJsonObject();
+                            CustomerOption customer = new CustomerOption(
+                                    customerObject.get("id").getAsString(),
+                                    customerObject.get("full_name").getAsString(),
+                                    customerObject.get("phone_number").getAsString()
+                            );
+                            customers.add(customer);
+                        }
+
+                        // Show customer selection dialog
+                        String[] customerNames = new String[customers.size()];
+                        for (int i = 0; i < customers.size(); i++) {
+                            customerNames[i] = customers.get(i).getName();
+                        }
+
+                        new AlertDialog.Builder(requireContext())
+                                .setTitle("Select Customer")
+                                .setItems(customerNames, (dialog, which) -> {
+                                    CustomerOption selectedCustomer = customers.get(which);
+                                    selectedCustomerId = selectedCustomer.getId();
+                                    selectedCustomerName = selectedCustomer.getName();
+                                    selectedCustomerTextView.setText("Selected Customer: " + selectedCustomerName);
+                                })
+                                .setNegativeButton("Cancel", null)
+                                .show();
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Failed to load customers.", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                Toast.makeText(requireContext(), "Error loading customers: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void showSortDialog() {
@@ -336,6 +525,7 @@ public class OrdersFragment extends Fragment {
     }
 
     private void sortOrders(Comparator<Order> comparator) {
+        currentComparator = comparator;
         Collections.sort(filteredOrderList, comparator);
         adapter.notifyDataSetChanged();
     }

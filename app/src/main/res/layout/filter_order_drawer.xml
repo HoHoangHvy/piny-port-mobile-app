@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
     <LinearLayout
         android:id="@+id/filter_drawer"
         android:layout_width="300dp"
@@ -46,7 +47,7 @@
                 android:textColor="#006FFD"/>
         </LinearLayout>
 
-        <!-- Category Filter -->
+        <!-- Status Filter -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -54,14 +55,17 @@
             android:text="Status"
             android:textSize="16sp"
             android:textColor="#000000" />
+
         <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             app:flexWrap="wrap"
             app:alignItems="center">
+
+            <!-- Wait for Approval -->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/delivering_status_filter"
+                android:id="@+id/waitForApprovalStatusFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
@@ -72,19 +76,21 @@
                 app:cardBackgroundColor="@color/filter_item_background"
                 app:strokeWidth="0dp">
                 <TextView
-                    android:id="@+id/delivering_status_text"
+                    android:id="@+id/waitForApprovalStatusText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
-                    android:text="DELIVERING"
+                    android:text="Wait for Approval"
                     android:textColor="#006FFD"
                     android:textSize="11sp"
                     android:textStyle="bold"
                     android:maxLines="1"
                     android:ellipsize="end" />
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- In Progress -->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/preparing_status_filter"
+                android:id="@+id/inProgressStatusFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
@@ -95,22 +101,23 @@
                 app:cardBackgroundColor="@color/filter_item_background"
                 app:strokeWidth="0dp">
                 <TextView
-                    android:id="@+id/preparing_status_text"
+                    android:id="@+id/inProgressStatusText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
-                    android:text="PREPARING"
+                    android:text="In Progress"
                     android:textColor="#006FFD"
                     android:textSize="11sp"
                     android:textStyle="bold"
                     android:maxLines="1"
                     android:ellipsize="end" />
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- Delivering -->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cancelled_status_filter"
+                android:id="@+id/deliveringStatusFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:state_checked="true"
                 android:clickable="true"
                 android:layout_marginRight="5dp"
                 android:layout_weight="1"
@@ -119,60 +126,96 @@
                 app:cardBackgroundColor="@color/filter_item_background"
                 app:strokeWidth="0dp">
                 <TextView
-                    android:id="@+id/cancelled_status_text"
-                    android:layout_width="match_parent"
+                    android:id="@+id/deliveringStatusText"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
-                    android:text="CANCELLED"
+                    android:text="Delivering"
                     android:textColor="#006FFD"
                     android:textSize="11sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- Delivered -->
             <com.google.android.material.card.MaterialCardView
-                android:id="@+id/wait_status_filter"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginTop="5dp"
-                android:clickable="true"
-                android:layout_weight="1"
-                android:checkable="true"
-                app:checkedIcon="@drawable/icon_empty"
-                app:cardBackgroundColor="@color/filter_item_background"
-                app:strokeWidth="0dp">
-                <TextView
-                    android:id="@+id/wait_status_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="8dp"
-                    android:text="WAIT"
-                    android:textColor="#006FFD"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
-            </com.google.android.material.card.MaterialCardView>
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/success_status_filter"
+                android:id="@+id/deliveredStatusFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/filter_item_background"
                 android:clickable="true"
-                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_weight="1"
                 android:checkable="true"
                 app:checkedIcon="@drawable/icon_empty"
+                app:cardBackgroundColor="@color/filter_item_background"
                 app:strokeWidth="0dp">
                 <TextView
-                    android:id="@+id/success_status_text"
+                    android:id="@+id/deliveredStatusText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="8dp"
-                    android:text="SUCCESS"
+                    android:text="Delivered"
                     android:textColor="#006FFD"
                     android:textSize="11sp"
                     android:textStyle="bold"
                     android:maxLines="1"
                     android:ellipsize="end" />
             </com.google.android.material.card.MaterialCardView>
+
+            <!-- Cancelled -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cancelledStatusFilter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:checkable="true"
+                app:checkedIcon="@drawable/icon_empty"
+                app:cardBackgroundColor="@color/filter_item_background"
+                app:strokeWidth="0dp">
+                <TextView
+                    android:id="@+id/cancelledStatusText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="Cancelled"
+                    android:textColor="#006FFD"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Completed -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/completedStatusFilter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_weight="1"
+                android:checkable="true"
+                app:checkedIcon="@drawable/icon_empty"
+                app:cardBackgroundColor="@color/filter_item_background"
+                app:strokeWidth="0dp">
+                <TextView
+                    android:id="@+id/completedStatusText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:text="Completed"
+                    android:textColor="#006FFD"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </com.google.android.material.card.MaterialCardView>
+
         </com.google.android.flexbox.FlexboxLayout>
 
         <!-- Price Range Filter -->
@@ -183,6 +226,7 @@
             android:text="Price Range"
             android:textSize="16sp"
             android:textColor="#000000" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -197,6 +241,7 @@
                 android:layout_height="wrap_content"
                 android:entries="@array/step_values" />
         </LinearLayout>
+
         <com.google.android.material.slider.RangeSlider
             android:id="@+id/price_range_slider"
             android:layout_width="match_parent"
@@ -208,25 +253,29 @@
             app:trackHeight="7dp"
             app:values="@array/initial_slider_values"
             android:stepSize="10.0"/>
+
         <TextView
             android:id="@+id/price_range_text"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="Selected Price Range: $0 - $100"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp" />
 
         <!-- Date Filter -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="24dp"
             android:text="Date"
             android:textSize="16sp"
             android:textColor="#000000" />
+
         <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
             app:justifyContent="flex_start"
-            app:alignContent="center"
-            >
+            app:alignContent="center">
             <Button
                 style="?attr/materialIconButtonStyle"
                 android:id="@+id/date_picker_button"
@@ -251,42 +300,38 @@
             android:textSize="16sp"
             android:textColor="#000000" />
 
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
             <Button
                 style="?attr/materialIconButtonStyle"
                 android:id="@+id/customer_picker"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:icon="@drawable/profile_icon"/>
+
             <TextView
                 android:id="@+id/selectedCustomerTextView"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Selected Customer: None"
                 android:textSize="14sp"
-                android:paddingBottom="8dp"/>
+                android:paddingLeft="8dp" />
         </LinearLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <Button
-                android:id="@+id/apply_filter_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:backgroundTint="#006FFD"
-                android:text="Apply Filters"
-                android:textColor="#FFFFFF"
-                android:textAllCaps="false"
-                android:layout_gravity="center_horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
-        </androidx.constraintlayout.widget.ConstraintLayout>
         <!-- Apply Filter Button -->
+        <Button
+            android:id="@+id/apply_filter_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="#006FFD"
+            android:text="Apply Filters"
+            android:textColor="#FFFFFF"
+            android:textAllCaps="false"
+            android:layout_gravity="center_horizontal" />
 
     </LinearLayout>
 

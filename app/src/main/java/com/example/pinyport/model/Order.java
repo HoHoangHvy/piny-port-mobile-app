@@ -9,7 +9,17 @@ public class Order implements Serializable {
     private String time;
     private String customerName;
     private String status;
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
+    }
+
     private String paymentStatus;
+    private String customerId;
 
     public String getPaymentStatus() {
         return paymentStatus;
@@ -69,7 +79,7 @@ public class Order implements Serializable {
     }
 
 
-    public Order(String orderId, String orderNumber, String date, String time, String customerName, String status, int itemsCount, double value, String paymentStatus) {
+    public Order(String orderId, String orderNumber, String date, String time, String customerName, String status, int itemsCount, double value, String paymentStatus, String customerId) {
         this.orderId = orderId;
         this.orderNumber = orderNumber;
         this.date = date;
@@ -79,6 +89,7 @@ public class Order implements Serializable {
         this.itemsCount = itemsCount;
         this.value = value;
         this.paymentStatus = paymentStatus;
+        this.customerId = customerId;
     }
 
     // Getters for all fields
